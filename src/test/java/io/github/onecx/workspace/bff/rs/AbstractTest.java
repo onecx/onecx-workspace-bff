@@ -13,14 +13,14 @@ import io.restassured.config.RestAssuredConfig;
 @QuarkusTestResource(MockServerTestResource.class)
 public abstract class AbstractTest {
 
-  static {
-    RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-            ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(
-                    (cls, charset) -> {
-                      ObjectMapper objectMapper = new ObjectMapper();
-                      objectMapper.registerModule(new JavaTimeModule());
-                      objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-                      return objectMapper;
-                    }));
-  }
+    static {
+        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+                ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(
+                        (cls, charset) -> {
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            objectMapper.registerModule(new JavaTimeModule());
+                            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+                            return objectMapper;
+                        }));
+    }
 }
