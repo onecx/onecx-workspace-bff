@@ -278,35 +278,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-    put: # CAN BE REMOVED? SAME AS PATCH?
-      tags:
-        - menuItem
-      description: Update an existing menu item
-      operationId: updateMenuItem
-      parameters:
-        - $ref: '#/components/parameters/id'
-        - $ref: '#/components/parameters/menuItemId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateMenuItemRequest'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateMenuItemResponse'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-        "404":
-          description: Menu item not found
+
   /workspaces/{id}/products:
     post:
       tags:
@@ -667,20 +639,6 @@ components:
           items:
             $ref: '#/components/schemas/MenuItem'
     GetMenuItemResponse:
-      required:
-        - resource
-      type: object
-      properties:
-        resource:
-          $ref: '#/components/schemas/MenuItem'
-    UpdateMenuItemRequest:
-      required:
-        - resource
-      type: object
-      properties:
-        resource:
-          $ref: '#/components/schemas/MenuItem'
-    UpdateMenuItemResponse:
       required:
         - resource
       type: object
