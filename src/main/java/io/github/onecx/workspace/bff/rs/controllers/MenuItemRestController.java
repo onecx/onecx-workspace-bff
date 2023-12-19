@@ -31,8 +31,6 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Inject
     MenuItemMapper menuItemMapper;
-    @Inject
-    ListMapper menuItemListMapper;
 
     @Inject
     @RestClient
@@ -68,7 +66,7 @@ public class MenuItemRestController implements MenuItemApiService {
         try (Response response = menuClient.getMenuItemsForWorkspaceId(id)) {
             GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
             responseDTO.setMenuItems(
-                    menuItemListMapper
+                    menuItemMapper
                             .map(response.readEntity(new GenericType<List<MenuItem>>() {
                             })));
             return Response.status(response.getStatus()).entity(responseDTO).build();
@@ -80,7 +78,7 @@ public class MenuItemRestController implements MenuItemApiService {
         try (Response response = menuClient.getMenuStructureForWorkspaceId(id)) {
             GetWorkspaceMenuItemStructureResponseDTO responseDTO = new GetWorkspaceMenuItemStructureResponseDTO();
             responseDTO.setMenuItems(
-                    menuItemListMapper
+                    menuItemMapper
                             .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructrue.class).getMenuItems()));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
@@ -93,7 +91,7 @@ public class MenuItemRestController implements MenuItemApiService {
         try (Response response = menuClient.patchMenuItems(id, menuItems)) {
             List<MenuItem> menuItemList = response.readEntity(new GenericType<List<MenuItem>>() {
             });
-            List<PatchMenuItemsResponseDTO> responseDTOList = menuItemListMapper.mapToResponseDTOList(menuItemList);
+            List<PatchMenuItemsResponseDTO> responseDTOList = menuItemMapper.mapToResponseDTOList(menuItemList);
             return Response.status(response.getStatus()).entity(responseDTOList).build();
         }
     }
@@ -103,7 +101,7 @@ public class MenuItemRestController implements MenuItemApiService {
             CreateWorkspaceMenuItemStructrueRequestDTO createWorkspaceMenuItemStructrueRequestDTO) {
         WorkspaceMenuItemStructrue menuStructure = new WorkspaceMenuItemStructrue();
         menuStructure.setMenuItems(
-                menuItemListMapper.mapToWorkspaceMenuItems(createWorkspaceMenuItemStructrueRequestDTO.getMenuItems()));
+                menuItemMapper.mapToWorkspaceMenuItems(createWorkspaceMenuItemStructrueRequestDTO.getMenuItems()));
         try (Response response = menuClient.uploadMenuStructureForWorkspaceId(id, menuStructure)) {
             return Response.status(response.getStatus()).build();
         }

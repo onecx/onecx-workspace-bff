@@ -30,9 +30,6 @@ public class ProductRestController implements ProductApiService {
     ExceptionMapper exceptionMapper;
 
     @Inject
-    ListMapper menuItemListMapper;
-
-    @Inject
     ProductMapper productMapper;
 
     @Inject
@@ -67,7 +64,7 @@ public class ProductRestController implements ProductApiService {
     @Override
     public Response getProductsForWorkspaceId(String id) {
         try (Response response = productClient.getProductsForWorkspaceId(id)) {
-            List<ProductDTO> productList = menuItemListMapper
+            List<ProductDTO> productList = productMapper
                     .mapProductListToDTOs(response.readEntity(new GenericType<List<Product>>() {
                     }));
             return Response.status(response.getStatus()).entity(productList).build();

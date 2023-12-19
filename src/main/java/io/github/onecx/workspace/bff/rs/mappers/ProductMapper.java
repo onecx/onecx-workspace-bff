@@ -1,5 +1,7 @@
 package io.github.onecx.workspace.bff.rs.mappers;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
@@ -19,4 +21,7 @@ public interface ProductMapper {
     ProductDTO map(Product product);
 
     UpdateProductRequest map(UpdateProductRequestDTO dto);
+
+    List<ProductDTO> mapProductListToDTOs(List<Product> productList);
+
 }
