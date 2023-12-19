@@ -113,7 +113,7 @@ public class MenuItemRestController implements MenuItemApiService {
     public Response createMenuItemForWorkspace(String id, CreateMenuItemRequestDTO createMenuItemRequestDTO) {
         try (Response response = menuClient.createMenuItemForWorkspace(id,
                 menuItemMapper.map(createMenuItemRequestDTO.getResource()))) {
-            UpdateMenuItemResponseDTO responseDTO = new UpdateMenuItemResponseDTO();
+            CreateMenuItemResponseDTO responseDTO = new CreateMenuItemResponseDTO();
             responseDTO.setResource(menuItemMapper.map(response.readEntity(MenuItem.class)));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }

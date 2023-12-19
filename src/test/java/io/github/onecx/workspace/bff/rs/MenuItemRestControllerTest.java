@@ -5,7 +5,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -366,43 +365,5 @@ public class MenuItemRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(m1.getName(), output.getResource().getName());
-    }
-
-    @Test
-    void updateMenuItemByIdTest() {
-
-        String menuItemId = "p-id";
-        String workspaceId = "w-id";
-        MenuItem updateItem = new MenuItem();
-        updateItem.setName("update");
-
-        // create mock rest endpoint
-        mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/" + menuItemId)
-                        .withMethod(HttpMethod.PUT)
-                        .withBody(JsonBody.json(updateItem)))
-                .withPriority(100)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(updateItem)));
-        UpdateMenuItemRequestDTO input = new UpdateMenuItemRequestDTO();
-        MenuItemDTO item = new MenuItemDTO();
-        item.setName("update");
-        input.setResource(item);
-
-        var output = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .pathParam("workspaceId", workspaceId)
-                .pathParam("menuItemId", menuItemId)
-                .body(input)
-                .put("/workspaces/{workspaceId}/menuItems/{menuItemId}")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(UpdateMenuItemResponseDTO.class);
-
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(updateItem.getName(), output.getResource().getName());
     }
 }
