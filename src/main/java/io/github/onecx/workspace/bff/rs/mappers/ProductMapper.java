@@ -2,6 +2,7 @@ package io.github.onecx.workspace.bff.rs.mappers;
 
 import java.util.List;
 
+import gen.io.github.onecx.workspace.bff.rs.internal.model.CreateUpdateProductResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
@@ -23,5 +24,6 @@ public interface ProductMapper {
     UpdateProductRequest map(UpdateProductRequestDTO dto);
 
     List<ProductDTO> mapProductListToDTOs(List<Product> productList);
-
+    @Mapping(source= ".", target = "resource")
+    CreateUpdateProductResponseDTO mapToCreateUpdate(ProductDTO map);
 }

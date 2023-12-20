@@ -50,8 +50,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
     public Response createWorkspace(CreateWorkspaceRequestDTO createWorkspaceRequestDTO) {
         try (Response response = workspaceClient
                 .createWorkspace(workspaceMapper.map(createWorkspaceRequestDTO.getResource()))) {
-            CreateWorkspaceResponseDTO responseDTO = new CreateWorkspaceResponseDTO();
-            responseDTO.setResource(workspaceMapper.map(response.readEntity(Workspace.class)));
+            CreateWorkspaceResponseDTO responseDTO = workspaceMapper.mapToCreate(response.readEntity(Workspace.class));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }
@@ -66,8 +65,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
     @Override
     public Response getWorkspaceById(String id) {
         try (Response response = workspaceClient.getWorkspace(id)) {
-            GetWorkspaceResponseDTO responseDTO = new GetWorkspaceResponseDTO();
-            responseDTO.setResource(workspaceMapper.map(response.readEntity(Workspace.class)));
+            GetWorkspaceResponseDTO responseDTO = workspaceMapper.mapToGetResponse(workspaceMapper.map(response.readEntity(Workspace.class)));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }
