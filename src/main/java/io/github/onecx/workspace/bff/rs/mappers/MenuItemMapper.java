@@ -9,9 +9,8 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import gen.io.github.onecx.workspace.bff.clients.model.CreateMenuItem;
 import gen.io.github.onecx.workspace.bff.clients.model.MenuItem;
 import gen.io.github.onecx.workspace.bff.clients.model.WorkspaceMenuItem;
-import gen.io.github.onecx.workspace.bff.rs.internal.model.CreateUpdateMenuItemDTO;
-import gen.io.github.onecx.workspace.bff.rs.internal.model.MenuItemDTO;
-import gen.io.github.onecx.workspace.bff.rs.internal.model.PatchMenuItemsResponseDTO;
+import gen.io.github.onecx.workspace.bff.clients.model.WorkspaceMenuItemStructrue;
+import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface MenuItemMapper {
@@ -43,6 +42,29 @@ public interface MenuItemMapper {
         return newResponseDTO;
     }
 
+    @Mapping(source = ".", target = "resource")
+    GetMenuItemResponseDTO mapToResponse(MenuItemDTO menuItemDTO);
+
     List<WorkspaceMenuItem> mapToWorkspaceMenuItems(List<MenuItemDTO> menuItems);
 
+    default GetMenuItemsResponseDTO mapToGetResponseList(List<MenuItemDTO> menuItemDTOList) {
+        GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
+        responseDTO.setMenuItems(menuItemDTOList);
+        return responseDTO;
+    }
+
+    default GetWorkspaceMenuItemStructureResponseDTO mapToStructureResponse(List<MenuItemDTO> menuItemDTOList) {
+        GetWorkspaceMenuItemStructureResponseDTO responseDTO = new GetWorkspaceMenuItemStructureResponseDTO();
+        responseDTO.setMenuItems(menuItemDTOList);
+        return responseDTO;
+    }
+
+    default WorkspaceMenuItemStructrue mapToWorkspaceStructure(List<WorkspaceMenuItem> workspaceMenuItems) {
+        WorkspaceMenuItemStructrue menuItemStructure = new WorkspaceMenuItemStructrue();
+        menuItemStructure.setMenuItems(workspaceMenuItems);
+        return menuItemStructure;
+    }
+
+    @Mapping(source = ".", target = "resource")
+    CreateMenuItemResponseDTO mapToCreateResponse(MenuItemDTO menuItem);
 }

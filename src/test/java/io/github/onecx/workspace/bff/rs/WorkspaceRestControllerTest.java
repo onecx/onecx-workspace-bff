@@ -19,10 +19,13 @@ import org.mockserver.model.MediaType;
 
 import gen.io.github.onecx.workspace.bff.clients.model.*;
 import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
+import io.github.onecx.workspace.bff.rs.controllers.WorkspaceRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@TestHTTPEndpoint(WorkspaceRestController.class)
 public class WorkspaceRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -61,7 +64,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(input)
-                .post("/workspaces")
+                .post()
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -96,7 +99,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(input)
-                .post("/workspaces")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -121,7 +124,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
-                .delete("/workspaces/{id}")
+                .delete("/{id}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -145,7 +148,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
-                .get("/workspaces/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -168,7 +171,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", notFoundId)
-                .get("/workspaces/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -209,7 +212,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(searchWorkspaceRequestDTO)
-                .post("/workspaces/search")
+                .post("/search")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -236,7 +239,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .post("/workspaces/search")
+                .post("/search")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -269,7 +272,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
-                .put("/workspaces/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
 
@@ -299,7 +302,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
-                .put("/workspaces/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)

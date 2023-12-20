@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.workspace.bff.clients.api.MenuInternalApi;
 import gen.io.github.onecx.workspace.bff.clients.api.ProductInternalApi;
@@ -24,6 +25,7 @@ import io.github.onecx.workspace.bff.rs.mappers.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
+@LogService
 public class ProductRestController implements ProductApiService {
 
     @Inject

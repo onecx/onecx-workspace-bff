@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.workspace.bff.clients.api.MenuInternalApi;
 import gen.io.github.onecx.workspace.bff.clients.api.ProductInternalApi;
@@ -24,6 +25,7 @@ import io.github.onecx.workspace.bff.rs.mappers.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
+@LogService
 public class MenuItemRestController implements MenuItemApiService {
 
     @Inject
@@ -55,8 +57,7 @@ public class MenuItemRestController implements MenuItemApiService {
     public Response getMenuItemById(String id, String menuItemId) {
         try (Response response = menuClient.getMenuItemById(id, menuItemId)) {
             MenuItemDTO menuItemDTO = menuItemMapper.map(response.readEntity(MenuItem.class));
-            GetMenuItemResponseDTO responseDTO = new GetMenuItemResponseDTO();
-            responseDTO.setResource(menuItemDTO);
+            GetMenuItemResponseDTO responseDTO = menuItemMapper.mapToResponse(menuItemDTO);
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }
@@ -64,11 +65,9 @@ public class MenuItemRestController implements MenuItemApiService {
     @Override
     public Response getMenuItemsForWorkspaceById(String id) {
         try (Response response = menuClient.getMenuItemsForWorkspaceId(id)) {
-            GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
-            responseDTO.setMenuItems(
-                    menuItemMapper
-                            .map(response.readEntity(new GenericType<List<MenuItem>>() {
-                            })));
+            GetMenuItemsResponseDTO responseDTO = menuItemMapper.mapToGetResponseList(menuItemMapper
+                    .map(response.readEntity(new GenericType<List<MenuItem>>() {
+                    })));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }
@@ -76,10 +75,8 @@ public class MenuItemRestController implements MenuItemApiService {
     @Override
     public Response getMenuStructureForWorkspaceId(String id) {
         try (Response response = menuClient.getMenuStructureForWorkspaceId(id)) {
-            GetWorkspaceMenuItemStructureResponseDTO responseDTO = new GetWorkspaceMenuItemStructureResponseDTO();
-            responseDTO.setMenuItems(
-                    menuItemMapper
-                            .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructrue.class).getMenuItems()));
+            GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuItemMapper
+                    .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructrue.class).getMenuItems()));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }
@@ -99,9 +96,9 @@ public class MenuItemRestController implements MenuItemApiService {
     @Override
     public Response uploadMenuStructureForWorkspaceId(String id,
             CreateWorkspaceMenuItemStructrueRequestDTO createWorkspaceMenuItemStructrueRequestDTO) {
-        WorkspaceMenuItemStructrue menuStructure = new WorkspaceMenuItemStructrue();
-        menuStructure.setMenuItems(
-                menuItemMapper.mapToWorkspaceMenuItems(createWorkspaceMenuItemStructrueRequestDTO.getMenuItems()));
+        WorkspaceMenuItemStructrue menuStructure = menuItemMapper
+                .mapToWorkspaceStructure(menuItemMapper
+                        .mapToWorkspaceMenuItems(createWorkspaceMenuItemStructrueRequestDTO.getMenuItems()));
         try (Response response = menuClient.uploadMenuStructureForWorkspaceId(id, menuStructure)) {
             return Response.status(response.getStatus()).build();
         }
@@ -111,8 +108,8 @@ public class MenuItemRestController implements MenuItemApiService {
     public Response createMenuItemForWorkspace(String id, CreateMenuItemRequestDTO createMenuItemRequestDTO) {
         try (Response response = menuClient.createMenuItemForWorkspace(id,
                 menuItemMapper.map(createMenuItemRequestDTO.getResource()))) {
-            CreateMenuItemResponseDTO responseDTO = new CreateMenuItemResponseDTO();
-            responseDTO.setResource(menuItemMapper.map(response.readEntity(MenuItem.class)));
+            CreateMenuItemResponseDTO responseDTO = menuItemMapper
+                    .mapToCreateResponse(menuItemMapper.map(response.readEntity(MenuItem.class)));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }

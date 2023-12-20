@@ -20,10 +20,13 @@ import org.mockserver.model.MediaType;
 
 import gen.io.github.onecx.workspace.bff.clients.model.*;
 import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
+import io.github.onecx.workspace.bff.rs.controllers.ProductRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@TestHTTPEndpoint(ProductRestController.class)
 public class ProductRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -59,7 +62,7 @@ public class ProductRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
-                .post("/workspaces/{id}/products")
+                .post()
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -91,7 +94,7 @@ public class ProductRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
-                .post("/workspaces/{id}/products")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -125,7 +128,7 @@ public class ProductRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get("/workspaces/{id}/products")
+                .get()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -148,7 +151,7 @@ public class ProductRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get("/workspaces/{id}/products")
+                .get()
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -171,9 +174,9 @@ public class ProductRestControllerTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .pathParam("workspaceId", workspaceId)
+                .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
-                .delete("/workspaces/{workspaceId}/products/{productId}")
+                .delete("/{productId}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -222,10 +225,10 @@ public class ProductRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .pathParam("workspaceId", workspaceId)
+                .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
                 .body(updateRequest)
-                .put("/workspaces/{workspaceId}/products/{productId}")
+                .put("/{productId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -282,10 +285,10 @@ public class ProductRestControllerTest extends AbstractTest {
         var output = given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .pathParam("workspaceId", workspaceId)
+                .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
                 .body(updateRequest)
-                .put("/workspaces/{workspaceId}/products/{productId}")
+                .put("/{productId}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)

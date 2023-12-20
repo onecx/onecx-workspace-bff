@@ -21,10 +21,13 @@ import org.mockserver.model.MediaType;
 import gen.io.github.onecx.workspace.bff.clients.model.*;
 import gen.io.github.onecx.workspace.bff.clients.model.MenuItem;
 import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
+import io.github.onecx.workspace.bff.rs.controllers.MenuItemRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@TestHTTPEndpoint(MenuItemRestController.class)
 public class MenuItemRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
@@ -58,7 +61,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(requestDTO)
-                .post("/workspaces/{id}/menuItems")
+                .post()
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -88,7 +91,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(requestDTO)
-                .post("/workspaces/{id}/menuItems")
+                .post()
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -121,7 +124,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get("/workspaces/{id}/menuItems")
+                .get()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -146,7 +149,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get("/workspaces/{id}/menuItems")
+                .get()
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -194,7 +197,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
                 .pathParam("id", workspaceId)
-                .patch("/workspaces/{id}/menuItems")
+                .patch()
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -226,7 +229,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
                 .pathParam("id", workspaceId)
-                .patch("/workspaces/{id}/menuItems")
+                .patch()
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -245,13 +248,12 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
-
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .pathParam("workspaceId", workspaceId)
+                .pathParam("id", workspaceId)
                 .pathParam("menuItemId", menuItemId)
-                .delete("/workspaces/{workspaceId}/menuItems/{menuItemId}")
+                .delete("/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -284,7 +286,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get("/workspaces/{id}/menuItems/tree")
+                .get("/tree")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -329,7 +331,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(input)
-                .post("/workspaces/{id}/menuItems/tree/upload")
+                .post("/tree/upload")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode());
         Assertions.assertNotNull(output);
@@ -357,7 +359,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("menuItemId", menuItemId)
-                .get("/workspaces/{id}/menuItems/{menuItemId}")
+                .get("/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
