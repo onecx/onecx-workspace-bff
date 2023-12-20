@@ -32,9 +32,6 @@ public class WorkspaceRestController implements WorkspaceApiService {
     WorkspaceMapper workspaceMapper;
 
     @Inject
-    ProblemDetailMapper problemDetailMapper;
-
-    @Inject
     @RestClient
     ProductInternalApi productClient;
 
