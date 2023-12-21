@@ -15,19 +15,10 @@ public class ProductLog implements LogParam {
     public List<Item> getClasses() {
         return List.of(
                 this.item(10, CreateProductRequestDTO.class,
-                        x -> "CreateProductRequestDTO[ name: " + ((CreateProductRequestDTO) x).getProductName()
-                                + ", baseUrl: " + ((CreateProductRequestDTO) x).getBaseUrl()
-                                + ", mfe list size: "
-                                + (((CreateProductRequestDTO) x).getMicrofrontends() != null
-                                        ? ((CreateProductRequestDTO) x).getMicrofrontends().size()
-                                        : "null")
-                                + " ]"),
+                        x -> CreateProductRequestDTO.class.getSimpleName() + "[name:"
+                                + ((CreateProductRequestDTO) x).getProductName() + "]"),
                 this.item(10, UpdateProductRequestDTO.class,
-                        x -> "UpdateProductRequestDTO[ baseUrl: " + ((UpdateProductRequestDTO) x).getBaseUrl()
-                                + ", mfe list size: "
-                                + (((UpdateProductRequestDTO) x).getMicrofrontends() != null
-                                        ? ((UpdateProductRequestDTO) x).getMicrofrontends().size()
-                                        : "null")
-                                + " ]"));
+                        x -> UpdateProductRequestDTO.class.getSimpleName() + "[baseUrl: "
+                                + ((UpdateProductRequestDTO) x).getBaseUrl() + "]"));
     }
 }
