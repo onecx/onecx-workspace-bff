@@ -17,21 +17,17 @@ public class WorkspaceLog implements LogParam {
     public List<Item> getClasses() {
         return List.of(
                 this.item(10, CreateWorkspaceRequestDTO.class,
-                        x -> "CreateWorkspaceRequestDTO[ name: "
-                                + ((CreateWorkspaceRequestDTO) x).getResource().getWorkspaceName()
-                                + ", baseUrl: " + ((CreateWorkspaceRequestDTO) x).getResource().getBaseUrl()
-                                + ", company name: " + ((CreateWorkspaceRequestDTO) x).getResource().getCompanyName()
-                                + " ]"),
+                        x -> CreateWorkspaceRequestDTO.class.getSimpleName() + "[name:"
+                                + ((CreateWorkspaceRequestDTO) x).getResource().getWorkspaceName() + "]"),
                 this.item(10, UpdateWorkspaceRequestDTO.class,
-                        x -> "UpdateWorkspaceRequestDTO[ name: "
+                        x -> UpdateWorkspaceRequestDTO.class.getSimpleName() + "[name:"
                                 + ((UpdateWorkspaceRequestDTO) x).getResource().getWorkspaceName()
-                                + ", baseUrl: " + ((UpdateWorkspaceRequestDTO) x).getResource().getBaseUrl()
-                                + ", company name: " + ((UpdateWorkspaceRequestDTO) x).getResource().getCompanyName()
-                                + " ]"),
+                                + "]"),
                 this.item(10, SearchWorkspacesRequestDTO.class,
-                        x -> "SearchWorkspacesRequestDTO[ workspace name criteria: "
-                                + ((SearchWorkspacesRequestDTO) x).getWorkspaceName()
-                                + ", theme name criteria: " + ((SearchWorkspacesRequestDTO) x).getThemeName()
-                                + " ]"));
+                        x -> {
+                            SearchWorkspacesRequestDTO d = (SearchWorkspacesRequestDTO) x;
+                            return SearchWorkspacesRequestDTO.class.getSimpleName() + "[" + d.getPageNumber() + ","
+                                    + d.getPageSize() + "]";
+                        }));
     }
 }

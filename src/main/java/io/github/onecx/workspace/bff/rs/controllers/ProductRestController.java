@@ -15,9 +15,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.io.github.onecx.workspace.bff.clients.api.MenuInternalApi;
 import gen.io.github.onecx.workspace.bff.clients.api.ProductInternalApi;
-import gen.io.github.onecx.workspace.bff.clients.api.WorkspaceInternalApi;
 import gen.io.github.onecx.workspace.bff.clients.model.*;
 import gen.io.github.onecx.workspace.bff.rs.internal.ProductApiService;
 import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
@@ -37,14 +35,6 @@ public class ProductRestController implements ProductApiService {
     @Inject
     @RestClient
     ProductInternalApi productClient;
-
-    @Inject
-    @RestClient
-    WorkspaceInternalApi workspaceClient;
-
-    @Inject
-    @RestClient
-    MenuInternalApi menuClient;
 
     @Override
     public Response createProductInWorkspace(String id, CreateProductRequestDTO createProductRequestDTO) {
