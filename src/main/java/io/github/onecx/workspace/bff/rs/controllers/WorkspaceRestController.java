@@ -62,7 +62,8 @@ public class WorkspaceRestController implements WorkspaceApiService {
     @Override
     public Response getWorkspaceById(String id) {
         try (Response response = workspaceClient.getWorkspace(id)) {
-            GetWorkspaceResponseDTO responseDTO = workspaceMapper.mapToGetResponse(workspaceMapper.map(response.readEntity(Workspace.class)));
+            GetWorkspaceResponseDTO responseDTO = workspaceMapper
+                    .mapToGetResponse(workspaceMapper.map(response.readEntity(Workspace.class)));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }

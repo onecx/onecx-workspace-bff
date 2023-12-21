@@ -22,7 +22,7 @@ public interface WorkspaceMapper {
 
     UpdateWorkspaceRequest mapUpdate(WorkspaceDTO requestDTO);
 
-    @Mapping(source=".", target = "resource")
+    @Mapping(source = ".", target = "resource")
     CreateWorkspaceResponseDTO mapToCreate(Workspace workspace);
 
     @Mapping(source = ".", target = "resource")

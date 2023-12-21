@@ -50,7 +50,8 @@ public class ProductRestController implements ProductApiService {
     public Response createProductInWorkspace(String id, CreateProductRequestDTO createProductRequestDTO) {
         CreateProductRequest request = productMapper.map(createProductRequestDTO);
         try (Response response = productClient.createProductInWorkspace(id, request)) {
-            CreateUpdateProductResponseDTO createdProduct = productMapper.mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
+            CreateUpdateProductResponseDTO createdProduct = productMapper
+                    .mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
             return Response.status(response.getStatus()).entity(createdProduct).build();
         }
     }
@@ -76,7 +77,8 @@ public class ProductRestController implements ProductApiService {
     public Response updateProductById(String id, String productId, UpdateProductRequestDTO updateProductRequestDTO) {
 
         try (Response response = productClient.updateProductById(id, productId, productMapper.map(updateProductRequestDTO))) {
-            CreateUpdateProductResponseDTO updateProductResponseDTO = productMapper.mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
+            CreateUpdateProductResponseDTO updateProductResponseDTO = productMapper
+                    .mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
             return Response.status(response.getStatus()).entity(updateProductResponseDTO).build();
         }
     }

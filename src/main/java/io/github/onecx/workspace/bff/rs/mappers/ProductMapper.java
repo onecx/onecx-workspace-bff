@@ -24,6 +24,7 @@ public interface ProductMapper {
     UpdateProductRequest map(UpdateProductRequestDTO dto);
 
     List<ProductDTO> mapProductListToDTOs(List<Product> productList);
-    @Mapping(source= ".", target = "resource")
+
+    @Mapping(source = ".", target = "resource")
     CreateUpdateProductResponseDTO mapToCreateUpdate(ProductDTO map);
 }
