@@ -1,11 +1,11 @@
 package io.github.onecx.workspace.bff.rs.mappers;
 
-import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.io.github.onecx.workspace.bff.clients.model.*;
+import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface WorkspaceMapper {
