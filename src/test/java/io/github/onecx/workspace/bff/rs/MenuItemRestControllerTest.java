@@ -405,6 +405,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
         String workspaceName = "test";
         ImportMenuResponse importResponse = new ImportMenuResponse();
         importResponse.setStatus(ImportResponseStatus.CREATED);
+        importResponse.setId("1000000000");
         MenuSnapshot snapshot = new MenuSnapshot();
         EximMenuStructure menu = new EximMenuStructure();
         EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
@@ -413,6 +414,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
         menuItem.setKey("testKey");
         menu.setMenuItems(List.of(menuItem));
         snapshot.setMenu(menu);
+        snapshot.setId("1000000000");
 
         mockServerClient
                 .when(request().withPath("/exim/v1/workspace/" + workspaceName + "/menu/import").withMethod(HttpMethod.POST)
@@ -430,6 +432,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
         menuItemDTO.setWorkspaceName("test");
         menuStructureDTO.setMenuItems(List.of(menuItemDTO));
         snapshotDTO.setMenu(menuStructureDTO);
+        snapshotDTO.setId("1000000000");
 
         var output = given()
                 .when()
