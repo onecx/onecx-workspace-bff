@@ -68,8 +68,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
                 exportWorkspacesRequestDTO.getNames().forEach(s -> {
                     try (Response menuResponse = eximClient.exportMenuByWorkspaceName(s)) {
                         menuSnapshots.put(s, menuItemMapper.mapSnapshot(menuResponse.readEntity(MenuSnapshot.class)));
-                    } catch (Exception ex) {
-                        menuSnapshots.put(s, null);
+                    } catch (WebApplicationException ex) {
                     }
                 });
             }
@@ -98,7 +97,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
                         menuItemMapper.mapSnapshot(eximWorkspaceDTO.getMenu()))) {
                     menuResponses.put(s,
                             menuItemMapper.map(menuImportResponse.readEntity(ImportMenuResponse.class)).getStatus());
-                } catch (Exception ex) {
+                } catch (WebApplicationException ex) {
                     menuResponses.put(s, ImportResponseStatusDTO.ERROR);
                 }
             });
