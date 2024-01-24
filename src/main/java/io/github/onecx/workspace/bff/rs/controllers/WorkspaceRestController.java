@@ -64,11 +64,12 @@ public class WorkspaceRestController implements WorkspaceApiService {
     public Response exportWorkspaces(ExportWorkspacesRequestDTO exportWorkspacesRequestDTO) {
         try (Response response = eximClient.exportWorkspacesByNames(workspaceMapper.map(exportWorkspacesRequestDTO))) {
             Map<String, MenuSnapshotDTO> menuSnapshots = new HashMap<>();
-            if (exportWorkspacesRequestDTO.getIncludeMenus()) {
+            if (exportWorkspacesRequestDTO.getIncludeMenus() == true) {
                 exportWorkspacesRequestDTO.getNames().forEach(s -> {
                     try (Response menuResponse = eximClient.exportMenuByWorkspaceName(s)) {
                         menuSnapshots.put(s, menuItemMapper.mapSnapshot(menuResponse.readEntity(MenuSnapshot.class)));
                     } catch (WebApplicationException ex) {
+                        menuSnapshots.put(s, null);
                     }
                 });
             }

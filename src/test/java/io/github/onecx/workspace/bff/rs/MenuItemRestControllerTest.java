@@ -446,6 +446,6 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .extract().as(ImportMenuResponseDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getStatus(), ImportResponseStatusDTO.CREATED);
+        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getStatus());
     }
 }

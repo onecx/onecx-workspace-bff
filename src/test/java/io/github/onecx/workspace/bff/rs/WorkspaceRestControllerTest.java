@@ -414,8 +414,8 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getWorkspaceName(),
                 eximWorkspace.getWorkspaceName());
         Assertions.assertNotNull(output.getWorkspaces().get("testWorkspace").getMenu());
-        Assertions.assertEquals(output.getWorkspaces()
-                .get("testWorkspace").getMenu().getMenu().getMenuItems().get(0).getKey(), "testKey");
+        Assertions.assertEquals("testKey", output.getWorkspaces()
+                .get("testWorkspace").getMenu().getMenu().getMenuItems().get(0).getKey());
 
     }
 
@@ -521,10 +521,10 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .extract().as(ImportWorkspaceResponseDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getWorkspaces().get("test"), ImportResponseStatusDTO.CREATED);
-        Assertions.assertEquals(output.getWorkspaces().get("test2"), ImportResponseStatusDTO.CREATED);
-        Assertions.assertEquals(output.getMenus().get("test"), ImportResponseStatusDTO.CREATED);
-        Assertions.assertEquals(output.getMenus().get("test2"), ImportResponseStatusDTO.ERROR);
+        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test"));
+        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
+        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getMenus().get("test"));
+        Assertions.assertEquals(ImportResponseStatusDTO.ERROR, output.getMenus().get("test2"));
 
     }
 }

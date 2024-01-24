@@ -1,6 +1,5 @@
 package io.github.onecx.workspace.bff.rs.controllers;
 
-import java.awt.*;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
