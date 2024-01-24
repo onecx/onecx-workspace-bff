@@ -4,15 +4,13 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.io.github.onecx.workspace.bff.clients.model.CreateMenuItem;
-import gen.io.github.onecx.workspace.bff.clients.model.MenuItem;
-import gen.io.github.onecx.workspace.bff.clients.model.WorkspaceMenuItem;
-import gen.io.github.onecx.workspace.bff.clients.model.WorkspaceMenuItemStructrue;
+import gen.io.github.onecx.workspace.bff.clients.model.*;
 import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
 
-@Mapper(uses = { OffsetDateTimeMapper.class })
+@Mapper(uses = { OffsetDateTimeMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MenuItemMapper {
 
     @Mapping(target = "removeI18nItem", ignore = true)
@@ -67,4 +65,11 @@ public interface MenuItemMapper {
 
     @Mapping(source = ".", target = "resource")
     CreateMenuItemResponseDTO mapToCreateResponse(MenuItemDTO menuItem);
+
+    MenuSnapshot mapSnapshot(MenuSnapshotDTO menuSnapshotDTO);
+
+    MenuSnapshotDTO mapSnapshot(MenuSnapshot snapshot);
+
+    ImportMenuResponseDTO map(ImportMenuResponse response);
+
 }

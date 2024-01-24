@@ -1,5 +1,8 @@
 package io.github.onecx.workspace.bff.rs.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -12,6 +15,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
+import gen.io.github.onecx.workspace.bff.clients.api.WorkspaceExportImportApi;
 import gen.io.github.onecx.workspace.bff.clients.api.WorkspaceInternalApi;
 import gen.io.github.onecx.workspace.bff.clients.model.*;
 import gen.io.github.onecx.workspace.bff.rs.internal.WorkspaceApiService;
@@ -30,8 +34,15 @@ public class WorkspaceRestController implements WorkspaceApiService {
     WorkspaceMapper workspaceMapper;
 
     @Inject
+    MenuItemMapper menuItemMapper;
+
+    @Inject
     @RestClient
     WorkspaceInternalApi workspaceClient;
+
+    @Inject
+    @RestClient
+    WorkspaceExportImportApi eximClient;
 
     @Override
     public Response createWorkspace(CreateWorkspaceRequestDTO createWorkspaceRequestDTO) {
@@ -50,11 +61,49 @@ public class WorkspaceRestController implements WorkspaceApiService {
     }
 
     @Override
+    public Response exportWorkspaces(ExportWorkspacesRequestDTO exportWorkspacesRequestDTO) {
+        try (Response response = eximClient.exportWorkspacesByNames(workspaceMapper.map(exportWorkspacesRequestDTO))) {
+            Map<String, MenuSnapshotDTO> menuSnapshots = new HashMap<>();
+            if (exportWorkspacesRequestDTO.getIncludeMenus()) {
+                exportWorkspacesRequestDTO.getNames().forEach(s -> {
+                    try (Response menuResponse = eximClient.exportMenuByWorkspaceName(s)) {
+                        menuSnapshots.put(s, menuItemMapper.mapSnapshot(menuResponse.readEntity(MenuSnapshot.class)));
+                    } catch (Exception ex) {
+                        menuSnapshots.put(s, null);
+                    }
+                });
+            }
+            return Response.status(response.getStatus())
+                    .entity(workspaceMapper.mapSnapshotIncludingMenus(response.readEntity(WorkspaceSnapshot.class),
+                            menuSnapshots))
+                    .build();
+        }
+    }
+
+    @Override
     public Response getWorkspaceById(String id) {
         try (Response response = workspaceClient.getWorkspace(id)) {
             GetWorkspaceResponseDTO responseDTO = workspaceMapper
                     .mapToGetResponse(workspaceMapper.map(response.readEntity(Workspace.class)));
             return Response.status(response.getStatus()).entity(responseDTO).build();
+        }
+    }
+
+    @Override
+    public Response importWorkspaces(WorkspaceSnapshotDTO workspaceSnapshotDTO) {
+        try (Response response = eximClient.importWorkspaces(workspaceMapper.mapSnapshot(workspaceSnapshotDTO))) {
+            Map<String, ImportResponseStatusDTO> menuResponses = new HashMap<>();
+            workspaceSnapshotDTO.getWorkspaces().forEach((s, eximWorkspaceDTO) -> {
+                try (Response menuImportResponse = eximClient.importMenu(s,
+                        menuItemMapper.mapSnapshot(eximWorkspaceDTO.getMenu()))) {
+                    menuResponses.put(s,
+                            menuItemMapper.map(menuImportResponse.readEntity(ImportMenuResponse.class)).getStatus());
+                } catch (Exception ex) {
+                    menuResponses.put(s, ImportResponseStatusDTO.ERROR);
+                }
+            });
+            return Response.status(response.getStatus())
+                    .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class), menuResponses)).build();
         }
     }
 
