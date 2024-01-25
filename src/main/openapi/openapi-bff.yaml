@@ -375,6 +375,105 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Product not found
+  /workspaces/export:
+    post:
+      tags:
+        - workspace
+      description: Export workspaces
+      operationId: exportWorkspaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportWorkspacesRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSnapshot'
+        "404":
+          description: No themes founds
+  /workspaces/import:
+    post:
+      tags:
+        - workspace
+      description: Import workspaces
+      operationId: importWorkspaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceSnapshot'
+      responses:
+        "200":
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportWorkspaceResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /workspaces/{name}/menu/export:
+    get:
+      tags:
+        - menuItem
+      description: Export workspaces
+      operationId: exportMenuByWorkspaceName
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuSnapshot'
+        "404":
+          description: No themes founds
+
+  /workspaces/{name}/menu/import:
+    post:
+      tags:
+        - menuItem
+      description: Import workspaces
+      operationId: importMenuByWorkspaceName
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuSnapshot'
+      responses:
+        "200":
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportMenuResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
     Workspace:
@@ -725,7 +824,182 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CreateUpdateMicrofrontend'
-
+    WorkspaceSnapshot:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        created:
+          $ref: '#/components/schemas/OffsetDateTime'
+        workspaces:
+          type: object
+          nullable: false
+          additionalProperties:
+            $ref: '#/components/schemas/EximWorkspace'
+    ImportMenuResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        status:
+          $ref: '#/components/schemas/ImportResponseStatus'
+    ImportWorkspaceResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        workspaces:
+          additionalProperties:
+            $ref: '#/components/schemas/ImportResponseStatus'
+        menus:
+          additionalProperties:
+            $ref: '#/components/schemas/ImportResponseStatus'
+    ImportResponseStatus:
+      type: string
+      enum:
+        - UPDATED
+        - CREATED
+        - SKIPPED
+        - ERROR
+    EximWorkspace:
+      type: object
+      properties:
+        workspaceName:
+          type: string
+        description:
+          type: string
+        theme:
+          type: string
+        homePage:
+          type: string
+        baseUrl:
+          type: string
+        companyName:
+          type: string
+        phoneNumber:
+          type: string
+        rssFeedUrl:
+          type: string
+        footerLabel:
+          type: string
+        workspaceRoles:
+          type: string
+        logoUrl:
+          type: string
+        address:
+          $ref: '#/components/schemas/EximWorkspaceAddress'
+        subjectLinks:
+          uniqueItems: true
+          maxItems: 3
+          type: array
+          items:
+            $ref: '#/components/schemas/EximSubjectLink'
+        imageUrls:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        menu:
+          $ref: '#/components/schemas/MenuSnapshot'
+    EximWorkspaceAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        streetNo:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+    EximSubjectLink:
+      type: object
+      properties:
+        label:
+          type: string
+        url:
+          type: string
+    MenuSnapshot:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 10
+          description: ID of the request
+        created:
+          $ref: '#/components/schemas/OffsetDateTime'
+        menu:
+          $ref: '#/components/schemas/EximMenuStructure'
+    EximMenuStructure:
+      type: object
+      properties:
+        menuItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximWorkspaceMenuItem'
+    EximWorkspaceMenuItem:
+      type: object
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        workspaceName:
+          type: string
+        applicationId:
+          type: string
+        disabled:
+          type: boolean
+        position:
+          format: int32
+          type: integer
+        permission:
+          type: string
+        badge:
+          type: string
+        scope:
+          $ref: '#/components/schemas/EximScope'
+        workspaceExit:
+          type: boolean
+        i18n:
+          type: object
+          additionalProperties:
+            type: string
+        roles:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximWorkspaceMenuItem'
+    EximScope:
+      enum:
+        - WORKSPACE
+        - APP
+        - PAGE
+      type: string
+    ExportWorkspacesRequest:
+      type: object
+      properties:
+        names:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        includeMenus:
+          type: boolean
+          default: false
     Scope:
       enum:
         - WORKSPACE

@@ -61,7 +61,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(requestDTO)
-                .post()
+                .post("/{id}/menuItems")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -91,7 +91,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(requestDTO)
-                .post()
+                .post("/{id}/menuItems")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -124,7 +124,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get()
+                .get("/{id}/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -149,7 +149,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get()
+                .get("/{id}/menuItems")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -197,7 +197,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
                 .pathParam("id", workspaceId)
-                .patch()
+                .patch("/{id}/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -229,7 +229,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
                 .pathParam("id", workspaceId)
-                .patch()
+                .patch("/{id}/menuItems")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -253,7 +253,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("menuItemId", menuItemId)
-                .delete("/{menuItemId}")
+                .delete("/{id}/menuItems/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -286,7 +286,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get("/tree")
+                .get("/{id}/menuItems/tree")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -331,7 +331,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(input)
-                .post("/tree/upload")
+                .post("/{id}/menuItems/tree/upload")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode());
         Assertions.assertNotNull(output);
@@ -359,7 +359,7 @@ public class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("menuItemId", menuItemId)
-                .get("/{menuItemId}")
+                .get("/{id}/menuItems/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -367,5 +367,85 @@ public class MenuItemRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(m1.getName(), output.getResource().getName());
+    }
+
+    @Test
+    void exportMenuTest() {
+        String workspaceName = "test";
+        MenuSnapshot snapshot = new MenuSnapshot();
+        EximMenuStructure menu = new EximMenuStructure();
+        EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
+        menuItem.setName("test");
+        menuItem.setWorkspaceName("test");
+        menuItem.setKey("testKey");
+        menu.setMenuItems(List.of(menuItem));
+        snapshot.setMenu(menu);
+        mockServerClient
+                .when(request().withPath("/exim/v1/workspace/" + workspaceName + "/menu/export").withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(snapshot)));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", workspaceName)
+                .get("/{name}/menu/export")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .extract().as(MenuSnapshotDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(output.getMenu().getMenuItems().get(0).getKey(), menuItem.getKey());
+    }
+
+    @Test
+    void importMenuTest() {
+        String workspaceName = "test";
+        ImportMenuResponse importResponse = new ImportMenuResponse();
+        importResponse.setStatus(ImportResponseStatus.CREATED);
+        importResponse.setId("1000000000");
+        MenuSnapshot snapshot = new MenuSnapshot();
+        EximMenuStructure menu = new EximMenuStructure();
+        EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
+        menuItem.setName("test");
+        menuItem.setWorkspaceName("test");
+        menuItem.setKey("testKey");
+        menu.setMenuItems(List.of(menuItem));
+        snapshot.setMenu(menu);
+        snapshot.setId("1000000000");
+
+        mockServerClient
+                .when(request().withPath("/exim/v1/workspace/" + workspaceName + "/menu/import").withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(snapshot)))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(importResponse)));
+
+        MenuSnapshotDTO snapshotDTO = new MenuSnapshotDTO();
+        EximMenuStructureDTO menuStructureDTO = new EximMenuStructureDTO();
+        EximWorkspaceMenuItemDTO menuItemDTO = new EximWorkspaceMenuItemDTO();
+        menuItemDTO.setKey("testKey");
+        menuItemDTO.setName("test");
+        menuItemDTO.setWorkspaceName("test");
+        menuStructureDTO.setMenuItems(List.of(menuItemDTO));
+        snapshotDTO.setMenu(menuStructureDTO);
+        snapshotDTO.setId("1000000000");
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", workspaceName)
+                .body(snapshotDTO)
+                .post("/{name}/menu/import")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ImportMenuResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getStatus());
     }
 }

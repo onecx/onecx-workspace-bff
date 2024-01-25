@@ -16,7 +16,9 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.io.github.onecx.workspace.bff.clients.api.MenuInternalApi;
+import gen.io.github.onecx.workspace.bff.clients.api.WorkspaceExportImportApi;
 import gen.io.github.onecx.workspace.bff.clients.model.*;
+import gen.io.github.onecx.workspace.bff.clients.model.MenuItem;
 import gen.io.github.onecx.workspace.bff.rs.internal.MenuItemApiService;
 import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
 import io.github.onecx.workspace.bff.rs.mappers.*;
@@ -36,10 +38,22 @@ public class MenuItemRestController implements MenuItemApiService {
     @RestClient
     MenuInternalApi menuClient;
 
+    @Inject
+    @RestClient
+    WorkspaceExportImportApi eximClient;
+
     @Override
     public Response deleteMenuItemById(String id, String menuItemId) {
         try (Response response = menuClient.deleteMenuItemById(id, menuItemId)) {
             return Response.status(response.getStatus()).build();
+        }
+    }
+
+    @Override
+    public Response exportMenuByWorkspaceName(String name) {
+        try (Response response = eximClient.exportMenuByWorkspaceName(name)) {
+            return Response.status(response.getStatus())
+                    .entity(menuItemMapper.mapSnapshot(response.readEntity(MenuSnapshot.class))).build();
         }
     }
 
@@ -68,6 +82,14 @@ public class MenuItemRestController implements MenuItemApiService {
             GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuItemMapper
                     .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructrue.class).getMenuItems()));
             return Response.status(response.getStatus()).entity(responseDTO).build();
+        }
+    }
+
+    @Override
+    public Response importMenuByWorkspaceName(String name, MenuSnapshotDTO menuSnapshotDTO) {
+        try (Response response = eximClient.importMenu(name, menuItemMapper.mapSnapshot(menuSnapshotDTO))) {
+            return Response.status(response.getStatus())
+                    .entity(menuItemMapper.map(response.readEntity(ImportMenuResponse.class))).build();
         }
     }
 
