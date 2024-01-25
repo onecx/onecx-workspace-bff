@@ -64,7 +64,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
     public Response exportWorkspaces(ExportWorkspacesRequestDTO exportWorkspacesRequestDTO) {
         try (Response response = eximClient.exportWorkspacesByNames(workspaceMapper.map(exportWorkspacesRequestDTO))) {
             Map<String, MenuSnapshotDTO> menuSnapshots = new HashMap<>();
-            if (exportWorkspacesRequestDTO.getIncludeMenus() == true) {
+            if (exportWorkspacesRequestDTO.getIncludeMenus()) {
                 exportWorkspacesRequestDTO.getNames().forEach(s -> {
                     try (Response menuResponse = eximClient.exportMenuByWorkspaceName(s)) {
                         menuSnapshots.put(s, menuItemMapper.mapSnapshot(menuResponse.readEntity(MenuSnapshot.class)));
