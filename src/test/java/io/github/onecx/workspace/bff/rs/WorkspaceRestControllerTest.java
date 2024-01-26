@@ -325,6 +325,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         eximWorkspace.setName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
         snapshot.setWorkspaces(Map.of("testWorkspace", eximWorkspace));
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
