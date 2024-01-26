@@ -16,10 +16,10 @@ public class WorkspaceLog implements LogParam {
         return List.of(
                 this.item(10, CreateWorkspaceRequestDTO.class,
                         x -> CreateWorkspaceRequestDTO.class.getSimpleName() + "[name:"
-                                + ((CreateWorkspaceRequestDTO) x).getResource().getWorkspaceName() + "]"),
+                                + ((CreateWorkspaceRequestDTO) x).getResource().getName() + "]"),
                 this.item(10, UpdateWorkspaceRequestDTO.class,
                         x -> UpdateWorkspaceRequestDTO.class.getSimpleName() + "[name:"
-                                + ((UpdateWorkspaceRequestDTO) x).getResource().getWorkspaceName()
+                                + ((UpdateWorkspaceRequestDTO) x).getResource().getName()
                                 + "]"),
                 this.item(10, ExportWorkspacesRequestDTO.class,
                         x -> ExportWorkspacesRequestDTO.class.getSimpleName() + "[names:"

@@ -478,7 +478,7 @@ components:
   schemas:
     Workspace:
       required:
-        - workspaceName
+        - name
       type: object
       properties:
         id:
@@ -498,7 +498,7 @@ components:
         modificationUser:
           type: string
           readOnly: true
-        workspaceName:
+        name:
           type: string
         description:
           type: string
@@ -516,8 +516,6 @@ components:
           type: string
         footerLabel:
           type: string
-        workspaceRoles:
-          type: string
         logoUrl:
           type: string
         address:
@@ -533,6 +531,21 @@ components:
           type: array
           items:
             type: string
+    WorkspaceAbstract:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        theme:
+          type: string
+        baseUrl:
+          type: string
+        logoUrl:
+          type: string
     WorkspaceAddress:
       type: object
       properties:
@@ -568,7 +581,7 @@ components:
     SearchWorkspacesRequest:
       type: object
       properties:
-        workspaceName:
+        name:
           type: string
         themeName:
           type: string
@@ -590,7 +603,7 @@ components:
             stream:
               type: array
               items:
-                $ref: '#/components/schemas/Workspace'
+                $ref: '#/components/schemas/WorkspaceAbstract'
     GetWorkspaceResponse:
       type: object
       properties:
@@ -650,10 +663,6 @@ components:
           type: object
           additionalProperties:
             type: string
-        roles:
-          type: array
-          items:
-            type: string
     CreateUpdateMenuItem:
       type: object
       properties:
@@ -689,10 +698,6 @@ components:
         i18n:
           type: object
           additionalProperties:
-            type: string
-        roles:
-          type: array
-          items:
             type: string
     GetMenuItemsResponse: #holds array
       type: object
@@ -870,7 +875,7 @@ components:
     EximWorkspace:
       type: object
       properties:
-        workspaceName:
+        name:
           type: string
         description:
           type: string
@@ -887,8 +892,6 @@ components:
         rssFeedUrl:
           type: string
         footerLabel:
-          type: string
-        workspaceRoles:
           type: string
         logoUrl:
           type: string
@@ -977,8 +980,6 @@ components:
           type: object
           additionalProperties:
             type: string
-        roles:
-          type: string
         children:
           type: array
           items:
