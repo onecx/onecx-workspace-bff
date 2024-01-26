@@ -41,12 +41,12 @@ public class WorkspaceRestControllerTest extends AbstractTest {
     @Test
     void createWorkspace() {
         CreateWorkspaceRequest request = new CreateWorkspaceRequest();
-        request.setWorkspaceName("test");
+        request.setName("test");
         request.setCompanyName("company1");
         request.setDescription("description1");
 
         Workspace response = new Workspace();
-        response.setWorkspaceName("test");
+        response.setName("test");
         response.setDescription("description1");
         response.setCompanyName("company1");
 
@@ -61,7 +61,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         WorkspaceDTO dto = new WorkspaceDTO();
         dto.setDescription("description1");
         dto.setCompanyName("company1");
-        dto.setWorkspaceName("test");
+        dto.setName("test");
         input.setResource(dto);
         var output = given()
                 .when()
@@ -74,7 +74,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .extract().as(CreateWorkspaceResponseDTO.class);
 
         Assertions.assertNotNull(output.getResource());
-        Assertions.assertEquals(request.getWorkspaceName(), output.getResource().getWorkspaceName());
+        Assertions.assertEquals(request.getName(), output.getResource().getName());
         Assertions.assertEquals(request.getDescription(), output.getResource().getDescription());
         Assertions.assertEquals(request.getCompanyName(), output.getResource().getCompanyName());
     }
@@ -137,7 +137,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         Workspace data = new Workspace();
         data.setId("test-id-1");
-        data.setWorkspaceName("test-name");
+        data.setName("test-name");
         data.setDescription("this is a test workspace");
 
         // create mock rest endpoint
@@ -159,7 +159,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
-        Assertions.assertEquals(data.getWorkspaceName(), output.getResource().getWorkspaceName());
+        Assertions.assertEquals(data.getName(), output.getResource().getName());
     }
 
     @Test
@@ -184,12 +184,11 @@ public class WorkspaceRestControllerTest extends AbstractTest {
     void searchWorkspaceByCriteriaTest() {
         WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
         criteria.setPageNumber(1);
-        criteria.setWorkspaceName("test");
+        criteria.setName("test");
         criteria.setPageSize(1);
 
-        Workspace w1 = new Workspace();
-        w1.setId("1");
-        w1.setWorkspaceName("test");
+        WorkspaceAbstract w1 = new WorkspaceAbstract();
+        w1.setName("test");
 
         WorkspacePageResult data = new WorkspacePageResult();
         data.setNumber(1);
@@ -201,7 +200,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         SearchWorkspacesRequestDTO searchWorkspaceRequestDTO = new SearchWorkspacesRequestDTO();
         searchWorkspaceRequestDTO.setPageNumber(1);
         searchWorkspaceRequestDTO.setPageSize(1);
-        searchWorkspaceRequestDTO.setWorkspaceName("test");
+        searchWorkspaceRequestDTO.setName("test");
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/search").withMethod(HttpMethod.POST)
@@ -224,7 +223,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output);
         Assertions.assertEquals(data.getSize(), output.getSize());
         Assertions.assertEquals(data.getStream().size(), output.getStream().size());
-        Assertions.assertEquals(data.getStream().get(0).getWorkspaceName(), output.getStream().get(0).getWorkspaceName());
+        Assertions.assertEquals(data.getStream().get(0).getName(), output.getStream().get(0).getName());
     }
 
     @Test
@@ -256,7 +255,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         String testId = "testId";
         UpdateWorkspaceRequest updateWorkspace = new UpdateWorkspaceRequest();
         updateWorkspace.setDescription("test-desc");
-        updateWorkspace.setWorkspaceName("test-workspace");
+        updateWorkspace.setName("test-workspace");
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
@@ -267,7 +266,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
         UpdateWorkspaceRequestDTO input = new UpdateWorkspaceRequestDTO();
         WorkspaceDTO dto = new WorkspaceDTO();
         dto.setDescription("test-desc");
-        dto.setWorkspaceName("test-workspace");
+        dto.setName("test-workspace");
         input.setResource(dto);
 
         var output = given()
@@ -323,9 +322,10 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         WorkspaceSnapshot snapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
-        eximWorkspace.setWorkspaceName("testWorkspace");
+        eximWorkspace.setName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
         snapshot.setWorkspaces(Map.of("testWorkspace", eximWorkspace));
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
@@ -348,8 +348,8 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .extract().as(WorkspaceSnapshotDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getWorkspaceName(),
-                eximWorkspace.getWorkspaceName());
+        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
+                eximWorkspace.getName());
     }
 
     @Test
@@ -360,12 +360,12 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         WorkspaceSnapshot workspaceSnapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
-        eximWorkspace.setWorkspaceName("testWorkspace");
+        eximWorkspace.setName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
         Map<String, EximWorkspace> workspaceMap = new HashMap<>();
         workspaceMap.put("testWorkspace", eximWorkspace);
         EximWorkspace errorWorkspace = new EximWorkspace();
-        errorWorkspace.setWorkspaceName("error");
+        errorWorkspace.setName("error");
         errorWorkspace.setBaseUrl("/error");
         workspaceMap.put("error", eximWorkspace);
         workspaceSnapshot.setWorkspaces(workspaceMap);
@@ -389,7 +389,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getWorkspaceName() + "/menu/export")
+                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getName() + "/menu/export")
                         .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
@@ -411,8 +411,8 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                 .extract().as(WorkspaceSnapshotDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getWorkspaceName(),
-                eximWorkspace.getWorkspaceName());
+        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
+                eximWorkspace.getName());
         Assertions.assertNotNull(output.getWorkspaces().get("testWorkspace").getMenu());
         Assertions.assertEquals("testKey", output.getWorkspaces()
                 .get("testWorkspace").getMenu().getMenu().getMenuItems().get(0).getKey());
@@ -423,10 +423,10 @@ public class WorkspaceRestControllerTest extends AbstractTest {
     void importWorkspacesTest() {
         WorkspaceSnapshot workspaceSnapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
-        eximWorkspace.setWorkspaceName("test");
+        eximWorkspace.setName("test");
         eximWorkspace.setBaseUrl("/test");
         EximWorkspace eximWorkspace2 = new EximWorkspace();
-        eximWorkspace2.setWorkspaceName("test2");
+        eximWorkspace2.setName("test2");
         eximWorkspace2.setBaseUrl("/test2");
         Map<String, EximWorkspace> eximWorkspaceMap = new HashMap<>();
         eximWorkspaceMap.put("test", eximWorkspace);
@@ -462,7 +462,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getWorkspaceName() + "/menu/import")
+                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getName() + "/menu/import")
                         .withBody(JsonBody.json(menuSnapshot))
                         .withMethod(HttpMethod.POST))
                 .withPriority(100)
@@ -471,7 +471,7 @@ public class WorkspaceRestControllerTest extends AbstractTest {
                         .withBody(JsonBody.json(menuResponse)));
 
         mockServerClient
-                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace2.getWorkspaceName() + "/menu/import")
+                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace2.getName() + "/menu/import")
                         .withBody(JsonBody.json(menuSnapshot))
                         .withMethod(HttpMethod.POST))
                 .withPriority(100)
@@ -479,11 +479,11 @@ public class WorkspaceRestControllerTest extends AbstractTest {
 
         WorkspaceSnapshotDTO workspaceSnapshotDTO = new WorkspaceSnapshotDTO();
         EximWorkspaceDTO eximWorkspaceDTO = new EximWorkspaceDTO();
-        eximWorkspaceDTO.setWorkspaceName("test");
+        eximWorkspaceDTO.setName("test");
         eximWorkspaceDTO.setBaseUrl("/test");
 
         EximWorkspaceDTO eximWorkspaceDTO2 = new EximWorkspaceDTO();
-        eximWorkspaceDTO2.setWorkspaceName("test2");
+        eximWorkspaceDTO2.setName("test2");
         eximWorkspaceDTO2.setBaseUrl("/test2");
 
         MenuSnapshotDTO menuSnapshotDTO = new MenuSnapshotDTO();

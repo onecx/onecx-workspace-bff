@@ -14,11 +14,9 @@ import gen.io.github.onecx.workspace.bff.rs.internal.model.*;
 public interface MenuItemMapper {
 
     @Mapping(target = "removeI18nItem", ignore = true)
-    @Mapping(target = "removeRolesItem", ignore = true)
     MenuItemDTO map(MenuItem menuItem);
 
     @Mapping(target = "removeI18nItem", ignore = true)
-    @Mapping(target = "removeRolesItem", ignore = true)
     MenuItemDTO map(WorkspaceMenuItem menuItem);
 
     CreateMenuItem map(CreateUpdateMenuItemDTO menuItem);
