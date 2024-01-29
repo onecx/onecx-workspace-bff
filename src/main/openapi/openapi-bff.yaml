@@ -121,6 +121,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /workspaces/name/{name}:
+    get:
+      tags:
+        - workspace
+      description: Get workspace by name
+      operationId: getWorkspaceByName
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWorkspaceResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{id}/menuItems:
     get:
       tags:
@@ -1082,6 +1103,12 @@ components:
     id:
       in: path
       name: id
+      required: true
+      schema:
+        type: string
+    name:
+      in: path
+      name: name
       required: true
       schema:
         type: string
