@@ -181,6 +181,53 @@ public class WorkspaceRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void getWorkspaceByNameTest() {
+        Workspace data = new Workspace();
+        data.setId("test-id-1");
+        data.setName("test-name");
+        data.setDescription("this is a test workspace");
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/workspaces/name/" + data.getName()).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(data)));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", data.getName())
+                .get("/name/{name}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(GetWorkspaceResponseDTO.class);
+
+        Assertions.assertNotNull(output.getResource());
+        Assertions.assertEquals(data.getId(), output.getResource().getId());
+        Assertions.assertEquals(data.getName(), output.getResource().getName());
+    }
+
+    @Test
+    void getWorkspaceByNameNotFoundTest() {
+        String notFoundName = "notFound";
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/internal/workspaces/name/" + notFoundName).withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .pathParam("name", notFoundName)
+                .get("/name/{name}")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+        Assertions.assertNotNull(output);
+    }
+
+    @Test
     void searchWorkspaceByCriteriaTest() {
         WorkspaceSearchCriteria criteria = new WorkspaceSearchCriteria();
         criteria.setPageNumber(1);

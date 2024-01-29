@@ -90,6 +90,15 @@ public class WorkspaceRestController implements WorkspaceApiService {
     }
 
     @Override
+    public Response getWorkspaceByName(String name) {
+        try (Response response = workspaceClient.getWorkspaceByName(name)) {
+            GetWorkspaceResponseDTO responseDTO = workspaceMapper
+                    .mapToGetResponse(workspaceMapper.map(response.readEntity(Workspace.class)));
+            return Response.status(response.getStatus()).entity(responseDTO).build();
+        }
+    }
+
+    @Override
     public Response importWorkspaces(WorkspaceSnapshotDTO workspaceSnapshotDTO) {
         try (Response response = eximClient.importWorkspaces(workspaceMapper.mapSnapshot(workspaceSnapshotDTO))) {
             Map<String, ImportResponseStatusDTO> menuResponses = new HashMap<>();
