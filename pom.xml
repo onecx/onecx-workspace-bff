@@ -4,9 +4,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.onecx</groupId>
+        <groupId>org.tkit.onecx</groupId>
         <artifactId>onecx-quarkus3-parent</artifactId>
-        <version>0.25.0</version>
+        <version>0.31.0</version>
     </parent>
 
     <artifactId>onecx-workspace-bff</artifactId>
@@ -106,8 +106,8 @@
                         </goals>
                         <configuration>
                             <inputSpec>src/main/openapi/openapi-bff.yaml</inputSpec>
-                            <apiPackage>gen.io.github.onecx.workspace.bff.rs.internal</apiPackage>
-                            <modelPackage>gen.io.github.onecx.workspace.bff.rs.internal.model</modelPackage>
+                            <apiPackage>gen.org.tkit.onecx.workspace.bff.rs.internal</apiPackage>
+                            <modelPackage>gen.org.tkit.onecx.workspace.bff.rs.internal.model</modelPackage>
                         </configuration>
                     </execution>
                 </executions>
