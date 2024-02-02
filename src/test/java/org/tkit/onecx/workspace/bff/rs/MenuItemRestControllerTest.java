@@ -17,11 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
+import org.tkit.onecx.workspace.bff.rs.controllers.MenuItemRestController;
 
 import gen.org.tkit.onecx.workspace.bff.clients.model.*;
 import gen.org.tkit.onecx.workspace.bff.clients.model.MenuItem;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
-import org.tkit.onecx.workspace.bff.rs.controllers.MenuItemRestController;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;

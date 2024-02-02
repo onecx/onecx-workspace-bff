@@ -13,13 +13,13 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.workspace.bff.clients.api.ProductInternalApi;
 import gen.org.tkit.onecx.workspace.bff.clients.model.*;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.ProductApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
-import org.tkit.onecx.workspace.bff.rs.mappers.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
