@@ -1,5 +1,6 @@
 package org.tkit.onecx.workspace.bff.rs.mappers;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.mapstruct.Mapper;
@@ -58,5 +59,11 @@ public interface WorkspaceMapper {
         responseDTO.setWorkspaces(map(response.getWorkspaces()));
         responseDTO.setMenus(menuResponseStatus);
         return responseDTO;
+    }
+
+    default ArrayList<String> mapThemeList(ThemeInfoList themeInfoList) {
+        ArrayList<String> themeNames = new ArrayList<>();
+        themeInfoList.getThemes().forEach(themeInfo -> themeNames.add(themeInfo.getName()));
+        return themeNames;
     }
 }
