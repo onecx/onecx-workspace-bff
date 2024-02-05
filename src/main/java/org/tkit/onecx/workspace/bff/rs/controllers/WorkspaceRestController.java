@@ -16,6 +16,7 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
+import gen.org.tkit.onecx.workspace.bff.clients.api.ThemesApi;
 import gen.org.tkit.onecx.workspace.bff.clients.api.WorkspaceExportImportApi;
 import gen.org.tkit.onecx.workspace.bff.clients.api.WorkspaceInternalApi;
 import gen.org.tkit.onecx.workspace.bff.clients.model.*;
@@ -43,6 +44,10 @@ public class WorkspaceRestController implements WorkspaceApiService {
     @Inject
     @RestClient
     WorkspaceExportImportApi eximClient;
+
+    @Inject
+    @RestClient
+    ThemesApi themeClient;
 
     @Override
     public Response createWorkspace(CreateWorkspaceRequestDTO createWorkspaceRequestDTO) {
@@ -77,6 +82,14 @@ public class WorkspaceRestController implements WorkspaceApiService {
                     .entity(workspaceMapper.mapSnapshotIncludingMenus(response.readEntity(WorkspaceSnapshot.class),
                             menuSnapshots))
                     .build();
+        }
+    }
+
+    @Override
+    public Response getAllThemes() {
+        try (Response response = themeClient.getThemesInfo()) {
+            return Response.status(response.getStatus())
+                    .entity(workspaceMapper.mapThemeList(response.readEntity(ThemeInfoList.class))).build();
         }
     }
 

@@ -5,10 +5,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.Response;
@@ -572,6 +569,49 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getMenus().get("test"));
         Assertions.assertEquals(ImportResponseStatusDTO.ERROR, output.getMenus().get("test2"));
+
+    }
+
+    @Test
+    void getThemeNamesTest() {
+
+        ThemeInfoList infoList = new ThemeInfoList();
+        ThemeInfo theme1 = new ThemeInfo();
+        theme1.setName("theme1");
+        theme1.setDescription("theme1");
+
+        ThemeInfo theme2 = new ThemeInfo();
+        theme2.setName("theme2");
+        theme2.setDescription("theme2");
+
+        infoList.setThemes(List.of(theme1, theme2));
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/v1/themes/info")
+                        .withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(infoList)));
+
+        ArrayList<String> themeNames = new ArrayList<>();
+        themeNames.add("theme1");
+        themeNames.add("theme2");
+
+        var output = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(themeNames)
+                .get("/themes")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(List.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertTrue(output.contains("theme1"));
+        Assertions.assertTrue(output.contains("theme2"));
 
     }
 }
