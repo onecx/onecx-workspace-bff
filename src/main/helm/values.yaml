@@ -1,4 +1,4 @@
 app:
+  name: bff
   image:
     repository: "onecx/onecx-workspace-bff"
-  name: bff
