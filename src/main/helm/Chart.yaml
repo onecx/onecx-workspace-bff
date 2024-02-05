@@ -4,8 +4,7 @@ version: 0.0.0
 appVersion: 0.0.0
 description: Onecx workspace management bff
 keywords:
-  - iam
-  - parameters
+  - workspace
 sources:
   - https://github.com/onecx/onecx-workspace-bff
 maintainers:
