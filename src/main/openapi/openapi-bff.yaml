@@ -13,6 +13,10 @@ tags:
 paths:
   /workspaces:
     post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - workspace
       description: Create new workspace
@@ -38,6 +42,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/search:
     post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - workspace
       description: Search workspaces by criteria
@@ -63,6 +71,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{id}:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - workspace
       description: Get workspace by id
@@ -83,6 +95,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
     put:
+      x-onecx:
+        permissionss:
+          workspaces:
+            - write
       tags:
         - workspace
       description: Update workspace
@@ -106,6 +122,10 @@ paths:
         "404":
           description: Not found
     delete:
+      x-onecx:
+        permissions:
+          workspaces:
+            - delete
       tags:
         - workspace
       description: Delete workspace
@@ -123,6 +143,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/name/{name}:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - workspace
       description: Get workspace by name
@@ -144,6 +168,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/themes:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - workspace
       description: get all theme names
@@ -166,6 +194,10 @@ paths:
 
   /workspaces/{id}/menuItems:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - menuItem
       description: Find all menu items belonging to a workspace
@@ -182,6 +214,10 @@ paths:
         "404":
           description: Not found
     patch:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - menuItem
       description: Bulk update menu Items
@@ -215,6 +251,10 @@ paths:
         "404":
           description: Menu items not found
     post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - menuItem
       description: Add a new menu item to workspace menu
@@ -248,6 +288,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{id}/menuItems/tree:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - menuItem
       description: Fetch the menuItems of the workspace in the tree structure
@@ -265,6 +309,10 @@ paths:
           description: Not found
   /workspaces/{id}/menuItems/tree/upload:
     post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - menuItem
       description: Upload the menu structure for workspace
@@ -288,6 +336,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{id}/menuItems/{menuItemId}:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - menuItem
       description: Retrieve menu item detail info
@@ -305,6 +357,10 @@ paths:
         "404":
           description: Not found
     delete:
+      x-onecx:
+        permissions:
+          workspaces:
+            - delete
       tags:
         - menuItem
       description: Delete a menuItem by the workspace id and the menuItemId
@@ -324,6 +380,10 @@ paths:
 
   /workspaces/{id}/products:
     post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - product
       description: Create/Register new product to workspace
@@ -356,6 +416,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - product
       description: Find all products belonging to a workspace
@@ -373,6 +437,10 @@ paths:
           description: Not found
   /workspaces/{id}/products/{productId}:
     delete:
+      x-onecx:
+        permissions:
+          workspaces:
+            - delete
       tags:
         - product
       description: Delete a product by the workspace id and the productId
@@ -390,6 +458,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
     put:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - product
       description: Update product and MFEs
@@ -419,6 +491,10 @@ paths:
         "404":
           description: Product not found
   /workspaces/export:
+    x-onecx:
+      permissions:
+        workspaces:
+          - read
     post:
       tags:
         - workspace
@@ -440,6 +516,10 @@ paths:
         "404":
           description: No themes founds
   /workspaces/import:
+    x-onecx:
+      permissions:
+        workspaces:
+          - write
     post:
       tags:
         - workspace
@@ -466,6 +546,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{name}/menu/export:
     get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
       tags:
         - menuItem
       description: Export workspaces
@@ -488,6 +572,10 @@ paths:
 
   /workspaces/{name}/menu/import:
     post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
       tags:
         - menuItem
       description: Import workspaces
@@ -527,10 +615,9 @@ components:
         id:
           type: string
           readOnly: true
-        version:
+        modificationCount:
           format: int32
           type: integer
-          readOnly: true
         creationDate:
           $ref: '#/components/schemas/OffsetDateTime'
         creationUser:
@@ -667,7 +754,7 @@ components:
     MenuItem:
       type: object
       properties:
-        version:
+        modificationCount:
           format: int32
           type: integer
         creationDate:
@@ -707,6 +794,10 @@ components:
           type: boolean
         parentItemId:
           type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
         i18n:
           type: object
           additionalProperties:
@@ -714,6 +805,9 @@ components:
     CreateUpdateMenuItem:
       type: object
       properties:
+        modificationCount:
+          format: int32
+          type: integer
         key:
           type: string
         name:
@@ -800,7 +894,7 @@ components:
     Product:
       type: object
       properties:
-        version:
+        modificationCount:
           format: int32
           type: integer
         creationDate:
@@ -869,8 +963,12 @@ components:
     UpdateProductRequest:
       required:
         - baseUrl
+        - modificationCount
       type: object
       properties:
+        modificationCount:
+          format: int32
+          type: integer
         baseUrl:
           type: string
         microfrontends:

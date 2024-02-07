@@ -30,10 +30,15 @@ import io.quarkus.test.junit.QuarkusTest;
 class ProductRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
+    static final String mockId = "MOCK";
 
     @BeforeEach
     void resetMockserver() {
-        mockServerClient.reset();
+        try {
+            mockServerClient.clear(mockId);
+        } catch (Exception ex) {
+            // mockId not existing
+        }
     }
 
     @Test
@@ -49,7 +54,6 @@ class ProductRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(request)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
@@ -59,6 +63,8 @@ class ProductRestControllerTest extends AbstractTest {
         input.setBaseUrl("/");
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
@@ -67,6 +73,18 @@ class ProductRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(CreateUpdateProductResponseDTO.class);
+
+        // standard USER get FORBIDDEN with only READ permission
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(USER))
+                .header(APM_HEADER_PARAM, USER)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(request.getProductName(), output.getResource().getProductName());
@@ -83,7 +101,6 @@ class ProductRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(request)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -91,6 +108,8 @@ class ProductRestControllerTest extends AbstractTest {
         CreateProductRequestDTO input = new CreateProductRequestDTO();
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
@@ -119,13 +138,15 @@ class ProductRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         ProductDTO[] output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .get()
@@ -145,17 +166,18 @@ class ProductRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .get()
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
-
     }
 
     @Test
@@ -167,12 +189,13 @@ class ProductRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products/" + productId)
                         .withMethod(HttpMethod.DELETE))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
@@ -194,6 +217,7 @@ class ProductRestControllerTest extends AbstractTest {
         List<UpdateMicrofrontend> mfes = new ArrayList<>();
         mfes.add(newMF);
         updateProduct.setMicrofrontends(mfes);
+        updateProduct.setModificationCount(0);
 
         Product response = new Product();
         response.setBaseUrl("/newUrl");
@@ -208,7 +232,6 @@ class ProductRestControllerTest extends AbstractTest {
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products/" + productId)
                         .withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(updateProduct)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
@@ -221,9 +244,12 @@ class ProductRestControllerTest extends AbstractTest {
         UpdateProductRequestDTO updateRequest = new UpdateProductRequestDTO();
         updateRequest.setMicrofrontends(updateMfes);
         updateRequest.setBaseUrl("/newUrl");
+        updateRequest.setModificationCount(0);
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
@@ -269,7 +295,6 @@ class ProductRestControllerTest extends AbstractTest {
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/products/" + productId)
                         .withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(updateProduct)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -284,6 +309,8 @@ class ProductRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("productId", productId)

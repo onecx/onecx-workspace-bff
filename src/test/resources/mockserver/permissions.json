@@ -1,0 +1,46 @@
+[
+  {
+    "id": "2",
+    "httpRequest": {
+      "headers": {
+        "apm-principal-token": [ "alice" ]
+      },
+      "path": "/v1/permissions/user/application/onecx-workspace-bff"
+    },
+    "httpResponse": {
+      "body": {
+        "type": "JSON",
+        "json": {
+          "appId": "onecx-workspace-bff",
+          "permissions": {
+            "workspaces": ["read", "write", "delete"],
+            "permissions": ["admin-write","admin-read"]
+          }
+        },
+        "contentType": "application/json"
+      }
+    }
+  },
+  {
+    "id": "3",
+    "httpRequest": {
+      "headers": {
+        "apm-principal-token": [ "bob" ]
+      },
+      "path": "/v1/permissions/user/application/onecx-workspace-bff"
+    },
+    "httpResponse": {
+      "body": {
+        "type": "JSON",
+        "json": {
+          "appId": "onecx-workspace-bff",
+          "permissions": {
+            "workspaces": ["read"],
+            "permissions": ["admin-write","admin-read"]
+          }
+        },
+        "contentType": "application/json"
+      }
+    }
+  }
+]
