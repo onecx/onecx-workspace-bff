@@ -7,8 +7,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.org.tkit.onecx.workspace.bff.clients.model.*;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.exim.client.model.ImportMenuResponse;
+import gen.org.tkit.onecx.workspace.exim.client.model.MenuSnapshot;
 
 @Mapper(uses = { OffsetDateTimeMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MenuItemMapper {
@@ -22,6 +24,21 @@ public interface MenuItemMapper {
     CreateMenuItem map(CreateUpdateMenuItemDTO menuItem);
 
     MenuItem map(MenuItemDTO menuItemDTO);
+
+    default UpdateMenuItemsRequest createUpdateRequest(List<PatchMenuItemsRequestDTO> patchMenuItemsRequestDTO) {
+        if (patchMenuItemsRequestDTO == null) {
+            return null;
+        }
+        UpdateMenuItemsRequest request = new UpdateMenuItemsRequest();
+        patchMenuItemsRequestDTO.forEach(item -> {
+            var m = item.getResource();
+            UpdateMenuItemRequest tmp = createUpdateItemRequest(m);
+            request.putItemsItem(m.getId(), tmp);
+        });
+        return request;
+    }
+
+    UpdateMenuItemRequest createUpdateItemRequest(MenuItemDTO menuItemDTO);
 
     @Mapping(target = "children", ignore = true)
     WorkspaceMenuItem mapWorkspaceItem(MenuItemDTO menuItemDTO);
@@ -55,8 +72,8 @@ public interface MenuItemMapper {
         return responseDTO;
     }
 
-    default WorkspaceMenuItemStructrue mapToWorkspaceStructure(List<WorkspaceMenuItem> workspaceMenuItems) {
-        WorkspaceMenuItemStructrue menuItemStructure = new WorkspaceMenuItemStructrue();
+    default WorkspaceMenuItemStructure mapToWorkspaceStructure(List<WorkspaceMenuItem> workspaceMenuItems) {
+        WorkspaceMenuItemStructure menuItemStructure = new WorkspaceMenuItemStructure();
         menuItemStructure.setMenuItems(workspaceMenuItems);
         return menuItemStructure;
     }

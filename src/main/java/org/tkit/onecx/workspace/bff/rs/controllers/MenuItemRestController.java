@@ -16,12 +16,13 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.workspace.bff.clients.api.MenuInternalApi;
-import gen.org.tkit.onecx.workspace.bff.clients.api.WorkspaceExportImportApi;
-import gen.org.tkit.onecx.workspace.bff.clients.model.*;
-import gen.org.tkit.onecx.workspace.bff.clients.model.MenuItem;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.MenuItemApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.api.MenuInternalApi;
+import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.client.model.MenuItem;
+import gen.org.tkit.onecx.workspace.exim.client.api.WorkspaceExportImportApi;
+import gen.org.tkit.onecx.workspace.exim.client.model.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -80,7 +81,7 @@ public class MenuItemRestController implements MenuItemApiService {
     public Response getMenuStructureForWorkspaceId(String id) {
         try (Response response = menuClient.getMenuStructureForWorkspaceId(id)) {
             GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuItemMapper
-                    .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructrue.class).getMenuItems()));
+                    .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructure.class).getMenuItems()));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }
@@ -95,9 +96,10 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Override
     public Response patchMenuItems(String id, List<PatchMenuItemsRequestDTO> patchMenuItemsRequestDTO) {
-        List<MenuItem> menuItems = patchMenuItemsRequestDTO.stream()
-                .map(requestDTO -> menuItemMapper.map(requestDTO.getResource())).toList();
-        try (Response response = menuClient.patchMenuItems(id, menuItems)) {
+
+        var request = menuItemMapper.createUpdateRequest(patchMenuItemsRequestDTO);
+
+        try (Response response = menuClient.patchMenuItems(id, request)) {
             List<MenuItem> menuItemList = response.readEntity(new GenericType<List<MenuItem>>() {
             });
             List<PatchMenuItemsResponseDTO> responseDTOList = menuItemMapper.mapToResponseDTOList(menuItemList);
@@ -107,10 +109,10 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Override
     public Response uploadMenuStructureForWorkspaceId(String id,
-            CreateWorkspaceMenuItemStructrueRequestDTO createWorkspaceMenuItemStructrueRequestDTO) {
-        WorkspaceMenuItemStructrue menuStructure = menuItemMapper
+            CreateWorkspaceMenuItemStructureRequestDTO createWorkspaceMenuItemStructureRequestDTO) {
+        WorkspaceMenuItemStructure menuStructure = menuItemMapper
                 .mapToWorkspaceStructure(menuItemMapper
-                        .mapToWorkspaceMenuItems(createWorkspaceMenuItemStructrueRequestDTO.getMenuItems()));
+                        .mapToWorkspaceMenuItems(createWorkspaceMenuItemStructureRequestDTO.getMenuItems()));
         try (Response response = menuClient.uploadMenuStructureForWorkspaceId(id, menuStructure)) {
             return Response.status(response.getStatus()).build();
         }

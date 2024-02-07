@@ -6,13 +6,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.org.tkit.onecx.workspace.bff.clients.model.CreateProductRequest;
-import gen.org.tkit.onecx.workspace.bff.clients.model.Product;
-import gen.org.tkit.onecx.workspace.bff.clients.model.UpdateProductRequest;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.CreateProductRequestDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.CreateUpdateProductResponseDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.UpdateProductRequestDTO;
+import gen.org.tkit.onecx.workspace.client.model.CreateProductRequest;
+import gen.org.tkit.onecx.workspace.client.model.Product;
+import gen.org.tkit.onecx.workspace.client.model.UpdateProductRequest;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ProductMapper {

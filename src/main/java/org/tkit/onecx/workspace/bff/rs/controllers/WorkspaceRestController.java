@@ -16,12 +16,17 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.workspace.bff.clients.api.ThemesApi;
-import gen.org.tkit.onecx.workspace.bff.clients.api.WorkspaceExportImportApi;
-import gen.org.tkit.onecx.workspace.bff.clients.api.WorkspaceInternalApi;
-import gen.org.tkit.onecx.workspace.bff.clients.model.*;
+import gen.org.tkit.onecx.theme.client.api.ThemesApi;
+import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.WorkspaceApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.api.WorkspaceInternalApi;
+import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.exim.client.api.WorkspaceExportImportApi;
+import gen.org.tkit.onecx.workspace.exim.client.model.ImportMenuResponse;
+import gen.org.tkit.onecx.workspace.exim.client.model.ImportWorkspaceResponse;
+import gen.org.tkit.onecx.workspace.exim.client.model.MenuSnapshot;
+import gen.org.tkit.onecx.workspace.exim.client.model.WorkspaceSnapshot;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -104,7 +109,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
 
     @Override
     public Response getWorkspaceByName(String name) {
-        try (Response response = workspaceClient.getWorkspaceByName(name)) {
+        try (Response response = workspaceClient.findWorkspaceByName(name)) {
             GetWorkspaceResponseDTO responseDTO = workspaceMapper
                     .mapToGetResponse(workspaceMapper.map(response.readEntity(Workspace.class)));
             return Response.status(response.getStatus()).entity(responseDTO).build();
