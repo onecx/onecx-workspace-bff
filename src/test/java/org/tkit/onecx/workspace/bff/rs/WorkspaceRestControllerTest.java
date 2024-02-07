@@ -30,9 +30,15 @@ class WorkspaceRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
+    static final String mockId = "MOCK";
+
     @BeforeEach
-    void resetMockserver() {
-        mockServerClient.reset();
+    void resetExpectation() {
+        try {
+            mockServerClient.clear(mockId);
+        } catch (Exception ex) {
+            //  mockId not existing
+        }
     }
 
     @Test
@@ -49,7 +55,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         mockServerClient.when(request().withPath("/internal/workspaces").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
@@ -59,9 +65,12 @@ class WorkspaceRestControllerTest extends AbstractTest {
         dto.setDescription("description1");
         dto.setCompanyName("company1");
         dto.setName("test");
+        dto.setModificationCount(0);
         input.setResource(dto);
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(input)
                 .post()
@@ -69,6 +78,17 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(CreateWorkspaceResponseDTO.class);
+
+        // standard USER get FORBIDDEN with only READ permission
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(USER))
+                .header(APM_HEADER_PARAM, USER)
+                .contentType(APPLICATION_JSON)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(request.getName(), output.getResource().getName());
@@ -86,7 +106,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(data)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -97,6 +117,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(input)
                 .post()
@@ -116,12 +138,14 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + id).withMethod(HttpMethod.DELETE))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .delete("/{id}")
@@ -138,14 +162,17 @@ class WorkspaceRestControllerTest extends AbstractTest {
         data.setDescription("this is a test workspace");
 
         // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/workspaces/" + data.getId()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+        mockServerClient
+                .when(request().withPath("/internal/workspaces/" + data.getId()).withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", data.getId())
                 .get("/{id}")
@@ -163,12 +190,15 @@ class WorkspaceRestControllerTest extends AbstractTest {
     void getWorkspaceByIdNotFoundTest() {
         String notFoundId = "notFound";
         // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/workspaces/" + notFoundId).withMethod(HttpMethod.GET))
-                .withPriority(100)
+        mockServerClient
+                .when(request().withPath("/internal/workspaces/" + notFoundId).withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", notFoundId)
                 .get("/{id}")
@@ -185,14 +215,17 @@ class WorkspaceRestControllerTest extends AbstractTest {
         data.setDescription("this is a test workspace");
 
         // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/workspaces/name/" + data.getName()).withMethod(HttpMethod.GET))
-                .withPriority(100)
+        mockServerClient
+                .when(request().withPath("/internal/workspaces/name/" + data.getName()).withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("name", data.getName())
                 .get("/name/{name}")
@@ -210,12 +243,15 @@ class WorkspaceRestControllerTest extends AbstractTest {
     void getWorkspaceByNameNotFoundTest() {
         String notFoundName = "notFound";
         // create mock rest endpoint
-        mockServerClient.when(request().withPath("/internal/workspaces/name/" + notFoundName).withMethod(HttpMethod.GET))
-                .withPriority(100)
+        mockServerClient
+                .when(request().withPath("/internal/workspaces/name/" + notFoundName).withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("name", notFoundName)
                 .get("/name/{name}")
@@ -249,13 +285,15 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(searchWorkspaceRequestDTO)
                 .post("/search")
@@ -277,13 +315,15 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/search").withMethod(HttpMethod.POST))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .post("/search")
                 .then()
@@ -304,7 +344,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateWorkspace)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode()));
 
         UpdateWorkspaceRequestDTO input = new UpdateWorkspaceRequestDTO();
@@ -315,6 +355,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
@@ -334,7 +376,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateWorkspace)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withBody(JsonBody.json(problemDetailResponse))
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -345,6 +387,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", testId)
                 .body(input)
@@ -373,7 +417,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(snapshot)));
@@ -383,6 +426,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .post("/export")
@@ -417,7 +462,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceSnapshot)));
@@ -435,7 +479,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getName() + "/menu/export")
                         .withMethod(HttpMethod.GET))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(menuSnapshot)));
@@ -446,6 +489,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .post("/export")
@@ -499,7 +544,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/import").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(workspaceSnapshot)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceResponse)));
@@ -509,7 +553,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getName() + "/menu/import")
                         .withBody(JsonBody.json(menuSnapshot))
                         .withMethod(HttpMethod.POST))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(menuResponse)));
@@ -518,7 +561,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .when(request().withPath("/exim/v1/workspace/" + eximWorkspace2.getName() + "/menu/import")
                         .withBody(JsonBody.json(menuSnapshot))
                         .withMethod(HttpMethod.POST))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode()));
 
         WorkspaceSnapshotDTO workspaceSnapshotDTO = new WorkspaceSnapshotDTO();
@@ -556,6 +598,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(workspaceSnapshotDTO)
                 .post("/import")
@@ -590,7 +634,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/v1/themes/info")
                         .withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(infoList)));
@@ -601,6 +645,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(themeNames)
                 .get("/themes")

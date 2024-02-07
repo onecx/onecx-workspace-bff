@@ -32,9 +32,15 @@ class MenuItemRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
+    static final String mockId = "MOCK";
+
     @BeforeEach
     void resetMockserver() {
-        mockServerClient.reset();
+        try {
+            mockServerClient.clear(mockId);
+        } catch (Exception ex) {
+            // mockId not existing
+        }
     }
 
     @Test
@@ -47,7 +53,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + id + "/menuItems").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(menuItem)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(createdItem)));
@@ -58,6 +64,8 @@ class MenuItemRestControllerTest extends AbstractTest {
         requestDTO.setResource(menuItemDTO);
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(requestDTO)
@@ -66,6 +74,18 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(CreateMenuItemResponseDTO.class);
+
+        // standard USER get FORBIDDEN with only READ permission
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(USER))
+                .header(APM_HEADER_PARAM, USER)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", id)
+                .body(requestDTO)
+                .post("/{id}/menuItems")
+                .then()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(menuItem.getName(), output.getResource().getName());
@@ -81,13 +101,15 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + id + "/menuItems").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(menuItem)))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         CreateMenuItemRequestDTO requestDTO = new CreateMenuItemRequestDTO();
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(requestDTO)
@@ -115,13 +137,15 @@ class MenuItemRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(menuItems)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .get("/{id}/menuItems")
@@ -141,12 +165,14 @@ class MenuItemRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.GET))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .get("/{id}/menuItems")
@@ -172,7 +198,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.PATCH)
                         .withBody(JsonBody.json(menuItems)).withContentType(MediaType.APPLICATION_JSON))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(menuItems)));
@@ -194,6 +220,8 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         PatchMenuItemsResponseDTO[] output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
                 .pathParam("id", workspaceId)
@@ -219,13 +247,15 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.PATCH)
                         .withBody(JsonBody.json(menuItem)).withContentType(MediaType.APPLICATION_JSON))
-                .withPriority(100)
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         List<PatchMenuItemsRequestDTO> inputList = new ArrayList<>();
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
                 .pathParam("id", workspaceId)
@@ -245,11 +275,12 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/" + menuItemId)
                         .withMethod(HttpMethod.DELETE))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
         given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("menuItemId", menuItemId)
@@ -277,13 +308,14 @@ class MenuItemRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/tree").withMethod(HttpMethod.GET))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(itemStructure)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .get("/{id}/menuItems/tree")
@@ -313,7 +345,6 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + id + "/menuItems/tree/upload").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(itemStructure)))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode()));
 
         CreateWorkspaceMenuItemStructrueRequestDTO input = new CreateWorkspaceMenuItemStructrueRequestDTO();
@@ -328,6 +359,8 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", id)
                 .body(input)
@@ -349,13 +382,14 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/" + menuItemId)
                         .withMethod(HttpMethod.GET))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(m1)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("menuItemId", menuItemId)
@@ -382,13 +416,14 @@ class MenuItemRestControllerTest extends AbstractTest {
         snapshot.setMenu(menu);
         mockServerClient
                 .when(request().withPath("/exim/v1/workspace/" + workspaceName + "/menu/export").withMethod(HttpMethod.GET))
-                .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(snapshot)));
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("name", workspaceName)
                 .get("/{name}/menu/export")
@@ -436,6 +471,8 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         var output = given()
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("name", workspaceName)
                 .body(snapshotDTO)

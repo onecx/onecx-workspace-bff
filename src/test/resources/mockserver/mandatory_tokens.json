@@ -1,0 +1,36 @@
+[
+
+  {
+    "id": "apm_not_available",
+    "httpRequest": {
+      "headers": {
+        "!apm-principal-token": [ ".*" ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 500,
+      "body": {
+        "type": "JSON",
+        "json": {},
+        "contentType": "application/json"
+      }
+    }
+  },
+  {
+    "id": "bearer_not_available",
+    "httpRequest": {
+      "headers": {
+        "!Authorization": [ ".*" ]
+      },
+      "!path": "/v1/permissions/*"
+    },
+    "httpResponse": {
+      "statusCode": 500,
+      "body": {
+        "type": "JSON",
+        "json": {},
+        "contentType": "application/json"
+      }
+    }
+  }
+]
