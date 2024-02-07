@@ -24,9 +24,9 @@ public class MenuItemLog implements LogParam {
                         x -> MenuSnapshotDTO.class.getSimpleName() + "[key: "
                                 + (((MenuSnapshotDTO) x).getId())
                                 + "]"),
-                this.item(10, CreateWorkspaceMenuItemStructrueRequestDTO.class,
-                        x -> CreateWorkspaceMenuItemStructrueRequestDTO.class.getSimpleName() + "[items:"
-                                + (((CreateWorkspaceMenuItemStructrueRequestDTO) x).toString())
+                this.item(10, CreateWorkspaceMenuItemStructureRequestDTO.class,
+                        x -> CreateWorkspaceMenuItemStructureRequestDTO.class.getSimpleName() + "[items:"
+                                + (((CreateWorkspaceMenuItemStructureRequestDTO) x).toString())
                                 + "]"));
 
     }

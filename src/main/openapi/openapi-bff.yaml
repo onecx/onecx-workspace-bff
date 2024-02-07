@@ -324,7 +324,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateWorkspaceMenuItemStructrueRequest'
+              $ref: '#/components/schemas/CreateWorkspaceMenuItemStructureRequest'
       responses:
         "201":
           description: New Menu structure created
@@ -753,6 +753,8 @@ components:
           $ref: '#/components/schemas/Workspace'
     MenuItem:
       type: object
+      required:
+        - id
       properties:
         modificationCount:
           format: int32
@@ -877,7 +879,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MenuItem'
-    CreateWorkspaceMenuItemStructrueRequest:
+    CreateWorkspaceMenuItemStructureRequest:
       type: object
       properties:
         menuItems:

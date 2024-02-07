@@ -19,9 +19,10 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.workspace.bff.rs.controllers.MenuItemRestController;
 
-import gen.org.tkit.onecx.workspace.bff.clients.model.*;
-import gen.org.tkit.onecx.workspace.bff.clients.model.MenuItem;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.client.model.MenuItem;
+import gen.org.tkit.onecx.workspace.exim.client.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -184,7 +185,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void bulkPatchMenuItemsTest() {
-        String workspaceId = "test";
+
         List<MenuItem> menuItems = new ArrayList<>();
         MenuItem m1 = new MenuItem();
         MenuItem m2 = new MenuItem();
@@ -194,10 +195,24 @@ class MenuItemRestControllerTest extends AbstractTest {
         m2.setBadge("newBadge");
         menuItems.add(m1);
         menuItems.add(m2);
+
+        String workspaceId = "test";
+
+        UpdateMenuItemRequest r1 = new UpdateMenuItemRequest();
+        r1.setName("m1");
+        r1.setBadge("newBadge");
+
+        UpdateMenuItemRequest r2 = new UpdateMenuItemRequest();
+        r2.setName("m2");
+        r2.setBadge("newBadge");
+
+        UpdateMenuItemsRequest response = new UpdateMenuItemsRequest();
+        response.putItemsItem("x1", r1).putItemsItem("x2", r2);
+
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.PATCH)
-                        .withBody(JsonBody.json(menuItems)).withContentType(MediaType.APPLICATION_JSON))
+                        .withBody(JsonBody.json(response)).withContentType(MediaType.APPLICATION_JSON))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -206,12 +221,14 @@ class MenuItemRestControllerTest extends AbstractTest {
         List<PatchMenuItemsRequestDTO> inputList = new ArrayList<>();
         PatchMenuItemsRequestDTO input1 = new PatchMenuItemsRequestDTO();
         MenuItemDTO item1 = new MenuItemDTO();
+        item1.setId("x1");
         item1.setName("m1");
         item1.setBadge("newBadge");
         input1.setResource(item1);
 
         PatchMenuItemsRequestDTO input2 = new PatchMenuItemsRequestDTO();
         MenuItemDTO item2 = new MenuItemDTO();
+        item2.setId("x2");
         item2.setName("m2");
         item2.setBadge("newBadge");
         input2.setResource(item2);
@@ -302,7 +319,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         menuItems.add(m1);
         menuItems.add(m2);
 
-        WorkspaceMenuItemStructrue itemStructure = new WorkspaceMenuItemStructrue();
+        WorkspaceMenuItemStructure itemStructure = new WorkspaceMenuItemStructure();
         itemStructure.setMenuItems(menuItems);
 
         // create mock rest endpoint
@@ -332,27 +349,25 @@ class MenuItemRestControllerTest extends AbstractTest {
     @Test
     void uploadMenuItemsTreeStructureTest() {
         String id = "1";
-        List<WorkspaceMenuItem> menuItems = new ArrayList<>();
-        WorkspaceMenuItem m1 = new WorkspaceMenuItem();
-        WorkspaceMenuItem m2 = new WorkspaceMenuItem();
-        m1.setName("m1");
-        m2.setName("m2");
-        menuItems.add(m1);
-        menuItems.add(m2);
 
-        WorkspaceMenuItemStructrue itemStructure = new WorkspaceMenuItemStructrue();
-        itemStructure.setMenuItems(menuItems);
+        WorkspaceMenuItem m1 = new WorkspaceMenuItem().id("x1").name("m1");
+        WorkspaceMenuItem m2 = new WorkspaceMenuItem().id("x2").name("m2");
+
+        WorkspaceMenuItemStructure itemStructure = new WorkspaceMenuItemStructure();
+        itemStructure.setMenuItems(List.of(m1, m2));
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + id + "/menuItems/tree/upload").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(itemStructure)))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode()));
 
-        CreateWorkspaceMenuItemStructrueRequestDTO input = new CreateWorkspaceMenuItemStructrueRequestDTO();
+        CreateWorkspaceMenuItemStructureRequestDTO input = new CreateWorkspaceMenuItemStructureRequestDTO();
         List<MenuItemDTO> items = new ArrayList<>();
         MenuItemDTO item1 = new MenuItemDTO();
         MenuItemDTO item2 = new MenuItemDTO();
+        item1.setId("x1");
         item1.setName("m1");
         item2.setName("m2");
+        item2.setId("x2");
         items.add(item1);
         items.add(item2);
         input.setMenuItems(items);

@@ -16,10 +16,10 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.workspace.bff.clients.api.ProductInternalApi;
-import gen.org.tkit.onecx.workspace.bff.clients.model.*;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.ProductApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.api.ProductInternalApi;
+import gen.org.tkit.onecx.workspace.client.model.*;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)

@@ -8,8 +8,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.org.tkit.onecx.workspace.bff.clients.model.*;
+import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.exim.client.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface WorkspaceMapper {
