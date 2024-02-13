@@ -141,7 +141,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/name/{name}:
+  /workspaces/name/{workspaceName}:
     get:
       x-onecx:
         permissions:
@@ -152,7 +152,7 @@ paths:
       description: Get workspace by name
       operationId: getWorkspaceByName
       parameters:
-        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/workspaceName'
       responses:
         "200":
           description: OK
@@ -192,7 +192,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
 
-  /workspaces/{id}/menuItems:
+  /workspaces/menu/{workspaceName}/menuItems:
     get:
       x-onecx:
         permissions:
@@ -201,9 +201,9 @@ paths:
       tags:
         - menuItem
       description: Find all menu items belonging to a workspace
-      operationId: getMenuItemsForWorkspaceById
+      operationId: getMenuItemsForWorkspaceByName
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
       responses:
         "200":
           description: OK
@@ -223,7 +223,7 @@ paths:
       description: Bulk update menu Items
       operationId: patchMenuItems
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
       requestBody:
         required: true
         content:
@@ -260,7 +260,7 @@ paths:
       description: Add a new menu item to workspace menu
       operationId: createMenuItemForWorkspace
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
       requestBody:
         required: true
         content:
@@ -286,7 +286,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/{id}/menuItems/tree:
+  /workspaces/menu/{workspaceName}/menuItems/tree:
     get:
       x-onecx:
         permissions:
@@ -295,9 +295,9 @@ paths:
       tags:
         - menuItem
       description: Fetch the menuItems of the workspace in the tree structure
-      operationId: getMenuStructureForWorkspaceId
+      operationId: getMenuStructureForWorkspaceName
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
       responses:
         "200":
           description: OK
@@ -307,7 +307,7 @@ paths:
                 $ref: '#/components/schemas/GetWorkspaceMenuItemStructureResponse'
         "404":
           description: Not found
-  /workspaces/{id}/menuItems/tree/upload:
+  /workspaces/menu/{workspaceName}/menuItems/tree/upload:
     post:
       x-onecx:
         permissions:
@@ -316,9 +316,9 @@ paths:
       tags:
         - menuItem
       description: Upload the menu structure for workspace
-      operationId: uploadMenuStructureForWorkspaceId
+      operationId: uploadMenuStructureForWorkspaceName
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
       requestBody:
         required: true
         content:
@@ -334,7 +334,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/{id}/menuItems/{menuItemId}:
+  /workspaces/menu/{workspaceName}/menuItems/{menuItemId}:
     get:
       x-onecx:
         permissions:
@@ -345,7 +345,7 @@ paths:
       description: Retrieve menu item detail info
       operationId: getMenuItemById
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
         - $ref: '#/components/parameters/menuItemId'
       responses:
         "200":
@@ -363,10 +363,10 @@ paths:
             - delete
       tags:
         - menuItem
-      description: Delete a menuItem by the workspace id and the menuItemId
+      description: Delete a menuItem by the workspace name and the menuItemId
       operationId: deleteMenuItemById
       parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/workspaceName'
         - $ref: '#/components/parameters/menuItemId'
       responses:
         "204":
@@ -544,7 +544,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/{name}/menu/export:
+  /workspaces/menu/{workspaceName}/export:
     get:
       x-onecx:
         permissions:
@@ -555,11 +555,7 @@ paths:
       description: Export workspaces
       operationId: exportMenuByWorkspaceName
       parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/workspaceName'
       responses:
         "200":
           description: OK
@@ -570,7 +566,7 @@ paths:
         "404":
           description: No themes founds
 
-  /workspaces/{name}/menu/import:
+  /workspaces/menu/{workspaceName}/import:
     post:
       x-onecx:
         permissions:
@@ -581,11 +577,7 @@ paths:
       description: Import workspaces
       operationId: importMenuByWorkspaceName
       parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/workspaceName'
       requestBody:
         required: true
         content:
@@ -1238,9 +1230,9 @@ components:
       required: true
       schema:
         type: string
-    name:
+    workspaceName:
       in: path
-      name: name
+      name: workspaceName
       required: true
       schema:
         type: string

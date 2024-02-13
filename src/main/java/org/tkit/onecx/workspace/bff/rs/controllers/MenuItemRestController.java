@@ -44,8 +44,8 @@ public class MenuItemRestController implements MenuItemApiService {
     WorkspaceExportImportApi eximClient;
 
     @Override
-    public Response deleteMenuItemById(String id, String menuItemId) {
-        try (Response response = menuClient.deleteMenuItemById(id, menuItemId)) {
+    public Response deleteMenuItemById(String name, String menuItemId) {
+        try (Response response = menuClient.deleteMenuItemById(name, menuItemId)) {
             return Response.status(response.getStatus()).build();
         }
     }
@@ -59,8 +59,8 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response getMenuItemById(String id, String menuItemId) {
-        try (Response response = menuClient.getMenuItemById(id, menuItemId)) {
+    public Response getMenuItemById(String name, String menuItemId) {
+        try (Response response = menuClient.getMenuItemById(name, menuItemId)) {
             MenuItemDTO menuItemDTO = menuItemMapper.map(response.readEntity(MenuItem.class));
             GetMenuItemResponseDTO responseDTO = menuItemMapper.mapToResponse(menuItemDTO);
             return Response.status(response.getStatus()).entity(responseDTO).build();
@@ -68,8 +68,8 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response getMenuItemsForWorkspaceById(String id) {
-        try (Response response = menuClient.getMenuItemsForWorkspaceName(id)) {
+    public Response getMenuItemsForWorkspaceByName(String name) {
+        try (Response response = menuClient.getMenuItemsForWorkspaceName(name)) {
             GetMenuItemsResponseDTO responseDTO = menuItemMapper.mapToGetResponseList(menuItemMapper
                     .map(response.readEntity(new GenericType<List<MenuItem>>() {
                     })));
@@ -78,8 +78,8 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response getMenuStructureForWorkspaceId(String id) {
-        try (Response response = menuClient.getMenuStructureForWorkspaceName(id)) {
+    public Response getMenuStructureForWorkspaceName(String name) {
+        try (Response response = menuClient.getMenuStructureForWorkspaceName(name)) {
             GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuItemMapper
                     .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructure.class).getMenuItems()));
             return Response.status(response.getStatus()).entity(responseDTO).build();
@@ -95,11 +95,11 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response patchMenuItems(String id, List<PatchMenuItemsRequestDTO> patchMenuItemsRequestDTO) {
+    public Response patchMenuItems(String name, List<PatchMenuItemsRequestDTO> patchMenuItemsRequestDTO) {
 
         var request = menuItemMapper.createUpdateRequest(patchMenuItemsRequestDTO);
 
-        try (Response response = menuClient.patchMenuItems(id, request)) {
+        try (Response response = menuClient.patchMenuItems(name, request)) {
             List<MenuItem> menuItemList = response.readEntity(new GenericType<List<MenuItem>>() {
             });
             List<PatchMenuItemsResponseDTO> responseDTOList = menuItemMapper.mapToResponseDTOList(menuItemList);
@@ -108,12 +108,12 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response uploadMenuStructureForWorkspaceId(String id,
+    public Response uploadMenuStructureForWorkspaceName(String name,
             CreateWorkspaceMenuItemStructureRequestDTO createWorkspaceMenuItemStructureRequestDTO) {
         WorkspaceMenuItemStructure menuStructure = menuItemMapper
                 .mapToWorkspaceStructure(menuItemMapper
                         .mapToWorkspaceMenuItems(createWorkspaceMenuItemStructureRequestDTO.getMenuItems()));
-        try (Response response = menuClient.uploadMenuStructureForWorkspaceName(id, menuStructure)) {
+        try (Response response = menuClient.uploadMenuStructureForWorkspaceName(name, menuStructure)) {
             return Response.status(response.getStatus()).build();
         }
     }
