@@ -1046,7 +1046,10 @@ components:
         address:
           $ref: '#/components/schemas/EximWorkspaceAddress'
         workspaceRoles:
-          type: string
+          type: array
+          uniqueItems: true
+          items:
+            type: string
         subjectLinks:
           uniqueItems: true
           maxItems: 3

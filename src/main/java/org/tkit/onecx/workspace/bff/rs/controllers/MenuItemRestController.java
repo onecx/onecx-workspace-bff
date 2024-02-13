@@ -69,7 +69,7 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Override
     public Response getMenuItemsForWorkspaceById(String id) {
-        try (Response response = menuClient.getMenuItemsForWorkspaceId(id)) {
+        try (Response response = menuClient.getMenuItemsForWorkspaceName(id)) {
             GetMenuItemsResponseDTO responseDTO = menuItemMapper.mapToGetResponseList(menuItemMapper
                     .map(response.readEntity(new GenericType<List<MenuItem>>() {
                     })));
@@ -79,7 +79,7 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Override
     public Response getMenuStructureForWorkspaceId(String id) {
-        try (Response response = menuClient.getMenuStructureForWorkspaceId(id)) {
+        try (Response response = menuClient.getMenuStructureForWorkspaceName(id)) {
             GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuItemMapper
                     .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructure.class).getMenuItems()));
             return Response.status(response.getStatus()).entity(responseDTO).build();
@@ -113,7 +113,7 @@ public class MenuItemRestController implements MenuItemApiService {
         WorkspaceMenuItemStructure menuStructure = menuItemMapper
                 .mapToWorkspaceStructure(menuItemMapper
                         .mapToWorkspaceMenuItems(createWorkspaceMenuItemStructureRequestDTO.getMenuItems()));
-        try (Response response = menuClient.uploadMenuStructureForWorkspaceId(id, menuStructure)) {
+        try (Response response = menuClient.uploadMenuStructureForWorkspaceName(id, menuStructure)) {
             return Response.status(response.getStatus()).build();
         }
     }

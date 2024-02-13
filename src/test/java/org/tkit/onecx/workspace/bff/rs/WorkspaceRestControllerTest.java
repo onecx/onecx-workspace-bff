@@ -635,7 +635,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/v1/themes/info")
+                .when(request().withPath("/v1/themes")
                         .withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
