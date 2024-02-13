@@ -68,9 +68,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", id)
+                .pathParam("workspaceName", id)
                 .body(requestDTO)
-                .post("/{id}/menuItems")
+                .post("/menuItems")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -82,9 +82,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(USER))
                 .header(APM_HEADER_PARAM, USER)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", id)
+                .pathParam("workspaceName", id)
                 .body(requestDTO)
-                .post("/{id}/menuItems")
+                .post("/menuItems")
                 .then()
                 .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
@@ -112,9 +112,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", id)
+                .pathParam("workspaceName", id)
                 .body(requestDTO)
-                .post("/{id}/menuItems")
+                .post("/menuItems")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -126,7 +126,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void getAllMenuItemsOfWorkspaceTest() {
-        String workspaceId = "test";
+        String workspaceName = "test";
 
         List<MenuItem> menuItems = new ArrayList<>();
         MenuItem m1 = new MenuItem();
@@ -137,7 +137,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         menuItems.add(m2);
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -148,8 +148,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", workspaceId)
-                .get("/{id}/menuItems")
+                .pathParam("workspaceName", workspaceName)
+                .get("/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -162,10 +162,10 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void getAllMenuItemsOfWorkspaceNotFoundTest() {
-        String workspaceId = "test";
+        String workspaceName = "test";
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -175,8 +175,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", workspaceId)
-                .get("/{id}/menuItems")
+                .pathParam("workspaceName", workspaceName)
+                .get("/menuItems")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -196,7 +196,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         menuItems.add(m1);
         menuItems.add(m2);
 
-        String workspaceId = "test";
+        String workspaceName = "test";
 
         UpdateMenuItemRequest r1 = new UpdateMenuItemRequest();
         r1.setName("m1");
@@ -211,7 +211,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.PATCH)
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.PATCH)
                         .withBody(JsonBody.json(response)).withContentType(MediaType.APPLICATION_JSON))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
@@ -241,8 +241,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
-                .pathParam("id", workspaceId)
-                .patch("/{id}/menuItems")
+                .pathParam("workspaceName", workspaceName)
+                .patch("/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -257,12 +257,12 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void bulkPatchMenuItemsNotFoundTest() {
-        String workspaceId = "test";
+        String workspaceName = "test";
         MenuItem menuItem = new MenuItem();
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems").withMethod(HttpMethod.PATCH)
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.PATCH)
                         .withBody(JsonBody.json(menuItem)).withContentType(MediaType.APPLICATION_JSON))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
@@ -275,8 +275,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(inputList)
-                .pathParam("id", workspaceId)
-                .patch("/{id}/menuItems")
+                .pathParam("workspaceName", workspaceName)
+                .patch("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -286,11 +286,11 @@ class MenuItemRestControllerTest extends AbstractTest {
     @Test
     void deleteMenuItemTest() {
         String menuItemId = "p-id";
-        String workspaceId = "w-id";
+        String workspaceName = "wid";
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/" + menuItemId)
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems/" + menuItemId)
                         .withMethod(HttpMethod.DELETE))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -299,9 +299,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", workspaceId)
+                .pathParam("workspaceName", workspaceName)
                 .pathParam("menuItemId", menuItemId)
-                .delete("/{id}/menuItems/{menuItemId}")
+                .delete("/menuItems/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -309,7 +309,7 @@ class MenuItemRestControllerTest extends AbstractTest {
     @Test
     void getMenuItemsTreeStructureTest() {
 
-        String workspaceId = "test";
+        String workspaceName = "test";
 
         List<WorkspaceMenuItem> menuItems = new ArrayList<>();
         WorkspaceMenuItem m1 = new WorkspaceMenuItem();
@@ -324,7 +324,8 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/tree").withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems/tree")
+                        .withMethod(HttpMethod.GET))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(itemStructure)));
@@ -334,8 +335,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", workspaceId)
-                .get("/{id}/menuItems/tree")
+                .pathParam("workspaceName", workspaceName)
+                .get("/menuItems/tree")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -377,9 +378,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", id)
+                .pathParam("workspaceName", id)
                 .body(input)
-                .post("/{id}/menuItems/tree/upload")
+                .post("/menuItems/tree/upload")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode());
         Assertions.assertNotNull(output);
@@ -387,7 +388,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void getMenuItemByIdTest() {
-        String workspaceId = "test";
+        String workspaceName = "test";
         String menuItemId = "1";
 
         MenuItem m1 = new MenuItem();
@@ -395,7 +396,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/menuItems/" + menuItemId)
+                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems/" + menuItemId)
                         .withMethod(HttpMethod.GET))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -406,9 +407,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("id", workspaceId)
+                .pathParam("workspaceName", workspaceName)
                 .pathParam("menuItemId", menuItemId)
-                .get("/{id}/menuItems/{menuItemId}")
+                .get("/menuItems/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -440,8 +441,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("name", workspaceName)
-                .get("/{name}/menu/export")
+                .pathParam("workspaceName", workspaceName)
+                .get("/export")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .extract().as(MenuSnapshotDTO.class);
@@ -489,9 +490,9 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("name", workspaceName)
+                .pathParam("workspaceName", workspaceName)
                 .body(snapshotDTO)
-                .post("/{name}/menu/import")
+                .post("/import")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)

@@ -230,8 +230,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("name", data.getName())
-                .get("/name/{name}")
+                .pathParam("workspaceName", data.getName())
+                .get("/name/{workspaceName}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -256,8 +256,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .pathParam("name", notFoundName)
-                .get("/name/{name}")
+                .pathParam("workspaceName", notFoundName)
+                .get("/name/{workspaceName}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -635,7 +635,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/v1/themes/info")
+                .when(request().withPath("/v1/themes")
                         .withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
