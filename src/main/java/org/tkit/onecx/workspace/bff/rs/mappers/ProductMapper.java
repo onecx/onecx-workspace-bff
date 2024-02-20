@@ -6,13 +6,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.CreateProductRequestDTO;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.CreateUpdateProductResponseDTO;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductDTO;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.UpdateProductRequestDTO;
-import gen.org.tkit.onecx.workspace.client.model.CreateProductRequest;
-import gen.org.tkit.onecx.workspace.client.model.Product;
-import gen.org.tkit.onecx.workspace.client.model.UpdateProductRequest;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ProductMapper {
@@ -27,4 +24,22 @@ public interface ProductMapper {
 
     @Mapping(source = ".", target = "resource")
     CreateUpdateProductResponseDTO mapToCreateUpdate(ProductDTO map);
+
+    @Mapping(source = "mfeId", target = "appId")
+    MicrofrontendDTO map(Microfrontend mfe);
+
+    @Mapping(source = "appId", target = "mfeId")
+    Microfrontend map(MicrofrontendDTO mfe);
+
+    @Mapping(source = "appId", target = "mfeId")
+    UpdateMicrofrontend map(CreateUpdateMicrofrontendDTO updateMicrofrontendDTO);
+
+    @Mapping(source = "appId", target = "mfeId")
+    CreateMicrofrontend mapCreate(CreateUpdateMicrofrontendDTO updateMicrofrontendDTO);
+
+    @Mapping(target = "name", ignore = true)
+    ProductItemSearchCriteria map(ProductStoreSearchCriteriaDTO productStoreSearchCriteriaDTO);
+
+    @Mapping(target = "removeStreamItem", ignore = true)
+    ProductStorePageResultDTO map(ProductItemPageResult pageResult);
 }

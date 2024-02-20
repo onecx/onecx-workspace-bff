@@ -494,6 +494,35 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Product not found
+  /workspaces/products:
+    x-onecx:
+      permissions:
+        workspaces:
+          - read
+    post:
+      tags:
+        - product
+      description: search all available products of product-store
+      operationId: searchAvailableProducts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductStoreSearchCriteria'
+      responses:
+        "200":
+          description: Corresponding products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductStorePageResult'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/export:
     x-onecx:
       permissions:
@@ -919,7 +948,7 @@ components:
       properties:
         id:
           type: string
-        mfeId:
+        appId:
           type: string
         basePath:
           type: string
@@ -939,11 +968,11 @@ components:
             $ref: '#/components/schemas/CreateUpdateMicrofrontend'
     CreateUpdateMicrofrontend:
       required:
-        - mfeId
+        - appId
         - basePath
       type: object
       properties:
-        mfeId:
+        appId:
           type: string
         basePath:
           type: string
@@ -1171,6 +1200,52 @@ components:
         totalPages:
           format: int64
           type: integer
+    ProductStoreSearchCriteria:
+      type: object
+      properties:
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 10
+          type: integer
+    ProductStorePageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductStoreItem'
+    ProductStoreItem:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        basePath:
+          type: string
+        classifications:
+          type: string
     ProblemDetailResponse:
       type: object
       properties:
@@ -1212,22 +1287,6 @@ components:
       type: string
       example: 2022-03-10T12:15:50-04:00
   parameters:
-    pageNumber:
-      in: query
-      name: pageNumber
-      required: false
-      schema:
-        type: integer
-        format: int32
-        default: 0
-    pageSize:
-      in: query
-      name: pageSize
-      required: false
-      schema:
-        type: integer
-        format: int32
-        default: 100
     id:
       in: path
       name: id
