@@ -344,11 +344,17 @@ class WorkspaceRestControllerTest extends AbstractTest {
         updateWorkspace.setDescription("test-desc");
         updateWorkspace.setName("test-workspace");
 
+        Workspace updatedResponse = new Workspace();
+        updatedResponse.setDescription("test-desc");
+        updatedResponse.setName("test-workspace");
+
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateWorkspace)))
                 .withId(mockId)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode()));
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(updatedResponse)));
 
         UpdateWorkspaceRequestDTO input = new UpdateWorkspaceRequestDTO();
         WorkspaceDTO dto = new WorkspaceDTO();

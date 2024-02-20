@@ -96,7 +96,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
     put:
       x-onecx:
-        permissionss:
+        permissions:
           workspaces:
             - write
       tags:
