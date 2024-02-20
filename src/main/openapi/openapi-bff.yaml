@@ -1211,7 +1211,7 @@ components:
         pageSize:
           format: int32
           description: The size of page
-          default: 10
+          default: 100
           type: integer
     ProductStorePageResult:
       type: object

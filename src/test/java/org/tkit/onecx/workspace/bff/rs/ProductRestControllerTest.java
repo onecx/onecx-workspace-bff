@@ -332,7 +332,7 @@ class ProductRestControllerTest extends AbstractTest {
     void getAvailableProductsOfProductStoreTest() {
 
         ProductItemSearchCriteria svcCriteria = new ProductItemSearchCriteria();
-        svcCriteria.pageNumber(0).pageSize(10);
+        svcCriteria.pageNumber(0).pageSize(100);
 
         ProductItemPageResult svcResult = new ProductItemPageResult();
         ProductItem productItem = new ProductItem();
@@ -344,6 +344,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .when(request().withPath("/v1/products/search")
                         .withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(svcCriteria)))
+                .withId("mock")
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(svcResult)));
@@ -366,6 +367,44 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertEquals(output.getStream().get(0).getName(), productItem.getName());
         Assertions.assertEquals(output.getStream().get(0).getBasePath(), productItem.getBasePath());
         Assertions.assertEquals(output.getStream().get(0).getClassifications(), productItem.getClassifications());
+        mockServerClient.clear("mock");
 
+    }
+
+    @Test
+    void webApplicationExceptionTest() {
+
+        ProductItemSearchCriteria svcCriteria = new ProductItemSearchCriteria();
+        svcCriteria.pageNumber(0).pageSize(10);
+
+        ProductItemPageResult svcResult = new ProductItemPageResult();
+        ProductItem productItem = new ProductItem();
+        productItem.basePath("test").name("test").classifications("search");
+        svcResult.number(0).totalElements(1L).totalPages(1L).stream(List.of(productItem));
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/v1/products/search")
+                        .withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(svcCriteria)))
+                .withId("mock")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(svcResult)));
+
+        ProductStoreSearchCriteriaDTO storeSearchCriteriaDTO = new ProductStoreSearchCriteriaDTO();
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(storeSearchCriteriaDTO)
+                .post("/products")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mock");
     }
 }
