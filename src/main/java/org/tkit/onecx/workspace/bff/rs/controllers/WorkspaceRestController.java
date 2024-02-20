@@ -146,7 +146,8 @@ public class WorkspaceRestController implements WorkspaceApiService {
     public Response updateWorkspace(String id, UpdateWorkspaceRequestDTO updateWorkspaceRequestDTO) {
         try (Response response = workspaceClient.updateWorkspace(id,
                 workspaceMapper.mapUpdate(updateWorkspaceRequestDTO.getResource()))) {
-            return Response.status(response.getStatus()).build();
+            return Response.status(response.getStatus())
+                    .entity(workspaceMapper.map(response.readEntity(Workspace.class))).build();
         }
     }
 

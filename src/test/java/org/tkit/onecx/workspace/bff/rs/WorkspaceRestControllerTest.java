@@ -365,9 +365,12 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .body(input)
                 .put("/{id}")
                 .then()
-                .statusCode(Response.Status.NO_CONTENT.getStatusCode());
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(WorkspaceDTO.class);
 
         Assertions.assertNotNull(output);
+        Assertions.assertEquals("test-workspace", output.getName());
     }
 
     @Test

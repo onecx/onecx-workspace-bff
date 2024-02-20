@@ -111,8 +111,12 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateWorkspaceRequest'
       responses:
-        "204":
+        "200":
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
         "400":
           description: Bad request
           content:
