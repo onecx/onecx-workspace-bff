@@ -20,14 +20,21 @@ public class MenuItemLog implements LogParam {
                                         ? ((CreateMenuItemRequestDTO) x).getResource().getKey()
                                         : null)
                                 + "]"),
+
+                this.item(10, UpdateMenuItemRequestDTO.class,
+                        x -> UpdateMenuItemRequestDTO.class.getSimpleName() + "[key: "
+                                + (((UpdateMenuItemRequestDTO) x).getResource().getId())
+                                + "]"),
                 this.item(10, MenuSnapshotDTO.class,
                         x -> MenuSnapshotDTO.class.getSimpleName() + "[key: "
                                 + (((MenuSnapshotDTO) x).getId())
                                 + "]"),
                 this.item(10, CreateWorkspaceMenuItemStructureRequestDTO.class,
-                        x -> CreateWorkspaceMenuItemStructureRequestDTO.class.getSimpleName() + "[items:"
-                                + (((CreateWorkspaceMenuItemStructureRequestDTO) x).toString())
-                                + "]"));
+                        x -> {
+                            var t = (CreateWorkspaceMenuItemStructureRequestDTO) x;
+                            return CreateWorkspaceMenuItemStructureRequestDTO.class.getSimpleName() + "[items:"
+                                    + (t.getMenuItems() == null ? "0" : t.getMenuItems().size());
+                        }));
 
     }
 }

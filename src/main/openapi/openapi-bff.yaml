@@ -224,8 +224,8 @@ paths:
             - write
       tags:
         - menuItem
-      description: Bulk update menu Items
-      operationId: patchMenuItems
+      description: Update menu Items
+      operationId: updateMenuItem
       parameters:
         - $ref: '#/components/parameters/workspaceName'
       requestBody:
@@ -233,10 +233,7 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              minItems: 1
-              items:
-                $ref: '#/components/schemas/PatchMenuItemsRequest'
+              $ref: '#/components/schemas/UpdateMenuItemRequest'
       responses:
         "200":
           description: OK
@@ -245,7 +242,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PatchMenuItemsResponse'
+                  $ref: '#/components/schemas/MenuItem'
         "400":
           description: Bad request
           content:
@@ -858,13 +855,10 @@ components:
       properties:
         resource:
           $ref: '#/components/schemas/MenuItem'
-    PatchMenuItemsRequest:
+    UpdateMenuItemRequest:
       type: object
-      properties:
-        resource:
-          $ref: '#/components/schemas/MenuItem'
-    PatchMenuItemsResponse:
-      type: object
+      required:
+        - resource
       properties:
         resource:
           $ref: '#/components/schemas/MenuItem'
