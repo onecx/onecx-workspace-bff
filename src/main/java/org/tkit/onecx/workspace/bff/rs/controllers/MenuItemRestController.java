@@ -1,13 +1,12 @@
 package org.tkit.onecx.workspace.bff.rs.controllers;
 
-import java.util.List;
+import static jakarta.ws.rs.core.Response.Status.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -19,8 +18,8 @@ import org.tkit.quarkus.log.cdi.LogService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.MenuItemApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.MenuInternalApi;
+import gen.org.tkit.onecx.workspace.client.api.WorkspaceInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
-import gen.org.tkit.onecx.workspace.client.model.MenuItem;
 import gen.org.tkit.onecx.workspace.exim.client.api.WorkspaceExportImportApi;
 import gen.org.tkit.onecx.workspace.exim.client.model.*;
 
@@ -41,48 +40,61 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Inject
     @RestClient
+    WorkspaceInternalApi workspaceInternalApi;
+
+    @Inject
+    @RestClient
     WorkspaceExportImportApi eximClient;
 
     @Override
     public Response deleteMenuItemById(String name, String menuItemId) {
-        try (Response response = menuClient.deleteMenuItemById(name, menuItemId)) {
-            return Response.status(response.getStatus()).build();
+        try (Response response = menuClient.deleteMenuItemById(menuItemId)) {
+            return Response.status(NO_CONTENT).build();
         }
     }
 
     @Override
     public Response exportMenuByWorkspaceName(String name) {
         try (Response response = eximClient.exportMenuByWorkspaceName(name)) {
-            return Response.status(response.getStatus())
+            return Response.status(OK)
                     .entity(menuItemMapper.mapSnapshot(response.readEntity(MenuSnapshot.class))).build();
         }
     }
 
     @Override
     public Response getMenuItemById(String name, String menuItemId) {
-        try (Response response = menuClient.getMenuItemById(name, menuItemId)) {
+        try (Response response = menuClient.getMenuItemById(menuItemId)) {
             MenuItemDTO menuItemDTO = menuItemMapper.map(response.readEntity(MenuItem.class));
             GetMenuItemResponseDTO responseDTO = menuItemMapper.mapToResponse(menuItemDTO);
-            return Response.status(response.getStatus()).entity(responseDTO).build();
+            return Response.status(OK).entity(responseDTO).build();
         }
     }
 
     @Override
     public Response getMenuItemsForWorkspaceByName(String name) {
-        try (Response response = menuClient.getMenuItemsForWorkspaceName(name)) {
-            GetMenuItemsResponseDTO responseDTO = menuItemMapper.mapToGetResponseList(menuItemMapper
-                    .map(response.readEntity(new GenericType<List<MenuItem>>() {
-                    })));
-            return Response.status(response.getStatus()).entity(responseDTO).build();
+
+        try (Response r = workspaceInternalApi.findWorkspaceByName(name)) {
+            var workspace = r.readEntity(Workspace.class);
+            var criteria = new MenuItemSearchCriteria().workspaceId(workspace.getId());
+            try (Response response = menuClient.searchMenuItemsByCriteria(criteria)) {
+                var pageResult = response.readEntity(MenuItemPageResult.class);
+                GetMenuItemsResponseDTO responseDTO = menuItemMapper.mapToGetResponseList(pageResult);
+                return Response.status(OK).entity(responseDTO).build();
+            }
         }
     }
 
     @Override
     public Response getMenuStructureForWorkspaceName(String name) {
-        try (Response response = menuClient.getMenuStructureForWorkspaceName(name)) {
-            GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuItemMapper
-                    .mapWorkspaceMenuItems(response.readEntity(WorkspaceMenuItemStructure.class).getMenuItems()));
-            return Response.status(response.getStatus()).entity(responseDTO).build();
+        try (Response r = workspaceInternalApi.findWorkspaceByName(name)) {
+            var workspace = r.readEntity(Workspace.class);
+            var criteria = new MenuStructureSearchCriteria().workspaceId(workspace.getId());
+            try (Response response = menuClient.getMenuStructure(criteria)) {
+                var menuStructure = response.readEntity(MenuItemStructure.class);
+                GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuStructure);
+
+                return Response.status(OK).entity(responseDTO).build();
+            }
         }
     }
 
@@ -95,36 +107,38 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response patchMenuItems(String name, List<PatchMenuItemsRequestDTO> patchMenuItemsRequestDTO) {
+    public Response updateMenuItem(String name, UpdateMenuItemRequestDTO updateMenuItemRequestDTO) {
 
-        var request = menuItemMapper.createUpdateRequest(patchMenuItemsRequestDTO);
-
-        try (Response response = menuClient.patchMenuItems(name, request)) {
-            List<MenuItem> menuItemList = response.readEntity(new GenericType<List<MenuItem>>() {
-            });
-            List<PatchMenuItemsResponseDTO> responseDTOList = menuItemMapper.mapToResponseDTOList(menuItemList);
-            return Response.status(response.getStatus()).entity(responseDTOList).build();
+        var request = menuItemMapper.createUpdateRequest(updateMenuItemRequestDTO);
+        try (Response response = menuClient.updateMenuItem(updateMenuItemRequestDTO.getResource().getId(), request)) {
+            var menuItem = response.readEntity(MenuItem.class);
+            var dto = menuItemMapper.map(menuItem);
+            return Response.status(OK).entity(dto).build();
         }
     }
 
     @Override
     public Response uploadMenuStructureForWorkspaceName(String name,
             CreateWorkspaceMenuItemStructureRequestDTO createWorkspaceMenuItemStructureRequestDTO) {
-        WorkspaceMenuItemStructure menuStructure = menuItemMapper
-                .mapToWorkspaceStructure(menuItemMapper
-                        .mapToWorkspaceMenuItems(createWorkspaceMenuItemStructureRequestDTO.getMenuItems()));
-        try (Response response = menuClient.uploadMenuStructureForWorkspaceName(name, menuStructure)) {
-            return Response.status(response.getStatus()).build();
+
+        var snapshot = menuItemMapper.createSnapshot(createWorkspaceMenuItemStructureRequestDTO);
+        try (Response response = eximClient.importMenu(name, snapshot)) {
+            var result = response.readEntity(ImportMenuResponse.class);
+            return Response.status(CREATED).entity(result.getStatus()).build();
         }
     }
 
     @Override
     public Response createMenuItemForWorkspace(String name, CreateMenuItemRequestDTO createMenuItemRequestDTO) {
-        try (Response response = menuClient.createMenuItemForWorkspace(name,
-                menuItemMapper.map(createMenuItemRequestDTO.getResource()))) {
-            CreateMenuItemResponseDTO responseDTO = menuItemMapper
-                    .mapToCreateResponse(menuItemMapper.map(response.readEntity(MenuItem.class)));
-            return Response.status(response.getStatus()).entity(responseDTO).build();
+        try (Response r = workspaceInternalApi.findWorkspaceByName(name)) {
+            var workspace = r.readEntity(Workspace.class);
+            var request = menuItemMapper.map(createMenuItemRequestDTO.getResource(), workspace.getId());
+
+            try (Response response = menuClient.createMenuItem(request)) {
+                var menu = menuItemMapper.map(response.readEntity(MenuItem.class));
+                var responseDTO = menuItemMapper.mapToCreateResponse(menu);
+                return Response.status(CREATED).entity(responseDTO).build();
+            }
         }
     }
 

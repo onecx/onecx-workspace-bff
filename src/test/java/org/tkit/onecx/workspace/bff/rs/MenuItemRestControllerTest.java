@@ -7,6 +7,7 @@ import static org.mockserver.model.HttpResponse.response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.Response;
@@ -51,8 +52,17 @@ class MenuItemRestControllerTest extends AbstractTest {
         menuItem.setName("newItem");
         MenuItem createdItem = new MenuItem();
         createdItem.setName("newItem");
+
+        var workspace = new Workspace().id("1");
+
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + id + "/menuItems").withMethod(HttpMethod.POST)
+                .when(request().withPath("/internal/workspaces/search/1").withMethod(HttpMethod.GET))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(workspace)));
+
+        mockServerClient
+                .when(request().withPath("/internal/menuItems").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(menuItem)))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
@@ -100,7 +110,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         ProblemDetailResponse problemDetailResponse = new ProblemDetailResponse();
         problemDetailResponse.setErrorCode("CONSTRAINT_VIOLATIONS");
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + id + "/menuItems").withMethod(HttpMethod.POST)
+                .when(request().withPath("/internal/menuItems").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(menuItem)))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
@@ -128,20 +138,23 @@ class MenuItemRestControllerTest extends AbstractTest {
     void getAllMenuItemsOfWorkspaceTest() {
         String workspaceName = "test";
 
-        List<MenuItem> menuItems = new ArrayList<>();
-        MenuItem m1 = new MenuItem();
-        MenuItem m2 = new MenuItem();
-        m1.setName("m1");
-        m2.setName("m2");
-        menuItems.add(m1);
-        menuItems.add(m2);
+        var result = new MenuItemPageResult().stream(List.of(
+                new MenuItemResult().name("m1"),
+                new MenuItemResult().name("m2")));
+
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/workspaces/search/test").withMethod(HttpMethod.GET))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(new Workspace().id("test"))));
+
+        mockServerClient
+                .when(request().withPath("/internal/menuItems/search").withMethod(HttpMethod.POST))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(menuItems)));
+                        .withBody(JsonBody.json(result)));
 
         var output = given()
                 .when()
@@ -156,8 +169,8 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .extract().as(GetMenuItemsResponseDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(m1.getName(), output.getMenuItems().get(0).getName());
-        Assertions.assertEquals(m2.getName(), output.getMenuItems().get(1).getName());
+        Assertions.assertEquals("m1", output.getMenuItems().get(0).getName());
+        Assertions.assertEquals("m2", output.getMenuItems().get(1).getName());
     }
 
     @Test
@@ -186,101 +199,64 @@ class MenuItemRestControllerTest extends AbstractTest {
     @Test
     void bulkPatchMenuItemsTest() {
 
-        List<MenuItem> menuItems = new ArrayList<>();
-        MenuItem m1 = new MenuItem();
-        MenuItem m2 = new MenuItem();
-        m1.setName("m1");
-        m1.setBadge("newBadge");
-        m2.setName("m2");
-        m2.setBadge("newBadge");
-        menuItems.add(m1);
-        menuItems.add(m2);
+        MenuItem m1 = new MenuItem().name("m1").badge("newBadge");
 
         String workspaceName = "test";
+        String menuId = "x1";
 
-        UpdateMenuItemRequest r1 = new UpdateMenuItemRequest();
-        r1.setName("m1");
-        r1.setBadge("newBadge");
-
-        UpdateMenuItemRequest r2 = new UpdateMenuItemRequest();
-        r2.setName("m2");
-        r2.setBadge("newBadge");
-
-        UpdateMenuItemsRequest response = new UpdateMenuItemsRequest();
-        response.putItemsItem("x1", r1).putItemsItem("x2", r2);
+        UpdateMenuItemRequest response = new UpdateMenuItemRequest();
+        response.name(m1.getName()).badge(m1.getBadge());
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.PATCH)
-                        .withBody(JsonBody.json(response)).withContentType(MediaType.APPLICATION_JSON))
+                .when(request().withPath("/internal/menuItems/" + menuId).withMethod(HttpMethod.PUT)
+                //                        .withBody(JsonBody.json(response)).withContentType(MediaType.APPLICATION_JSON)
+                )
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(menuItems)));
+                        .withBody(JsonBody.json(m1)));
 
-        List<PatchMenuItemsRequestDTO> inputList = new ArrayList<>();
-        PatchMenuItemsRequestDTO input1 = new PatchMenuItemsRequestDTO();
+        UpdateMenuItemRequestDTO input1 = new UpdateMenuItemRequestDTO();
         MenuItemDTO item1 = new MenuItemDTO();
-        item1.setId("x1");
+        item1.setId(menuId);
         item1.setName("m1");
         item1.setBadge("newBadge");
         input1.setResource(item1);
-
-        PatchMenuItemsRequestDTO input2 = new PatchMenuItemsRequestDTO();
-        MenuItemDTO item2 = new MenuItemDTO();
-        item2.setId("x2");
-        item2.setName("m2");
-        item2.setBadge("newBadge");
-        input2.setResource(item2);
-        inputList.add(input1);
-        inputList.add(input2);
-
-        PatchMenuItemsResponseDTO[] output = given()
-                .when()
-                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
-                .header(APM_HEADER_PARAM, ADMIN)
-                .contentType(APPLICATION_JSON)
-                .body(inputList)
-                .pathParam("workspaceName", workspaceName)
-                .patch("/menuItems")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(PatchMenuItemsResponseDTO[].class);
-
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(m1.getName(), output[0].getResource().getName());
-        Assertions.assertEquals(m1.getBadge(), output[0].getResource().getBadge());
-        Assertions.assertEquals(m2.getName(), output[1].getResource().getName());
-        Assertions.assertEquals(m2.getBadge(), output[1].getResource().getBadge());
-    }
-
-    @Test
-    void bulkPatchMenuItemsNotFoundTest() {
-        String workspaceName = "test";
-        MenuItem menuItem = new MenuItem();
-
-        // create mock rest endpoint
-        mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems").withMethod(HttpMethod.PATCH)
-                        .withBody(JsonBody.json(menuItem)).withContentType(MediaType.APPLICATION_JSON))
-                .withId(mockId)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
-
-        List<PatchMenuItemsRequestDTO> inputList = new ArrayList<>();
 
         var output = given()
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
-                .body(inputList)
+                .body(input1)
                 .pathParam("workspaceName", workspaceName)
-                .patch("/{workspaceName}/menuItems")
+                .patch("/menuItems")
                 .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(MenuItemDTO.class);
 
         Assertions.assertNotNull(output);
+        Assertions.assertEquals(m1.getName(), output.getName());
+        Assertions.assertEquals(m1.getBadge(), output.getBadge());
+
+    }
+
+    @Test
+    void bulkPatchMenuItemsNotFoundTest() {
+        String workspaceName = "test";
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("workspaceName", workspaceName)
+                .patch("/menuItems")
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
+
     }
 
     @Test
@@ -290,7 +266,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems/" + menuItemId)
+                .when(request().withPath("/internal/menuItems/" + menuItemId)
                         .withMethod(HttpMethod.DELETE))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -319,13 +295,19 @@ class MenuItemRestControllerTest extends AbstractTest {
         menuItems.add(m1);
         menuItems.add(m2);
 
-        WorkspaceMenuItemStructure itemStructure = new WorkspaceMenuItemStructure();
+        mockServerClient
+                .when(request().withPath("/internal/workspaces/search/test").withMethod(HttpMethod.GET))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(new Workspace().id("test"))));
+
+        MenuItemStructure itemStructure = new MenuItemStructure();
         itemStructure.setMenuItems(menuItems);
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems/tree")
-                        .withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/menuItems/tree")
+                        .withMethod(HttpMethod.POST))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(itemStructure)));
@@ -348,18 +330,43 @@ class MenuItemRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void uploadMenuItemsTreeStructureEmptyTest() {
+        String id = "1";
+
+        mockServerClient
+                .when(request().withPath("/exim/v1/workspace/" + id + "/menu/import").withMethod(HttpMethod.POST))
+                .withId(mockId)
+                .respond(httpRequest -> response()
+                        .withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withBody(JsonBody.json(new ImportMenuResponse().id(UUID.randomUUID()
+                                .toString()).status(ImportResponseStatus.SKIPPED))));
+
+        CreateWorkspaceMenuItemStructureRequestDTO input = new CreateWorkspaceMenuItemStructureRequestDTO();
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("workspaceName", id)
+                .body(input)
+                .post("/menuItems/tree/upload")
+                .then()
+                .statusCode(Response.Status.CREATED.getStatusCode());
+        Assertions.assertNotNull(output);
+    }
+
+    @Test
     void uploadMenuItemsTreeStructureTest() {
         String id = "1";
 
-        WorkspaceMenuItem m1 = new WorkspaceMenuItem().id("x1").name("m1");
-        WorkspaceMenuItem m2 = new WorkspaceMenuItem().id("x2").name("m2");
-
-        WorkspaceMenuItemStructure itemStructure = new WorkspaceMenuItemStructure();
-        itemStructure.setMenuItems(List.of(m1, m2));
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + id + "/menuItems/tree/upload").withMethod(HttpMethod.POST)
-                        .withBody(JsonBody.json(itemStructure)))
-                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode()));
+                .when(request().withPath("/exim/v1/workspace/" + id + "/menu/import").withMethod(HttpMethod.POST))
+                .withId(mockId)
+                .respond(httpRequest -> response()
+                        .withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withBody(JsonBody.json(new ImportMenuResponse().id(UUID.randomUUID()
+                                .toString()).status(ImportResponseStatus.SKIPPED))));
 
         CreateWorkspaceMenuItemStructureRequestDTO input = new CreateWorkspaceMenuItemStructureRequestDTO();
         List<MenuItemDTO> items = new ArrayList<>();
@@ -396,7 +403,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceName + "/menuItems/" + menuItemId)
+                .when(request().withPath("/internal/menuItems/" + menuItemId)
                         .withMethod(HttpMethod.GET))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -426,7 +433,6 @@ class MenuItemRestControllerTest extends AbstractTest {
         EximMenuStructure menu = new EximMenuStructure();
         EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
         menuItem.setName("test");
-        menuItem.setWorkspaceName("test");
         menuItem.setKey("testKey");
         menu.setMenuItems(List.of(menuItem));
         snapshot.setMenu(menu);
@@ -461,7 +467,6 @@ class MenuItemRestControllerTest extends AbstractTest {
         EximMenuStructure menu = new EximMenuStructure();
         EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
         menuItem.setName("test");
-        menuItem.setWorkspaceName("test");
         menuItem.setKey("testKey");
         menu.setMenuItems(List.of(menuItem));
         snapshot.setMenu(menu);

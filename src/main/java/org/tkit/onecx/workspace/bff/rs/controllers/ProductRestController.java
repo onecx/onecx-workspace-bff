@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -38,8 +37,8 @@ public class ProductRestController implements ProductApiService {
 
     @Override
     public Response createProductInWorkspace(String id, CreateProductRequestDTO createProductRequestDTO) {
-        CreateProductRequest request = productMapper.map(createProductRequestDTO);
-        try (Response response = productClient.createProductInWorkspace(id, request)) {
+        CreateProductRequest request = productMapper.map(createProductRequestDTO, id);
+        try (Response response = productClient.createProduct(request)) {
             CreateUpdateProductResponseDTO createdProduct = productMapper
                     .mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
             return Response.status(response.getStatus()).entity(createdProduct).build();
@@ -48,25 +47,24 @@ public class ProductRestController implements ProductApiService {
 
     @Override
     public Response deleteProductById(String id, String productId) {
-        try (Response response = productClient.deleteProductById(id, productId)) {
+        try (Response response = productClient.deleteProductById(productId)) {
             return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response getProductsForWorkspaceId(String id) {
-        try (Response response = productClient.getProductsForWorkspaceId(id)) {
+        var criteria = new ProductSearchCriteria().workspaceId(id);
+        try (Response response = productClient.searchProducts(criteria)) {
             List<ProductDTO> productList = productMapper
-                    .mapProductListToDTOs(response.readEntity(new GenericType<List<Product>>() {
-                    }));
+                    .mapProductListToDTOs(response.readEntity(ProductPageResult.class));
             return Response.status(response.getStatus()).entity(productList).build();
         }
     }
 
     @Override
     public Response updateProductById(String id, String productId, UpdateProductRequestDTO updateProductRequestDTO) {
-
-        try (Response response = productClient.updateProductById(id, productId, productMapper.map(updateProductRequestDTO))) {
+        try (Response response = productClient.updateProductById(productId, productMapper.map(updateProductRequestDTO))) {
             CreateUpdateProductResponseDTO updateProductResponseDTO = productMapper
                     .mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
             return Response.status(response.getStatus()).entity(updateProductResponseDTO).build();
