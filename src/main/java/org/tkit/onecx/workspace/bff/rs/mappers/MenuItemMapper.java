@@ -38,8 +38,6 @@ public interface MenuItemMapper {
 
     List<MenuItemDTO> map(List<MenuItem> menuItems);
 
-    //    List<MenuItemDTO> mapWorkspaceMenuItems(List<WorkspaceMenuItem> workspaceMenuItems);
-
     @Mapping(source = ".", target = "resource")
     GetMenuItemResponseDTO mapToResponse(MenuItemDTO menuItemDTO);
 

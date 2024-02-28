@@ -24,7 +24,7 @@ public interface ProductMapper {
 
     default List<ProductDTO> mapProductListToDTOs(ProductPageResult pageResult) {
         if (pageResult == null) {
-            return null;
+            return List.of();
         }
         return products(pageResult.getStream());
     }

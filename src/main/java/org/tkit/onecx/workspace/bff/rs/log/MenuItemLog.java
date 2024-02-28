@@ -22,11 +22,11 @@ public class MenuItemLog implements LogParam {
                                 + "]"),
 
                 this.item(10, UpdateMenuItemRequestDTO.class,
-                        x -> UpdateMenuItemRequestDTO.class.getSimpleName() + "[key: "
+                        x -> UpdateMenuItemRequestDTO.class.getSimpleName() + "[id: "
                                 + (((UpdateMenuItemRequestDTO) x).getResource().getId())
                                 + "]"),
                 this.item(10, MenuSnapshotDTO.class,
-                        x -> MenuSnapshotDTO.class.getSimpleName() + "[key: "
+                        x -> MenuSnapshotDTO.class.getSimpleName() + "[id: "
                                 + (((MenuSnapshotDTO) x).getId())
                                 + "]"),
                 this.item(10, CreateWorkspaceMenuItemStructureRequestDTO.class,
