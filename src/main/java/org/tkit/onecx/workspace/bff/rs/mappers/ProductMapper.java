@@ -13,7 +13,6 @@ import gen.org.tkit.onecx.workspace.bff.rs.internal.model.CreateProductRequestDT
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.CreateUpdateProductResponseDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.UpdateProductRequestDTO;
-
 import gen.org.tkit.onecx.workspace.client.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
