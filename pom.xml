@@ -132,6 +132,7 @@
                             <inputSpec>src/main/openapi/openapi-bff.yaml</inputSpec>
                             <apiPackage>gen.org.tkit.onecx.workspace.bff.rs.internal</apiPackage>
                             <modelPackage>gen.org.tkit.onecx.workspace.bff.rs.internal.model</modelPackage>
+                            <typeMappings>File=byte[]</typeMappings>
                         </configuration>
                     </execution>
                 </executions>
@@ -207,6 +208,21 @@
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-theme-svc-external-v1.yaml</outputFileName>
+                            <skipCache>true</skipCache>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>onecx-image-internal</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>
+                                https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-image-internal-openapi.yaml
+                            </url>
+                            <outputDirectory>target/tmp/openapi</outputDirectory>
+                            <outputFileName>onecx-image-internal.yaml</outputFileName>
                             <skipCache>true</skipCache>
                         </configuration>
                     </execution>
