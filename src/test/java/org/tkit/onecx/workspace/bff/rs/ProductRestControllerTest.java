@@ -2,6 +2,7 @@ package org.tkit.onecx.workspace.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -55,7 +56,7 @@ class ProductRestControllerTest extends AbstractTest {
         response.setProductName("test-product");
         response.setBaseUrl("/");
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.POST)
+                .when(request().withPath("/internal/products").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(request)))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -102,7 +103,7 @@ class ProductRestControllerTest extends AbstractTest {
         problemDetailResponse.setErrorCode("CONSTRAINT_VIOLATIONS");
 
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.POST)
+                .when(request().withPath("/internal/products").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(request)))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -130,21 +131,18 @@ class ProductRestControllerTest extends AbstractTest {
     void getAllProductsOfWorkspaceTest() {
         String workspaceId = "test";
 
-        List<Product> data = new ArrayList<>();
-        Product p1 = new Product();
-        p1.setProductName("p1");
-        data.add(p1);
-        Product p2 = new Product();
-        p2.setProductName("p2");
-        data.add(p2);
+        var result = new ProductPageResult()
+                .stream(List.of(
+                        new ProductResult().productName("p1"),
+                        new ProductResult().productName("p2")));
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/products/search").withMethod(HttpMethod.POST))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(data)));
+                        .withBody(JsonBody.json(result)));
 
         ProductDTO[] output = given()
                 .when()
@@ -157,9 +155,12 @@ class ProductRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(ProductDTO[].class);
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals(p1.getProductName(), output[0].getProductName());
-        Assertions.assertEquals(p2.getProductName(), output[1].getProductName());
+
+        assertThat(output).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(output[0]).isNotNull();
+        assertThat(output[0].getProductName()).isEqualTo("p1");
+        assertThat(output[1]).isNotNull();
+        assertThat(output[1].getProductName()).isEqualTo("p2");
     }
 
     @Test
@@ -168,7 +169,7 @@ class ProductRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/products").withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/products").withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
         var output = given()
@@ -190,7 +191,7 @@ class ProductRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/products/" + productId)
+                .when(request().withPath("/internal/products/" + productId)
                         .withMethod(HttpMethod.DELETE))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -232,7 +233,7 @@ class ProductRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/" + workspaceId + "/products/" + productId)
+                .when(request().withPath("/internal/products/" + productId)
                         .withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(updateProduct)))
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())

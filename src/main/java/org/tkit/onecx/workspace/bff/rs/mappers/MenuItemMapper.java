@@ -1,6 +1,8 @@
 package org.tkit.onecx.workspace.bff.rs.mappers;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,6 +11,8 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.exim.client.model.EximMenuStructure;
+import gen.org.tkit.onecx.workspace.exim.client.model.EximWorkspaceMenuItem;
 import gen.org.tkit.onecx.workspace.exim.client.model.ImportMenuResponse;
 import gen.org.tkit.onecx.workspace.exim.client.model.MenuSnapshot;
 
@@ -21,22 +25,11 @@ public interface MenuItemMapper {
     @Mapping(target = "removeI18nItem", ignore = true)
     MenuItemDTO map(WorkspaceMenuItem menuItem);
 
-    CreateMenuItem map(CreateUpdateMenuItemDTO menuItem);
+    CreateMenuItem map(CreateUpdateMenuItemDTO menuItem, String workspaceId);
 
     MenuItem map(MenuItemDTO menuItemDTO);
 
-    default UpdateMenuItemsRequest createUpdateRequest(List<PatchMenuItemsRequestDTO> patchMenuItemsRequestDTO) {
-        if (patchMenuItemsRequestDTO == null) {
-            return null;
-        }
-        UpdateMenuItemsRequest request = new UpdateMenuItemsRequest();
-        patchMenuItemsRequestDTO.forEach(item -> {
-            var m = item.getResource();
-            UpdateMenuItemRequest tmp = createUpdateItemRequest(m);
-            request.putItemsItem(m.getId(), tmp);
-        });
-        return request;
-    }
+    UpdateMenuItemRequest createUpdateRequest(UpdateMenuItemRequestDTO updateMenuItemRequestDTO);
 
     UpdateMenuItemRequest createUpdateItemRequest(MenuItemDTO menuItemDTO);
 
@@ -45,20 +38,35 @@ public interface MenuItemMapper {
 
     List<MenuItemDTO> map(List<MenuItem> menuItems);
 
-    List<MenuItemDTO> mapWorkspaceMenuItems(List<WorkspaceMenuItem> workspaceMenuItems);
-
-    List<PatchMenuItemsResponseDTO> mapToResponseDTOList(List<MenuItem> menuItemList);
-
-    default PatchMenuItemsResponseDTO mapToPatchDTO(MenuItemDTO menuitemDTO) {
-        PatchMenuItemsResponseDTO newResponseDTO = new PatchMenuItemsResponseDTO();
-        newResponseDTO.setResource(menuitemDTO);
-        return newResponseDTO;
-    }
-
     @Mapping(source = ".", target = "resource")
     GetMenuItemResponseDTO mapToResponse(MenuItemDTO menuItemDTO);
 
     List<WorkspaceMenuItem> mapToWorkspaceMenuItems(List<MenuItemDTO> menuItems);
+
+    default MenuSnapshot createSnapshot(CreateWorkspaceMenuItemStructureRequestDTO dto) {
+        if (dto == null || dto.getMenuItems() == null || dto.getMenuItems().isEmpty()) {
+            return null;
+        }
+
+        var data = new EximMenuStructure().menuItems(mapSnapshot(dto.getMenuItems()));
+        return new MenuSnapshot().id(UUID.randomUUID().toString())
+                .created(OffsetDateTime.now())
+                .menu(data);
+    }
+
+    List<EximWorkspaceMenuItem> mapSnapshot(List<MenuItemDTO> items);
+
+    default GetMenuItemsResponseDTO mapToGetResponseList(MenuItemPageResult dto) {
+        GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
+        if (dto != null && dto.getStream() != null) {
+            responseDTO.setMenuItems(mapMenuItem(dto.getStream()));
+        }
+        return responseDTO;
+    }
+
+    List<MenuItemDTO> mapMenuItem(List<MenuItemResult> items);
+
+    MenuItemDTO mapMenuItem(MenuItemResult item);
 
     default GetMenuItemsResponseDTO mapToGetResponseList(List<MenuItemDTO> menuItemDTOList) {
         GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
@@ -66,17 +74,13 @@ public interface MenuItemMapper {
         return responseDTO;
     }
 
-    default GetWorkspaceMenuItemStructureResponseDTO mapToStructureResponse(List<MenuItemDTO> menuItemDTOList) {
+    default GetWorkspaceMenuItemStructureResponseDTO mapToStructureResponse(MenuItemStructure menuItemStructure) {
         GetWorkspaceMenuItemStructureResponseDTO responseDTO = new GetWorkspaceMenuItemStructureResponseDTO();
-        responseDTO.setMenuItems(menuItemDTOList);
+        responseDTO.setMenuItems(mapToWorkspaceStructure(menuItemStructure.getMenuItems()));
         return responseDTO;
     }
 
-    default WorkspaceMenuItemStructure mapToWorkspaceStructure(List<WorkspaceMenuItem> workspaceMenuItems) {
-        WorkspaceMenuItemStructure menuItemStructure = new WorkspaceMenuItemStructure();
-        menuItemStructure.setMenuItems(workspaceMenuItems);
-        return menuItemStructure;
-    }
+    List<MenuItemDTO> mapToWorkspaceStructure(List<WorkspaceMenuItem> workspaceMenuItems);
 
     @Mapping(source = ".", target = "resource")
     CreateMenuItemResponseDTO mapToCreateResponse(MenuItemDTO menuItem);
