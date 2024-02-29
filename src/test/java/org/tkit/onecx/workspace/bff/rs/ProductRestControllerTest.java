@@ -20,6 +20,9 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.workspace.bff.rs.controllers.ProductRestController;
 
+import gen.org.tkit.onecx.product.store.client.model.ProductItem;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
@@ -69,7 +72,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
-                .post()
+                .post("/{id}/products")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -83,7 +86,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
-                .post()
+                .post("/{id}/products")
                 .then()
                 .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
@@ -114,7 +117,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .body(input)
-                .post()
+                .post("/{id}/products")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -147,7 +150,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get()
+                .get("/{id}/products")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -175,7 +178,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
-                .get()
+                .get("/products/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(output);
@@ -200,7 +203,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
-                .delete("/{productId}")
+                .delete("/{id}/products/{productId}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -239,7 +242,7 @@ class ProductRestControllerTest extends AbstractTest {
 
         List<CreateUpdateMicrofrontendDTO> updateMfes = new ArrayList<>();
         CreateUpdateMicrofrontendDTO updateMF = new CreateUpdateMicrofrontendDTO();
-        updateMF.setMfeId("mfeId");
+        updateMF.setAppId("mfeId");
         updateMF.setBasePath("/");
         updateMfes.add(updateMF);
         UpdateProductRequestDTO updateRequest = new UpdateProductRequestDTO();
@@ -255,7 +258,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
                 .body(updateRequest)
-                .put("/{productId}")
+                .put("/{id}/products/{productId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -264,7 +267,7 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output);
         Assertions.assertEquals(updateProduct.getBaseUrl(), output.getResource().getBaseUrl());
         Assertions.assertEquals(updateProduct.getMicrofrontends().get(0).getMfeId(),
-                output.getResource().getMicrofrontends().get(0).getMfeId());
+                output.getResource().getMicrofrontends().get(0).getAppId());
 
     }
 
@@ -302,7 +305,7 @@ class ProductRestControllerTest extends AbstractTest {
 
         List<CreateUpdateMicrofrontendDTO> updateMfes = new ArrayList<>();
         CreateUpdateMicrofrontendDTO updateMF = new CreateUpdateMicrofrontendDTO();
-        updateMF.setMfeId("mfeId");
+        updateMF.setAppId("mfeId");
         updateMfes.add(updateMF);
         UpdateProductRequestDTO updateRequest = new UpdateProductRequestDTO();
         updateRequest.setMicrofrontends(updateMfes);
@@ -316,7 +319,7 @@ class ProductRestControllerTest extends AbstractTest {
                 .pathParam("id", workspaceId)
                 .pathParam("productId", productId)
                 .body(updateRequest)
-                .put("/{productId}")
+                .put("/{id}/products/{productId}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -324,6 +327,85 @@ class ProductRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(problemDetailResponse.getErrorCode(), output.getErrorCode());
+    }
 
+    @Test
+    void getAvailableProductsOfProductStoreTest() {
+
+        ProductItemSearchCriteria svcCriteria = new ProductItemSearchCriteria();
+        svcCriteria.pageNumber(0).pageSize(100);
+
+        ProductItemPageResult svcResult = new ProductItemPageResult();
+        ProductItem productItem = new ProductItem();
+        productItem.basePath("test").name("test").classifications("search");
+        svcResult.number(0).totalElements(1L).totalPages(1L).stream(List.of(productItem));
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/v1/products/search")
+                        .withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(svcCriteria)))
+                .withId("mock")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(svcResult)));
+
+        ProductStoreSearchCriteriaDTO storeSearchCriteriaDTO = new ProductStoreSearchCriteriaDTO();
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(storeSearchCriteriaDTO)
+                .post("/products")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProductStorePageResultDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(output.getStream().get(0).getName(), productItem.getName());
+        Assertions.assertEquals(output.getStream().get(0).getBasePath(), productItem.getBasePath());
+        Assertions.assertEquals(output.getStream().get(0).getClassifications(), productItem.getClassifications());
+        mockServerClient.clear("mock");
+
+    }
+
+    @Test
+    void webApplicationExceptionTest() {
+
+        ProductItemSearchCriteria svcCriteria = new ProductItemSearchCriteria();
+        svcCriteria.pageNumber(0).pageSize(10);
+
+        ProductItemPageResult svcResult = new ProductItemPageResult();
+        ProductItem productItem = new ProductItem();
+        productItem.basePath("test").name("test").classifications("search");
+        svcResult.number(0).totalElements(1L).totalPages(1L).stream(List.of(productItem));
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/v1/products/search")
+                        .withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(svcCriteria)))
+                .withId("mock")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(svcResult)));
+
+        ProductStoreSearchCriteriaDTO storeSearchCriteriaDTO = new ProductStoreSearchCriteriaDTO();
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(storeSearchCriteriaDTO)
+                .post("/products")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+
+        Assertions.assertNotNull(output);
+        mockServerClient.clear("mock");
     }
 }
