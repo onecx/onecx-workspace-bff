@@ -219,7 +219,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/workspaces/name/" + data.getName()).withMethod(HttpMethod.GET))
+                .when(request().withPath("/internal/workspaces/search/" + data.getName()).withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
@@ -482,7 +482,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximMenuStructure menu = new EximMenuStructure();
         EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
         menuItem.setName("test");
-        menuItem.setWorkspaceName("testWorkspace");
         menuItem.setKey("testKey");
         menu.setMenuItems(List.of(menuItem));
         menuSnapshot.setMenu(menu);
@@ -542,11 +541,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         MenuSnapshot menuSnapshot = new MenuSnapshot();
         EximMenuStructure eximMenuStructure = new EximMenuStructure();
-        EximWorkspaceMenuItem menuitem = new EximWorkspaceMenuItem();
-        menuitem.setKey("test");
-        menuitem.setWorkspaceName("test");
 
-        eximMenuStructure.setMenuItems(List.of(menuitem));
+        eximMenuStructure.setMenuItems(List.of(new EximWorkspaceMenuItem().key("test")));
         menuSnapshot.setMenu(eximMenuStructure);
 
         ImportMenuResponse menuResponse = new ImportMenuResponse();
