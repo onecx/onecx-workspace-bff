@@ -20,6 +20,7 @@ public interface ProductMapper {
 
     CreateProductRequest map(CreateProductRequestDTO dto, String workspaceId);
 
+    @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     ProductDTO map(Product product);
 
@@ -34,6 +35,7 @@ public interface ProductMapper {
 
     List<ProductDTO> products(List<ProductResult> dtos);
 
+    @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "microfrontends", ignore = true)
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     ProductDTO map(ProductResult dto);

@@ -1062,6 +1062,8 @@ components:
           type: string
         productName:
           type: string
+        displayName:
+          type: string
         baseUrl:
           type: string
         microfrontends:
