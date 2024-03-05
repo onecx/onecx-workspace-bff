@@ -16,7 +16,9 @@ import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
+import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.ProductApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.ProductInternalApi;
@@ -62,8 +64,18 @@ public class ProductRestController implements ProductApiService {
     public Response getProductsForWorkspaceId(String id) {
         var criteria = new ProductSearchCriteria().workspaceId(id);
         try (Response response = productClient.searchProducts(criteria)) {
+            ProductItemSearchCriteria searchCriteria = new ProductItemSearchCriteria();
+            searchCriteria.setPageSize(100);
+            searchCriteria.setProductNames(response.readEntity(ProductPageResult.class).getStream().stream()
+                    .map(ProductResult::getProductName).toList());
+            List<ProductItem> pageResult;
+
+            try (Response productStoreResponse = productStoreClient.searchProductsByCriteria(searchCriteria)) {
+                pageResult = productStoreResponse.readEntity(ProductItemPageResult.class).getStream();
+            }
+
             List<ProductDTO> productList = productMapper
-                    .mapProductListToDTOs(response.readEntity(ProductPageResult.class));
+                    .mapProductListToDTOs(response.readEntity(ProductPageResult.class), pageResult);
             return Response.status(response.getStatus()).entity(productList).build();
         }
     }

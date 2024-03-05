@@ -1,11 +1,13 @@
 package org.tkit.onecx.workspace.bff.rs.mappers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
+import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
@@ -26,14 +28,21 @@ public interface ProductMapper {
 
     UpdateProductRequest map(UpdateProductRequestDTO dto);
 
-    default List<ProductDTO> mapProductListToDTOs(ProductPageResult pageResult) {
+    default List<ProductDTO> mapProductListToDTOs(ProductPageResult pageResult, List<ProductItem> productStoreProducts) {
         if (pageResult == null) {
             return List.of();
         }
-        return products(pageResult.getStream());
+        List<ProductDTO> resultList = new ArrayList<>();
+        pageResult.getStream().forEach(workspaceProduct -> {
+            var productDTO = map(workspaceProduct);
+            var optional = productStoreProducts.stream()
+                    .filter(productStoreProduct -> productDTO.getProductName().equals(productStoreProduct.getName()))
+                    .findFirst();
+            optional.ifPresent(productItem -> productDTO.setDisplayName(productItem.getDisplayName()));
+            resultList.add(productDTO);
+        });
+        return resultList;
     }
-
-    List<ProductDTO> products(List<ProductResult> dtos);
 
     @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "microfrontends", ignore = true)
@@ -55,7 +64,7 @@ public interface ProductMapper {
     @Mapping(source = "appId", target = "mfeId")
     CreateMicrofrontend mapCreate(CreateUpdateMicrofrontendDTO updateMicrofrontendDTO);
 
-    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "productNames", ignore = true)
     ProductItemSearchCriteria map(ProductStoreSearchCriteriaDTO productStoreSearchCriteriaDTO);
 
     @Mapping(target = "removeStreamItem", ignore = true)
