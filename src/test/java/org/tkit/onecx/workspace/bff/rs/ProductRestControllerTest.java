@@ -144,6 +144,25 @@ class ProductRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(result)));
 
+        ProductItemSearchCriteria productStoreSearchCriteria = new ProductItemSearchCriteria();
+        productStoreSearchCriteria.productNames(List.of("p1", "p2")).pageSize(100);
+        ProductItemPageResult productStoreResponse = new ProductItemPageResult();
+        ProductItem item1 = new ProductItem();
+        item1.name("p1").displayName("product1").basePath("/abc");
+        ProductItem item2 = new ProductItem();
+        item2.name("p2").displayName("product2").basePath("/abcd");
+        productStoreResponse.setStream(List.of(item1, item2));
+        productStoreResponse.totalElements(2L).number(0).size(2);
+
+        mockServerClient
+                .when(request().withPath("/v1/products/search").withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(productStoreSearchCriteria))
+                        .withContentType(MediaType.APPLICATION_JSON))
+                .withId("mock2")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(productStoreResponse)));
+
         ProductDTO[] output = given()
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
@@ -159,8 +178,13 @@ class ProductRestControllerTest extends AbstractTest {
         assertThat(output).isNotNull().isNotEmpty().hasSize(2);
         assertThat(output[0]).isNotNull();
         assertThat(output[0].getProductName()).isEqualTo("p1");
+        assertThat(output[0].getDisplayName()).isEqualTo("product1");
+
         assertThat(output[1]).isNotNull();
         assertThat(output[1].getProductName()).isEqualTo("p2");
+        assertThat(output[1].getDisplayName()).isEqualTo("product2");
+
+        mockServerClient.clear("mock2");
     }
 
     @Test
