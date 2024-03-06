@@ -595,7 +595,6 @@ paths:
                 $ref: '#/components/schemas/MenuSnapshot'
         "404":
           description: No themes founds
-
   /workspaces/menu/{workspaceName}/import:
     post:
       x-onecx:
@@ -746,6 +745,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
         "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /roles/iam/search:
+    post:
+      x-onecx:
+        permissions:
+          roles:
+            - read
+      tags:
+        - role
+      description: Search for available roles in iam
+      operationId: searchAvailableRoles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IAMRoleSearchCriteria'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IAMRolePageResult'
+        400:
           description: Bad request
           content:
             application/json:
@@ -1375,6 +1403,48 @@ components:
         basePath:
           type: string
         classifications:
+          type: string
+    IAMRoleSearchCriteria:
+      type: object
+      properties:
+        name:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    IAMRolePageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/IAMRole'
+    IAMRole:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
           type: string
     ProblemDetailResponse:
       type: object
