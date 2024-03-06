@@ -14,6 +14,7 @@
           "appId": "onecx-workspace-bff",
           "permissions": {
             "workspaces": ["read", "write", "delete"],
+            "roles": ["read"],
             "permissions": ["admin-write","admin-read"]
           }
         },
