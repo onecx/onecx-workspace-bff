@@ -2,16 +2,21 @@ package org.tkit.onecx.workspace.bff.rs.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
-import gen.org.tkit.onecx.iam.client.model.RolePageResult;
-import gen.org.tkit.onecx.iam.client.model.RoleSearchCriteria;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.IAMRolePageResultDTO;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.IAMRoleSearchCriteriaDTO;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
+import gen.org.tkit.onecx.workspace.client.model.*;
 
-@Mapper
+@Mapper(uses = { OffsetDateTimeMapper.class })
 public interface RoleMapper {
-    RoleSearchCriteria map(IAMRoleSearchCriteriaDTO searchCriteriaDTO);
+    CreateRoleRequest map(CreateWorkspaceRoleRequestDTO createWorkspaceRoleRequestDTO);
+
+    WorkspaceRoleDTO map(Role role);
+
+    RoleSearchCriteria map(WorkspaceRoleSearchCriteriaDTO workspaceRoleSearchCriteriaDTO);
 
     @Mapping(target = "removeStreamItem", ignore = true)
-    IAMRolePageResultDTO map(RolePageResult rolePageResult);
+    WorkspaceRolePageResultDTO map(RolePageResult rolePageResult);
+
+    UpdateRoleRequest map(UpdateWorkspaceRoleRequestDTO updateWorkspaceRoleRequestDTO);
 }

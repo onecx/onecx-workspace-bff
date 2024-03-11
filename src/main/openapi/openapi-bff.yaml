@@ -626,6 +626,137 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /workspaces/roles/search:
+    post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
+      tags:
+        - workspaceRoles
+      description: search workspaceRoles
+      operationId: searchWorkspaceRoles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceRoleSearchCriteria'
+      responses:
+        "200":
+          description: Corresponding roles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRolePageResult'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /workspaces/roles:
+    post:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
+      tags:
+        - workspaceRoles
+      description: create role for workspace
+      operationId: createWorkspaceRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceRoleRequest'
+      responses:
+        "201":
+          description: New role created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRole'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /workspaces/roles/{id}:
+    delete:
+      x-onecx:
+        permissions:
+          workspaces:
+            - delete
+      tags:
+        - workspaceRoles
+      description: delete workspace role
+      operationId: deleteWorkspaceRole
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+    get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
+      tags:
+        - workspaceRoles
+      description: Retrieve workspace role
+      operationId: getWorkspaceRole
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRole'
+        404:
+          description: Role not found
+    put:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
+      tags:
+        - workspaceRoles
+      description: Update workspace role
+      operationId: updateWorkspaceRole
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkspaceRoleRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRole'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        404:
+          description: Workspace role not found
   /images/{refId}/{refType}:
     post:
       x-onecx:
@@ -830,11 +961,7 @@ components:
           type: string
         logoUrl:
           type: string
-        workspaceRoles:
-          type: array
-          uniqueItems: true
-          items:
-            type: string
+
         address:
           $ref: '#/components/schemas/WorkspaceAddress'
         subjectLinks:
@@ -1226,11 +1353,6 @@ components:
           type: string
         address:
           $ref: '#/components/schemas/EximWorkspaceAddress'
-        workspaceRoles:
-          type: array
-          uniqueItems: true
-          items:
-            type: string
         subjectLinks:
           uniqueItems: true
           maxItems: 3
@@ -1442,6 +1564,88 @@ components:
     IAMRole:
       type: object
       properties:
+        name:
+          type: string
+        description:
+          type: string
+    WorkspaceRoleSearchCriteria:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        workspaceId:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    CreateWorkspaceRoleRequest:
+      type: object
+      required:
+        - workspaceId
+      properties:
+        workspaceId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    UpdateWorkspaceRoleRequest:
+      type: object
+      required:
+        - modificationCount
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        modificationCount:
+          format: int32
+          type: integer
+    WorkspaceRolePageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceRole'
+    WorkspaceRole:
+      type: object
+      properties:
+        id:
+          type: string
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
         name:
           type: string
         description:
