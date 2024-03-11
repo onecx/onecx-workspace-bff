@@ -19,7 +19,7 @@ import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
 import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.ProductApiService;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.WorkspaceProductApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.ProductInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
@@ -27,7 +27,7 @@ import gen.org.tkit.onecx.workspace.client.model.*;
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
 @LogService
-public class ProductRestController implements ProductApiService {
+public class ProductRestController implements WorkspaceProductApiService {
 
     @Inject
     ExceptionMapper exceptionMapper;
@@ -77,15 +77,6 @@ public class ProductRestController implements ProductApiService {
             List<ProductDTO> productList = productMapper
                     .mapProductListToDTOs(response.readEntity(ProductPageResult.class), pageResult);
             return Response.status(response.getStatus()).entity(productList).build();
-        }
-    }
-
-    @Override
-    public Response searchAvailableProducts(ProductStoreSearchCriteriaDTO productStoreSearchCriteriaDTO) {
-        try (Response response = productStoreClient
-                .searchProductsByCriteria(productMapper.map(productStoreSearchCriteriaDTO))) {
-            ProductStorePageResultDTO availableProducts = productMapper.map(response.readEntity(ProductItemPageResult.class));
-            return Response.status(response.getStatus()).entity(availableProducts).build();
         }
     }
 

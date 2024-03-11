@@ -13,11 +13,21 @@ public class RoleLog implements LogParam {
     @Override
     public List<Item> getClasses() {
         return List.of(
-                this.item(10, IAMRoleSearchCriteriaDTO.class,
+                this.item(10, WorkspaceRoleSearchCriteriaDTO.class,
                         x -> {
-                            IAMRoleSearchCriteriaDTO d = (IAMRoleSearchCriteriaDTO) x;
-                            return IAMRoleSearchCriteriaDTO.class.getSimpleName() + "[" + d.getPageNumber() + ","
+                            WorkspaceRoleSearchCriteriaDTO d = (WorkspaceRoleSearchCriteriaDTO) x;
+                            return WorkspaceRoleSearchCriteriaDTO.class.getSimpleName() + "[" + d.getPageNumber() + ","
                                     + d.getPageSize() + "]";
+                        }),
+                this.item(10, UpdateWorkspaceRoleRequestDTO.class,
+                        x -> {
+                            UpdateWorkspaceRoleRequestDTO d = (UpdateWorkspaceRoleRequestDTO) x;
+                            return UpdateWorkspaceRoleRequestDTO.class.getSimpleName() + "[" + d.getName() + "]";
+                        }),
+                this.item(10, CreateWorkspaceRoleRequestDTO.class,
+                        x -> {
+                            CreateWorkspaceRoleRequestDTO d = (CreateWorkspaceRoleRequestDTO) x;
+                            return CreateWorkspaceRoleRequestDTO.class.getSimpleName() + "[" + d.getName() + "]";
                         }));
     }
 }
