@@ -386,7 +386,7 @@ paths:
           workspaces:
             - write
       tags:
-        - product
+        - workspaceProduct
       description: Create/Register new product to workspace
       operationId: createProductInWorkspace
       parameters:
@@ -422,7 +422,7 @@ paths:
           workspaces:
             - read
       tags:
-        - product
+        - workspaceProduct
       description: Find all products belonging to a workspace
       operationId: getProductsForWorkspaceId
       parameters:
@@ -443,7 +443,7 @@ paths:
           workspaces:
             - delete
       tags:
-        - product
+        - workspaceProduct
       description: Delete a product by the workspace id and the productId
       operationId: deleteProductById
       parameters:
@@ -464,7 +464,7 @@ paths:
           workspaces:
             - write
       tags:
-        - product
+        - workspaceProduct
       description: Update product and MFEs
       operationId: updateProductById
       parameters:
@@ -491,14 +491,14 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Product not found
-  /workspaces/products:
+  /products:
     x-onecx:
       permissions:
         workspaces:
           - read
     post:
       tags:
-        - product
+        - products
       description: search all available products of product-store
       operationId: searchAvailableProducts
       requestBody:
