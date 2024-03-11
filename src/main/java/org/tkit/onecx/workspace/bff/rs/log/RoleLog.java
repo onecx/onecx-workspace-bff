@@ -19,7 +19,7 @@ public class RoleLog implements LogParam {
                             return WorkspaceRoleSearchCriteriaDTO.class.getSimpleName() + "[" + d.getPageNumber() + ","
                                     + d.getPageSize() + "]";
                         }),
-                this.item(10, UpdateWorkspaceRequestDTO.class,
+                this.item(10, UpdateWorkspaceRoleRequestDTO.class,
                         x -> {
                             UpdateWorkspaceRoleRequestDTO d = (UpdateWorkspaceRoleRequestDTO) x;
                             return UpdateWorkspaceRoleRequestDTO.class.getSimpleName() + "[" + d.getName() + "]";
