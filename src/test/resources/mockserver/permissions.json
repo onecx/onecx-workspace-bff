@@ -15,6 +15,7 @@
           "permissions": {
             "workspaces": ["read", "write", "delete"],
             "roles": ["read"],
+            "assignments": ["read", "write", "delete"],
             "permissions": ["admin-write","admin-read"]
           }
         },
@@ -37,6 +38,7 @@
           "appId": "onecx-workspace-bff",
           "permissions": {
             "workspaces": ["read"],
+            "assignments": ["read"],
             "permissions": ["admin-write","admin-read"]
           }
         },
