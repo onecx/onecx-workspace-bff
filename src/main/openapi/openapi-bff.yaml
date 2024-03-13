@@ -196,7 +196,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
 
-  /workspaces/menu/{workspaceName}/menuItems:
+  /menu/{workspaceName}/menuItems:
     get:
       x-onecx:
         permissions:
@@ -287,7 +287,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/menu/{workspaceName}/menuItems/tree:
+  /menu/{workspaceName}/menuItems/tree:
     get:
       x-onecx:
         permissions:
@@ -308,7 +308,7 @@ paths:
                 $ref: '#/components/schemas/GetWorkspaceMenuItemStructureResponse'
         "404":
           description: Not found
-  /workspaces/menu/{workspaceName}/menuItems/tree/upload:
+  /menu/{workspaceName}/menuItems/tree/upload:
     post:
       x-onecx:
         permissions:
@@ -335,7 +335,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/menu/{workspaceName}/menuItems/{menuItemId}:
+  /menu/{workspaceName}/menuItems/{menuItemId}:
     get:
       x-onecx:
         permissions:
@@ -574,7 +574,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /workspaces/menu/{workspaceName}/export:
+  /menu/{workspaceName}/export:
     get:
       x-onecx:
         permissions:
@@ -582,7 +582,7 @@ paths:
             - read
       tags:
         - menuItem
-      description: Export workspaces
+      description: Export menu
       operationId: exportMenuByWorkspaceName
       parameters:
         - $ref: '#/components/parameters/workspaceName'
@@ -595,7 +595,7 @@ paths:
                 $ref: '#/components/schemas/MenuSnapshot'
         "404":
           description: No themes founds
-  /workspaces/menu/{workspaceName}/import:
+  /menu/{workspaceName}/import:
     post:
       x-onecx:
         permissions:
@@ -603,7 +603,7 @@ paths:
             - write
       tags:
         - menuItem
-      description: Import workspaces
+      description: Import menu
       operationId: importMenuByWorkspaceName
       parameters:
         - $ref: '#/components/parameters/workspaceName'
@@ -910,6 +910,85 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /assignments/search:
+    post:
+      x-onecx:
+        permissions:
+          assignments:
+            - read
+      tags:
+        - assignment
+      description: Search for assignments by search criteria
+      operationId: searchAssignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentSearchCriteria'
+      responses:
+        "200":
+          description: Corresponding assignments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentPageResult'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /assignments:
+    post:
+      x-onecx:
+        permissions:
+          assignments:
+            - write
+      tags:
+        - assignment
+      description: Create new Assignment
+      operationId: createAssignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssignmentRequest'
+      responses:
+        "201":
+          description: New workspace created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: url
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /assignments/{id}:
+    delete:
+      x-onecx:
+        permissions:
+          assignments:
+            - delete
+      tags:
+        - assignment
+      description: Delete assignment
+      operationId: deleteAssignment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: Assignment deleted
 components:
   schemas:
     RefType:
@@ -1649,6 +1728,62 @@ components:
         name:
           type: string
         description:
+          type: string
+    AssignmentSearchCriteria:
+      type: object
+      properties:
+        workspaceId:
+          type: string
+        menuItemId:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    AssignmentPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assignment'
+    CreateAssignmentRequest:
+      type: object
+      required:
+        - roleId
+        - menuItemId
+      properties:
+        roleId:
+          type: string
+        menuItemId:
+          type: string
+    Assignment:
+      type: object
+      properties:
+        roleId:
+          type: string
+        menuItemId:
+          type: string
+        workspaceId:
           type: string
     ProblemDetailResponse:
       type: object
