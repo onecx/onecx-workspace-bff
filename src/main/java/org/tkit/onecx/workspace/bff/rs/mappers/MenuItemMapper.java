@@ -91,4 +91,5 @@ public interface MenuItemMapper {
 
     ImportMenuResponseDTO map(ImportMenuResponse response);
 
+    UpdateMenuItemParentRequest map(UpdateMenuItemParentRequestDTO updateMenuItemParentRequestDTO);
 }

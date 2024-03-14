@@ -80,7 +80,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", id)
                 .body(requestDTO)
-                .post("/menuItems")
+                .post("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -94,7 +94,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", id)
                 .body(requestDTO)
-                .post("/menuItems")
+                .post("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
@@ -124,7 +124,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", id)
                 .body(requestDTO)
-                .post("/menuItems")
+                .post("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -162,7 +162,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
-                .get("/menuItems")
+                .get("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -189,7 +189,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
-                .get("/menuItems")
+                .get("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -231,7 +231,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(input1)
                 .pathParam("workspaceName", workspaceName)
-                .patch("/menuItems")
+                .patch("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -253,7 +253,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
-                .patch("/menuItems")
+                .patch("/{workspaceName}/menuItems")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
 
@@ -277,7 +277,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
                 .pathParam("menuItemId", menuItemId)
-                .delete("/menuItems/{menuItemId}")
+                .delete("/{workspaceName}/menuItems/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
@@ -318,7 +318,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
-                .get("/menuItems/tree")
+                .get("/{workspaceName}/menuItems/tree")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -350,7 +350,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", id)
                 .body(input)
-                .post("/menuItems/tree/upload")
+                .post("/{workspaceName}/menuItems/tree/upload")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode());
         Assertions.assertNotNull(output);
@@ -387,7 +387,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", id)
                 .body(input)
-                .post("/menuItems/tree/upload")
+                .post("/{workspaceName}/menuItems/tree/upload")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode());
         Assertions.assertNotNull(output);
@@ -416,7 +416,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
                 .pathParam("menuItemId", menuItemId)
-                .get("/menuItems/{menuItemId}")
+                .get("/{workspaceName}/menuItems/{menuItemId}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -448,7 +448,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
-                .get("/export")
+                .get("/{workspaceName}/export")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .extract().as(MenuSnapshotDTO.class);
@@ -497,7 +497,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("workspaceName", workspaceName)
                 .body(snapshotDTO)
-                .post("/import")
+                .post("/{workspaceName}/import")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -505,5 +505,95 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getStatus());
+    }
+
+    @Test
+    void updateMenuItemParentTest() {
+        String menuItemId = "item1";
+        UpdateMenuItemParentRequest request = new UpdateMenuItemParentRequest();
+        request.setParentItemId("newId");
+        request.setModificationCount(0);
+        request.setPosition(0);
+        MenuItem responseItem = new MenuItem();
+        responseItem.setParentItemId("newId");
+        responseItem.setModificationCount(1);
+        responseItem.setId("item1");
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/internal/menuItems/" + menuItemId + "/parentItemId").withMethod(HttpMethod.PUT)
+                        .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
+                .withId(mockId)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(responseItem)));
+
+        UpdateMenuItemParentRequestDTO requestDTO = new UpdateMenuItemParentRequestDTO();
+        requestDTO.setModificationCount(0);
+        requestDTO.setParentItemId("newId");
+
+        //test with missing position(required)
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(requestDTO)
+                .pathParam("menuItemId", menuItemId)
+                .put("/{menuItemId}/parentItemId")
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
+
+        requestDTO.setPosition(0);
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(requestDTO)
+                .pathParam("menuItemId", menuItemId)
+                .put("/{menuItemId}/parentItemId")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(MenuItemDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(requestDTO.getParentItemId(), output.getParentItemId());
+        Assertions.assertEquals(menuItemId, output.getId());
+    }
+
+    @Test
+    void updateMenuItemParentNotFoundTest() {
+        String menuItemId = "item1";
+        UpdateMenuItemParentRequest request = new UpdateMenuItemParentRequest();
+        request.setParentItemId("newId");
+        request.setModificationCount(0);
+        request.setPosition(0);
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/internal/menuItems/" + menuItemId + "/parentItemId").withMethod(HttpMethod.PUT)
+                        .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
+                .withId(mockId)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
+
+        UpdateMenuItemParentRequestDTO requestDTO = new UpdateMenuItemParentRequestDTO();
+        requestDTO.setModificationCount(0);
+        requestDTO.setParentItemId("newId");
+        requestDTO.setPosition(0);
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(requestDTO)
+                .pathParam("menuItemId", menuItemId)
+                .put("/{menuItemId}/parentItemId")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
     }
 }

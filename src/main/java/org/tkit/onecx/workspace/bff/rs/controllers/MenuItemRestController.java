@@ -118,6 +118,15 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
+    public Response updateMenuItemParent(String menuItemId, UpdateMenuItemParentRequestDTO updateMenuItemParentRequestDTO) {
+        try (Response response = menuClient.updateMenuItemParent(menuItemId,
+                menuItemMapper.map(updateMenuItemParentRequestDTO))) {
+            return Response.status(response.getStatus()).entity(menuItemMapper.map(response.readEntity(MenuItem.class)))
+                    .build();
+        }
+    }
+
+    @Override
     public Response uploadMenuStructureForWorkspaceName(String name,
             CreateWorkspaceMenuItemStructureRequestDTO createWorkspaceMenuItemStructureRequestDTO) {
 
