@@ -378,7 +378,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-
+  /menu/{menuItemId}/parentItemId:
+    put:
+      x-onecx:
+        permissions:
+          workspaces:
+            - write
+      tags:
+        - menuItem
+      description: Update an existing menu item parent
+      operationId: updateMenuItemParent
+      parameters:
+        - $ref: '#/components/parameters/menuItemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuItemParentRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "404":
+          description: Menu item not found
   /workspaces/{id}/products:
     post:
       x-onecx:
@@ -1278,6 +1310,21 @@ components:
       properties:
         resource:
           $ref: '#/components/schemas/MenuItem'
+    UpdateMenuItemParentRequest:
+      type: object
+      required:
+        - modificationCount
+        - position
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        position:
+          minimum: 0
+          format: int32
+          type: integer
+        parentItemId:
+          type: string
     Product:
       type: object
       properties:
