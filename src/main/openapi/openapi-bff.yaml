@@ -195,39 +195,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-
-  /menu/{workspaceName}/menuItems:
+  /menu/{menuItemId}:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          menus:
             - read
       tags:
         - menuItem
-      description: Find all menu items belonging to a workspace
-      operationId: getMenuItemsForWorkspaceByName
+      description: Retrieve menu item detail info
+      operationId: getMenuItemById
       parameters:
-        - $ref: '#/components/parameters/workspaceName'
+        - $ref: '#/components/parameters/menuItemId'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetMenuItemsResponse'
+                $ref: '#/components/schemas/MenuItem'
         "404":
           description: Not found
-    patch:
+    put:
       x-onecx:
         permissions:
-          workspaces:
+          menus:
             - write
       tags:
         - menuItem
-      description: Update menu Items
+      description: Update menu Item
       operationId: updateMenuItem
       parameters:
-        - $ref: '#/components/parameters/workspaceName'
+        - $ref: '#/components/parameters/menuItemId'
       requestBody:
         required: true
         content:
@@ -251,23 +250,42 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Menu items not found
+    delete:
+      x-onecx:
+        permissions:
+          menus:
+            - delete
+      tags:
+        - menuItem
+      description: Delete a menuItem by the workspace name and the menuItemId
+      operationId: deleteMenuItemById
+      parameters:
+        - $ref: '#/components/parameters/menuItemId'
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /menu:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          menus:
             - write
       tags:
         - menuItem
       description: Add a new menu item to workspace menu
       operationId: createMenuItemForWorkspace
-      parameters:
-        - $ref: '#/components/parameters/workspaceName'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateMenuItemRequest'
+              $ref: '#/components/schemas/CreateMenuItem'
       responses:
         "201":
           description: OK
@@ -280,109 +298,43 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateMenuItemResponse'
+                $ref: '#/components/schemas/MenuItem'
         "400":
           description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /menu/{workspaceName}/menuItems/tree:
-    get:
+  /menu/menuItems/tree:
+    post:
       x-onecx:
         permissions:
-          workspaces:
+          menus:
             - read
       tags:
         - menuItem
       description: Fetch the menuItems of the workspace in the tree structure
-      operationId: getMenuStructureForWorkspaceName
-      parameters:
-        - $ref: '#/components/parameters/workspaceName'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetWorkspaceMenuItemStructureResponse'
-        "404":
-          description: Not found
-  /menu/{workspaceName}/menuItems/tree/upload:
-    post:
-      x-onecx:
-        permissions:
-          workspaces:
-            - write
-      tags:
-        - menuItem
-      description: Upload the menu structure for workspace
-      operationId: uploadMenuStructureForWorkspaceName
-      parameters:
-        - $ref: '#/components/parameters/workspaceName'
+      operationId: getMenuStructure
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateWorkspaceMenuItemStructureRequest'
-      responses:
-        "201":
-          description: New Menu structure created
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-  /menu/{workspaceName}/menuItems/{menuItemId}:
-    get:
-      x-onecx:
-        permissions:
-          workspaces:
-            - read
-      tags:
-        - menuItem
-      description: Retrieve menu item detail info
-      operationId: getMenuItemById
-      parameters:
-        - $ref: '#/components/parameters/workspaceName'
-        - $ref: '#/components/parameters/menuItemId'
+              $ref: '#/components/schemas/MenuStructureSearchCriteria'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetMenuItemResponse'
+                $ref: '#/components/schemas/MenuItemStructure'
         "404":
           description: Not found
-    delete:
-      x-onecx:
-        permissions:
-          workspaces:
-            - delete
-      tags:
-        - menuItem
-      description: Delete a menuItem by the workspace name and the menuItemId
-      operationId: deleteMenuItemById
-      parameters:
-        - $ref: '#/components/parameters/workspaceName'
-        - $ref: '#/components/parameters/menuItemId'
-      responses:
-        "204":
-          description: OK
-        "400":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /menu/{menuItemId}/parentItemId:
     put:
       x-onecx:
         permissions:
-          workspaces:
+          menus:
             - write
       tags:
         - menuItem
@@ -411,6 +363,56 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Menu item not found
+  /menu/search:
+    post:
+      x-onecx:
+        permissions:
+          menus:
+            - read
+      tags:
+        - menuItem
+      description: Search for menu items by search criteria
+      operationId: searchMenuItemsByCriteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuItemSearchCriteria'
+      responses:
+        "200":
+          description: Corresponding menu items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemPageResult'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /menu/workspace/{id}:
+    delete:
+      x-onecx:
+        permissions:
+          menus:
+            - delete
+      tags:
+        - menuItem
+      description: Delete all menu items in workspace
+      operationId: deleteAllMenuItemsForWorkspace
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{id}/products:
     post:
       x-onecx:
@@ -1174,7 +1176,7 @@ components:
     MenuItem:
       type: object
       required:
-        - id
+        - modificationCount
       properties:
         modificationCount:
           format: int32
@@ -1197,8 +1199,6 @@ components:
           type: string
         url:
           type: string
-        workspaceName:
-          type: string
         applicationId:
           type: string
         disabled:
@@ -1206,26 +1206,55 @@ components:
         position:
           format: int32
           type: integer
-        permission:
-          type: string
         badge:
           type: string
+        external:
+          type: boolean
         scope:
           $ref: '#/components/schemas/Scope'
-        workspaceExit:
-          type: boolean
         parentItemId:
           type: string
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/MenuItem'
         i18n:
           type: object
           additionalProperties:
             type: string
-    CreateUpdateMenuItem:
+    CreateMenuItem:
       type: object
+      required:
+        - workspaceId
+      properties:
+        workspaceId:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        disabled:
+          type: boolean
+        position:
+          format: int32
+          type: integer
+        badge:
+          type: string
+        scope:
+          $ref: '#/components/schemas/Scope'
+        external:
+          type: boolean
+        parentItemId:
+          type: string
+        i18n:
+          type: object
+          additionalProperties:
+            type: string
+    UpdateMenuItemRequest:
+      type: object
+      required:
+        - modificationCount
+        - position
       properties:
         modificationCount:
           format: int32
@@ -1238,24 +1267,19 @@ components:
           type: string
         url:
           type: string
-        workspaceName:
-          type: string
-          readOnly: true
         applicationId:
           type: string
-          readOnly: true
         disabled:
           type: boolean
         position:
+          minimum: 0
           format: int32
           type: integer
-        permission:
-          type: string
         badge:
           type: string
         scope:
           $ref: '#/components/schemas/Scope'
-        workspaceExit:
+        external:
           type: boolean
         parentItemId:
           type: string
@@ -1263,53 +1287,149 @@ components:
           type: object
           additionalProperties:
             type: string
-    GetMenuItemsResponse: #holds array
-      type: object
-      properties:
-        menuItems:
-          type: array
-          items:
-            $ref: '#/components/schemas/MenuItem'
-    CreateMenuItemRequest:
-      required:
-        - resource
-      type: object
-      properties:
-        resource:
-          $ref: '#/components/schemas/CreateUpdateMenuItem'
-    CreateMenuItemResponse:
-      type: object
-      properties:
-        resource:
-          $ref: '#/components/schemas/MenuItem'
-    UpdateMenuItemRequest:
+    MenuStructureSearchCriteria:
       type: object
       required:
-        - resource
+        - workspaceId
       properties:
-        resource:
-          $ref: '#/components/schemas/MenuItem'
-    GetWorkspaceMenuItemStructureResponse:
+        workspaceId:
+          type: string
+    MenuItemSearchCriteria:
       type: object
       properties:
-        menuItems:
-          type: array
-          items:
-            $ref: '#/components/schemas/MenuItem'
-    CreateWorkspaceMenuItemStructureRequest:
+        workspaceId:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    MenuItemPageResult:
       type: object
       properties:
-        menuItems:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
           type: array
           items:
-            $ref: '#/components/schemas/MenuItem'
-    GetMenuItemResponse:
+            $ref: '#/components/schemas/MenuItemResult'
+    MenuItemResult:
+      type: object
       required:
-        - resource
+        - modificationCount
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        applicationId:
+          type: string
+        disabled:
+          type: boolean
+        position:
+          format: int32
+          type: integer
+        badge:
+          type: string
+        scope:
+          $ref: '#/components/schemas/Scope'
+        external:
+          type: boolean
+        parentItemId:
+          type: string
+    MenuItemStructure:
+      type: object
+      required:
+        - menuItems
+        - workspaceId
+      properties:
+        workspaceId:
+          type: string
+        menuItems:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/WorkspaceMenuItem'
+    WorkspaceMenuItem:
       type: object
       properties:
-        resource:
-          $ref: '#/components/schemas/MenuItem'
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        applicationId:
+          type: string
+        disabled:
+          type: boolean
+        position:
+          format: int32
+          type: integer
+        badge:
+          type: string
+        scope:
+          $ref: '#/components/schemas/Scope'
+        external:
+          type: boolean
+        parentItemId:
+          type: string
+        i18n:
+          type: object
+          additionalProperties:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceMenuItem'
     UpdateMenuItemParentRequest:
       type: object
       required:
@@ -1541,8 +1661,6 @@ components:
           type: string
         url:
           type: string
-        workspaceName:
-          type: string
         applicationId:
           type: string
         disabled:
@@ -1550,14 +1668,17 @@ components:
         position:
           format: int32
           type: integer
-        permission:
-          type: string
         badge:
           type: string
         scope:
           $ref: '#/components/schemas/EximScope'
-        workspaceExit:
+        external:
           type: boolean
+        roles:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
         i18n:
           type: object
           additionalProperties:

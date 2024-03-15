@@ -60,10 +60,6 @@
         </dependency>
         <dependency>
             <groupId>org.tkit.quarkus.lib</groupId>
-            <artifactId>tkit-quarkus-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.tkit.quarkus.lib</groupId>
             <artifactId>tkit-quarkus-security</artifactId>
         </dependency>
         <dependency>

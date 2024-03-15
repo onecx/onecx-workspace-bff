@@ -14,27 +14,18 @@ public class MenuItemLog implements LogParam {
     @Override
     public List<Item> getClasses() {
         return List.of(
-                this.item(10, CreateMenuItemRequestDTO.class,
-                        x -> CreateMenuItemRequestDTO.class.getSimpleName() + "[key: "
-                                + (((CreateMenuItemRequestDTO) x).getResource() != null
-                                        ? ((CreateMenuItemRequestDTO) x).getResource().getKey()
-                                        : null)
-                                + "]"),
-
+                this.item(10, CreateMenuItemDTO.class,
+                        x -> CreateMenuItemDTO.class.getSimpleName() + "[key: "
+                                + ((((CreateMenuItemDTO) x).getKey())
+                                        + "]")),
                 this.item(10, UpdateMenuItemRequestDTO.class,
-                        x -> UpdateMenuItemRequestDTO.class.getSimpleName() + "[id: "
-                                + (((UpdateMenuItemRequestDTO) x).getResource().getId())
-                                + "]"),
+                        x -> UpdateMenuItemRequestDTO.class.getSimpleName() + "[key: "
+                                + ((((UpdateMenuItemRequestDTO) x).getKey())
+                                        + "]")),
                 this.item(10, MenuSnapshotDTO.class,
                         x -> MenuSnapshotDTO.class.getSimpleName() + "[id: "
-                                + (((MenuSnapshotDTO) x).getId())
-                                + "]"),
-                this.item(10, CreateWorkspaceMenuItemStructureRequestDTO.class,
-                        x -> {
-                            var t = (CreateWorkspaceMenuItemStructureRequestDTO) x;
-                            return CreateWorkspaceMenuItemStructureRequestDTO.class.getSimpleName() + "[items:"
-                                    + (t.getMenuItems() == null ? "0" : t.getMenuItems().size());
-                        }));
+                                + ((((MenuSnapshotDTO) x).getId())
+                                        + "]")));
 
     }
 }

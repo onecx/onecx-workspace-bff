@@ -583,13 +583,11 @@ class WorkspaceRestControllerTest extends AbstractTest {
         MenuSnapshotDTO menuSnapshotDTO = new MenuSnapshotDTO();
         EximMenuStructureDTO eximMenuStructureDTO = new EximMenuStructureDTO();
         EximWorkspaceMenuItemDTO itemDTO = new EximWorkspaceMenuItemDTO();
-        itemDTO.setWorkspaceName("test");
         itemDTO.setKey("test");
 
         MenuSnapshotDTO menuSnapshotDTO2 = new MenuSnapshotDTO();
         EximMenuStructureDTO eximMenuStructureDTO2 = new EximMenuStructureDTO();
         EximWorkspaceMenuItemDTO itemDTO2 = new EximWorkspaceMenuItemDTO();
-        itemDTO2.setWorkspaceName("test2");
         itemDTO2.setKey("test2");
 
         eximMenuStructureDTO.setMenuItems(List.of(itemDTO));

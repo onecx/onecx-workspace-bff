@@ -18,7 +18,6 @@ import org.tkit.quarkus.log.cdi.LogService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.MenuItemApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.MenuInternalApi;
-import gen.org.tkit.onecx.workspace.client.api.WorkspaceInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.exim.client.api.WorkspaceExportImportApi;
 import gen.org.tkit.onecx.workspace.exim.client.model.*;
@@ -40,14 +39,26 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Inject
     @RestClient
-    WorkspaceInternalApi workspaceInternalApi;
-
-    @Inject
-    @RestClient
     WorkspaceExportImportApi eximClient;
 
     @Override
-    public Response deleteMenuItemById(String name, String menuItemId) {
+    public Response createMenuItemForWorkspace(CreateMenuItemDTO createMenuItemDTO) {
+        try (Response response = menuClient.createMenuItem(menuItemMapper.map(createMenuItemDTO))) {
+            var menu = menuItemMapper.map(response.readEntity(MenuItem.class));
+            var responseDTO = menuItemMapper.map(menu);
+            return Response.status(CREATED).entity(responseDTO).build();
+        }
+    }
+
+    @Override
+    public Response deleteAllMenuItemsForWorkspace(String id) {
+        try (Response response = menuClient.deleteAllMenuItemsForWorkspace(id)) {
+            return Response.status(NO_CONTENT).build();
+        }
+    }
+
+    @Override
+    public Response deleteMenuItemById(String menuItemId) {
         try (Response response = menuClient.deleteMenuItemById(menuItemId)) {
             return Response.status(NO_CONTENT).build();
         }
@@ -62,39 +73,18 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response getMenuItemById(String name, String menuItemId) {
+    public Response getMenuItemById(String menuItemId) {
         try (Response response = menuClient.getMenuItemById(menuItemId)) {
             MenuItemDTO menuItemDTO = menuItemMapper.map(response.readEntity(MenuItem.class));
-            GetMenuItemResponseDTO responseDTO = menuItemMapper.mapToResponse(menuItemDTO);
-            return Response.status(OK).entity(responseDTO).build();
+            return Response.status(OK).entity(menuItemDTO).build();
         }
     }
 
     @Override
-    public Response getMenuItemsForWorkspaceByName(String name) {
-
-        try (Response r = workspaceInternalApi.findWorkspaceByName(name)) {
-            var workspace = r.readEntity(Workspace.class);
-            var criteria = new MenuItemSearchCriteria().workspaceId(workspace.getId());
-            try (Response response = menuClient.searchMenuItemsByCriteria(criteria)) {
-                var pageResult = response.readEntity(MenuItemPageResult.class);
-                GetMenuItemsResponseDTO responseDTO = menuItemMapper.mapToGetResponseList(pageResult);
-                return Response.status(OK).entity(responseDTO).build();
-            }
-        }
-    }
-
-    @Override
-    public Response getMenuStructureForWorkspaceName(String name) {
-        try (Response r = workspaceInternalApi.findWorkspaceByName(name)) {
-            var workspace = r.readEntity(Workspace.class);
-            var criteria = new MenuStructureSearchCriteria().workspaceId(workspace.getId());
-            try (Response response = menuClient.getMenuStructure(criteria)) {
-                var menuStructure = response.readEntity(MenuItemStructure.class);
-                GetWorkspaceMenuItemStructureResponseDTO responseDTO = menuItemMapper.mapToStructureResponse(menuStructure);
-
-                return Response.status(OK).entity(responseDTO).build();
-            }
+    public Response getMenuStructure(MenuStructureSearchCriteriaDTO menuStructureSearchCriteriaDTO) {
+        try (Response response = menuClient.getMenuStructure(menuItemMapper.map(menuStructureSearchCriteriaDTO))) {
+            return Response.status(response.getStatus())
+                    .entity(menuItemMapper.map(response.readEntity(MenuItemStructure.class))).build();
         }
     }
 
@@ -107,10 +97,17 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response updateMenuItem(String name, UpdateMenuItemRequestDTO updateMenuItemRequestDTO) {
+    public Response searchMenuItemsByCriteria(MenuItemSearchCriteriaDTO menuItemSearchCriteriaDTO) {
+        try (Response response = menuClient.searchMenuItemsByCriteria(menuItemMapper.map(menuItemSearchCriteriaDTO))) {
+            return Response.status(response.getStatus())
+                    .entity(menuItemMapper.map(response.readEntity(MenuItemPageResult.class))).build();
+        }
+    }
 
+    @Override
+    public Response updateMenuItem(String menuItemId, UpdateMenuItemRequestDTO updateMenuItemRequestDTO) {
         var request = menuItemMapper.createUpdateRequest(updateMenuItemRequestDTO);
-        try (Response response = menuClient.updateMenuItem(updateMenuItemRequestDTO.getResource().getId(), request)) {
+        try (Response response = menuClient.updateMenuItem(menuItemId, request)) {
             var menuItem = response.readEntity(MenuItem.class);
             var dto = menuItemMapper.map(menuItem);
             return Response.status(OK).entity(dto).build();
@@ -123,31 +120,6 @@ public class MenuItemRestController implements MenuItemApiService {
                 menuItemMapper.map(updateMenuItemParentRequestDTO))) {
             return Response.status(response.getStatus()).entity(menuItemMapper.map(response.readEntity(MenuItem.class)))
                     .build();
-        }
-    }
-
-    @Override
-    public Response uploadMenuStructureForWorkspaceName(String name,
-            CreateWorkspaceMenuItemStructureRequestDTO createWorkspaceMenuItemStructureRequestDTO) {
-
-        var snapshot = menuItemMapper.createSnapshot(createWorkspaceMenuItemStructureRequestDTO);
-        try (Response response = eximClient.importMenu(name, snapshot)) {
-            var result = response.readEntity(ImportMenuResponse.class);
-            return Response.status(CREATED).entity(result.getStatus()).build();
-        }
-    }
-
-    @Override
-    public Response createMenuItemForWorkspace(String name, CreateMenuItemRequestDTO createMenuItemRequestDTO) {
-        try (Response r = workspaceInternalApi.findWorkspaceByName(name)) {
-            var workspace = r.readEntity(Workspace.class);
-            var request = menuItemMapper.map(createMenuItemRequestDTO.getResource(), workspace.getId());
-
-            try (Response response = menuClient.createMenuItem(request)) {
-                var menu = menuItemMapper.map(response.readEntity(MenuItem.class));
-                var responseDTO = menuItemMapper.mapToCreateResponse(menu);
-                return Response.status(CREATED).entity(responseDTO).build();
-            }
         }
     }
 

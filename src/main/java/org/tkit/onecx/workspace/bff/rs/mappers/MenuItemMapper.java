@@ -1,12 +1,9 @@
 package org.tkit.onecx.workspace.bff.rs.mappers;
 
-import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
@@ -16,78 +13,45 @@ import gen.org.tkit.onecx.workspace.exim.client.model.EximWorkspaceMenuItem;
 import gen.org.tkit.onecx.workspace.exim.client.model.ImportMenuResponse;
 import gen.org.tkit.onecx.workspace.exim.client.model.MenuSnapshot;
 
-@Mapper(uses = { OffsetDateTimeMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(uses = { OffsetDateTimeMapper.class })
 public interface MenuItemMapper {
 
     @Mapping(target = "removeI18nItem", ignore = true)
     MenuItemDTO map(MenuItem menuItem);
 
     @Mapping(target = "removeI18nItem", ignore = true)
-    MenuItemDTO map(WorkspaceMenuItem menuItem);
+    @Mapping(target = "removeChildrenItem", ignore = true)
+    WorkspaceMenuItemDTO map(WorkspaceMenuItem workspaceMenuItem);
 
-    CreateMenuItem map(CreateUpdateMenuItemDTO menuItem, String workspaceId);
+    CreateMenuItem map(CreateMenuItemDTO menuItem);
 
     MenuItem map(MenuItemDTO menuItemDTO);
 
     UpdateMenuItemRequest createUpdateRequest(UpdateMenuItemRequestDTO updateMenuItemRequestDTO);
 
-    UpdateMenuItemRequest createUpdateItemRequest(MenuItemDTO menuItemDTO);
-
-    @Mapping(target = "children", ignore = true)
-    WorkspaceMenuItem mapWorkspaceItem(MenuItemDTO menuItemDTO);
-
     List<MenuItemDTO> map(List<MenuItem> menuItems);
 
-    @Mapping(source = ".", target = "resource")
-    GetMenuItemResponseDTO mapToResponse(MenuItemDTO menuItemDTO);
+    @Mapping(target = "removeMenuItemsItem", ignore = true)
+    MenuItemStructureDTO map(MenuItemStructure menuItemStructure);
 
-    List<WorkspaceMenuItem> mapToWorkspaceMenuItems(List<MenuItemDTO> menuItems);
+    MenuItemSearchCriteria map(MenuItemSearchCriteriaDTO criteriaDTO);
 
-    default MenuSnapshot createSnapshot(CreateWorkspaceMenuItemStructureRequestDTO dto) {
-        if (dto == null || dto.getMenuItems() == null || dto.getMenuItems().isEmpty()) {
-            return null;
-        }
+    MenuStructureSearchCriteria map(MenuStructureSearchCriteriaDTO criteria);
 
-        var data = new EximMenuStructure().menuItems(mapSnapshot(dto.getMenuItems()));
-        return new MenuSnapshot().id(UUID.randomUUID().toString())
-                .created(OffsetDateTime.now())
-                .menu(data);
-    }
-
-    List<EximWorkspaceMenuItem> mapSnapshot(List<MenuItemDTO> items);
-
-    default GetMenuItemsResponseDTO mapToGetResponseList(MenuItemPageResult dto) {
-        GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
-        if (dto != null && dto.getStream() != null) {
-            responseDTO.setMenuItems(mapMenuItem(dto.getStream()));
-        }
-        return responseDTO;
-    }
-
-    List<MenuItemDTO> mapMenuItem(List<MenuItemResult> items);
-
-    MenuItemDTO mapMenuItem(MenuItemResult item);
-
-    default GetMenuItemsResponseDTO mapToGetResponseList(List<MenuItemDTO> menuItemDTOList) {
-        GetMenuItemsResponseDTO responseDTO = new GetMenuItemsResponseDTO();
-        responseDTO.setMenuItems(menuItemDTOList);
-        return responseDTO;
-    }
-
-    default GetWorkspaceMenuItemStructureResponseDTO mapToStructureResponse(MenuItemStructure menuItemStructure) {
-        GetWorkspaceMenuItemStructureResponseDTO responseDTO = new GetWorkspaceMenuItemStructureResponseDTO();
-        responseDTO.setMenuItems(mapToWorkspaceStructure(menuItemStructure.getMenuItems()));
-        return responseDTO;
-    }
-
-    List<MenuItemDTO> mapToWorkspaceStructure(List<WorkspaceMenuItem> workspaceMenuItems);
-
-    @Mapping(source = ".", target = "resource")
-    CreateMenuItemResponseDTO mapToCreateResponse(MenuItemDTO menuItem);
+    @Mapping(target = "removeStreamItem", ignore = true)
+    MenuItemPageResultDTO map(MenuItemPageResult pageResult);
 
     MenuSnapshot mapSnapshot(MenuSnapshotDTO menuSnapshotDTO);
 
     MenuSnapshotDTO mapSnapshot(MenuSnapshot snapshot);
+
+    @Mapping(target = "removeRolesItem", ignore = true)
+    @Mapping(target = "removeI18nItem", ignore = true)
+    @Mapping(target = "removeChildrenItem", ignore = true)
+    EximWorkspaceMenuItemDTO map(EximWorkspaceMenuItem eximWorkspaceMenuItem);
+
+    @Mapping(target = "removeMenuItemsItem", ignore = true)
+    EximMenuStructureDTO map(EximMenuStructure eximMenuStructure);
 
     ImportMenuResponseDTO map(ImportMenuResponse response);
 
