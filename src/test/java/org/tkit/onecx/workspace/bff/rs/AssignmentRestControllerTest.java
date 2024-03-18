@@ -52,6 +52,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         response.setWorkspaceId("w1");
         response.setRoleId("role1");
         response.setMenuItemId("menu1");
+        response.setId("assignmentId1");
 
         mockServerClient.when(request().withPath("/internal/assignments").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
@@ -89,6 +90,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output);
         Assertions.assertEquals(request.getRoleId(), output.getRoleId());
         Assertions.assertEquals(request.getMenuItemId(), output.getMenuItemId());
+        Assertions.assertEquals("assignmentId1", output.getId());
     }
 
     @Test
@@ -100,7 +102,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         criteria.setPageSize(1);
 
         Assignment a1 = new Assignment();
-        a1.menuItemId("menu1").roleId("role1").workspaceId("w1");
+        a1.menuItemId("menu1").roleId("role1").workspaceId("w1").id("assignmentId1");
 
         AssignmentPageResult data = new AssignmentPageResult();
         data.setNumber(1);
@@ -138,6 +140,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         Assertions.assertEquals(data.getSize(), output.getSize());
         Assertions.assertEquals(data.getStream().size(), output.getStream().size());
         Assertions.assertEquals(data.getStream().get(0).getMenuItemId(), output.getStream().get(0).getMenuItemId());
+        Assertions.assertEquals(data.getStream().get(0).getId(), output.getStream().get(0).getId());
     }
 
     @Test
