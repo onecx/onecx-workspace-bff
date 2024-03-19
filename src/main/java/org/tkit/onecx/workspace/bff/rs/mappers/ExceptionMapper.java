@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -26,6 +27,10 @@ public interface ExceptionMapper {
         dto.setInvalidParams(createErrorValidationResponse(ex.getConstraintViolations()));
         return RestResponse.status(Response.Status.BAD_REQUEST, dto);
     }
+
+    @Mapping(target = "removeParamsItem", ignore = true)
+    @Mapping(target = "removeInvalidParamsItem", ignore = true)
+    ProblemDetailResponseDTO map(ProblemDetailResponse problemDetailResponse);
 
     @Mapping(target = "removeParamsItem", ignore = true)
     @Mapping(target = "params", ignore = true)
