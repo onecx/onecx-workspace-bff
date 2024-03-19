@@ -91,6 +91,30 @@ class AssignmentRestControllerTest extends AbstractTest {
         Assertions.assertEquals(request.getRoleId(), output.getRoleId());
         Assertions.assertEquals(request.getMenuItemId(), output.getMenuItemId());
         Assertions.assertEquals("assignmentId1", output.getId());
+        mockServerClient.clear(mockId);
+
+        //creating same assignment second time should throw error
+        ProblemDetailResponse errorResponse = new ProblemDetailResponse();
+        errorResponse.setErrorCode("400");
+        errorResponse.setDetail("duplicated key");
+        mockServerClient.when(request().withPath("/internal/assignments").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(request)))
+                .withId(mockId)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(errorResponse)));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
     }
 
     @Test

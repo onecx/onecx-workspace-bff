@@ -17,6 +17,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailInvalidParamDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailParamDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailResponseDTO;
+import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ExceptionMapper {
@@ -26,6 +27,10 @@ public interface ExceptionMapper {
         dto.setInvalidParams(createErrorValidationResponse(ex.getConstraintViolations()));
         return RestResponse.status(Response.Status.BAD_REQUEST, dto);
     }
+
+    @Mapping(target = "removeParamsItem", ignore = true)
+    @Mapping(target = "removeInvalidParamsItem", ignore = true)
+    ProblemDetailResponseDTO map(ProblemDetailResponse problemDetailResponse);
 
     @Mapping(target = "removeParamsItem", ignore = true)
     @Mapping(target = "params", ignore = true)
