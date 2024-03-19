@@ -1,6 +1,5 @@
 package org.tkit.onecx.workspace.bff.rs.controllers;
 
-import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -20,6 +19,7 @@ import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.AssignmentInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.Assignment;
 import gen.org.tkit.onecx.workspace.client.model.AssignmentPageResult;
+import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)

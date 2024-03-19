@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -18,6 +17,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailInvalidParamDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailParamDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailResponseDTO;
+import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface ExceptionMapper {

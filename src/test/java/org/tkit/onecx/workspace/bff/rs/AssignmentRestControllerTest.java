@@ -98,7 +98,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         errorResponse.setErrorCode("400");
         errorResponse.setDetail("duplicated key");
         mockServerClient.when(request().withPath("/internal/assignments").withMethod(HttpMethod.POST)
-                        .withBody(JsonBody.json(request)))
+                .withBody(JsonBody.json(request)))
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
