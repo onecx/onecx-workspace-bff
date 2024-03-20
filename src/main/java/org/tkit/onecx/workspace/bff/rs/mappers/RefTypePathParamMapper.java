@@ -13,9 +13,6 @@ import gen.org.tkit.onecx.workspace.client.model.RefType;
 @Provider
 @Singleton
 public class RefTypePathParamMapper implements ParamConverterProvider {
-    public RefTypePathParamMapper() {
-
-    }
 
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
@@ -24,8 +21,6 @@ public class RefTypePathParamMapper implements ParamConverterProvider {
     }
 
     public static class RefTypeParamConverter implements ParamConverter<RefType> {
-        public RefTypeParamConverter() {
-        }
 
         public RefType fromString(String value) {
             return value != null && !value.isBlank() ? RefType.fromString(value) : null;
