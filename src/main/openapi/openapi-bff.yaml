@@ -1074,20 +1074,8 @@ components:
           type: string
         logoUrl:
           type: string
-
         address:
           $ref: '#/components/schemas/WorkspaceAddress'
-        subjectLinks:
-          uniqueItems: true
-          maxItems: 3
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectLink'
-        imageUrls:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
     WorkspaceAbstract:
       required:
         - name
@@ -1115,13 +1103,6 @@ components:
         country:
           type: string
         postalCode:
-          type: string
-    SubjectLink:
-      type: object
-      properties:
-        label:
-          type: string
-        url:
           type: string
     CreateWorkspaceRequest:
       required:
@@ -1597,21 +1578,32 @@ components:
           type: string
         logoUrl:
           type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximProduct'
         address:
           $ref: '#/components/schemas/EximWorkspaceAddress'
-        subjectLinks:
-          uniqueItems: true
-          maxItems: 3
-          type: array
-          items:
-            $ref: '#/components/schemas/EximSubjectLink'
-        imageUrls:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
         menu:
           $ref: '#/components/schemas/MenuSnapshot'
+    EximProduct:
+      type: object
+      properties:
+        productName:
+          type: string
+        baseUrl:
+          type: string
+        microfrontends:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximMicrofrontend'
+    EximMicrofrontend:
+      type: object
+      properties:
+        appId:
+          type: string
+        basePath:
+          type: string
     EximWorkspaceAddress:
       type: object
       properties:
@@ -1624,13 +1616,6 @@ components:
         country:
           type: string
         postalCode:
-          type: string
-    EximSubjectLink:
-      type: object
-      properties:
-        label:
-          type: string
-        url:
           type: string
     MenuSnapshot:
       type: object
