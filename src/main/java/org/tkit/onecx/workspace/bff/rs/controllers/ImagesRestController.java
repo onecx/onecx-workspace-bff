@@ -39,19 +39,21 @@ public class ImagesRestController implements ImagesInternalApiService {
 
     @Override
     public Response getImage(String refId, RefTypeDTO refType) {
+        Response.ResponseBuilder responseBuilder;
         try (Response response = imageApi.getImage(refId, imageMapper.map(refType))) {
             var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
             var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);
-            if (contentType != null && contentLength != null && body != null && body.length != 0) {
-                return Response.status(response.getStatus())
+            if (contentType != null && body.length != 0) {
+                responseBuilder = Response.status(response.getStatus())
                         .header(HttpHeaders.CONTENT_TYPE, contentType)
                         .header(HttpHeaders.CONTENT_LENGTH, contentLength)
-                        .entity(body)
-                        .build();
+                        .entity(body);
             } else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             }
+
+            return responseBuilder.build();
         }
     }
 

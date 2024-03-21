@@ -171,11 +171,68 @@ class ImagesRestControllerTest extends AbstractTest {
         mockServerClient.when(request()
                 .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
                 .withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .withPriority(100)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
                         .withHeaders(
                                 new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_JPG))
                         .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
+                .get()
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+    }
+
+    @Test
+    void getImage_shouldReturnBadRequest_whenContentTypeEmpty() {
+
+        var refId = "themeName";
+        var refType = RefTypeDTO.FAVICON;
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        mockServerClient.when(request()
+                .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
+                .withMethod(HttpMethod.GET))
+                .withId(mockId)
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("refId", refId)
+                .pathParam("refType", refType)
+                .get()
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+    }
+
+    @Test
+    void getImage_shouldReturnBadRequest_whenAllEmpty() {
+
+        var refId = "themeName";
+        var refType = RefTypeDTO.FAVICON;
+
+        mockServerClient.when(request()
+                .withPath("/internal/images/" + refId + "/" + RefType.FAVICON)
+                .withMethod(HttpMethod.GET))
+                .withId(mockId)
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode()));
 
         given()
                 .when()
