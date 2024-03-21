@@ -17,8 +17,6 @@ import gen.org.tkit.onecx.workspace.exim.client.model.*;
 public interface WorkspaceMapper {
     CreateWorkspaceRequest map(WorkspaceDTO workspaceDTO);
 
-    @Mapping(target = "removeSubjectLinksItem", ignore = true)
-    @Mapping(target = "removeImageUrlsItem", ignore = true)
     WorkspaceDTO map(Workspace workspace);
 
     WorkspaceSearchCriteria map(SearchWorkspacesRequestDTO criteria);

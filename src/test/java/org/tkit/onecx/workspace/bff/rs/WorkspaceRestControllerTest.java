@@ -424,6 +424,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspace eximWorkspace = new EximWorkspace();
         eximWorkspace.setName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
+        eximWorkspace.setProducts(List.of(new EximProduct().productName("product1").baseUrl("/product1")
+                .microfrontends(List.of(new EximMicrofrontend().appId("app1").basePath("/app1")))));
         snapshot.setWorkspaces(Map.of("testWorkspace", eximWorkspace));
 
         // create mock rest endpoint
@@ -451,6 +453,9 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output);
         Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
                 eximWorkspace.getName());
+        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getProducts().get(0),
+                new EximProductDTO().baseUrl("/product1").productName("product1")
+                        .microfrontends(List.of(new EximMicrofrontendDTO().appId("app1").basePath("/app1"))));
     }
 
     @Test
@@ -525,6 +530,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspace eximWorkspace = new EximWorkspace();
         eximWorkspace.setName("test");
         eximWorkspace.setBaseUrl("/test");
+        eximWorkspace.setProducts(List.of(new EximProduct().baseUrl("product1").baseUrl("/product1")
+                .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1")))));
         EximWorkspace eximWorkspace2 = new EximWorkspace();
         eximWorkspace2.setName("test2");
         eximWorkspace2.setBaseUrl("/test2");
@@ -575,6 +582,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspaceDTO eximWorkspaceDTO = new EximWorkspaceDTO();
         eximWorkspaceDTO.setName("test");
         eximWorkspaceDTO.setBaseUrl("/test");
+        eximWorkspaceDTO.setProducts(List.of(new EximProductDTO().productName("product1").baseUrl("/product1")
+                .microfrontends(List.of(new EximMicrofrontendDTO().basePath("/app1").appId("app1")))));
 
         EximWorkspaceDTO eximWorkspaceDTO2 = new EximWorkspaceDTO();
         eximWorkspaceDTO2.setName("test2");
