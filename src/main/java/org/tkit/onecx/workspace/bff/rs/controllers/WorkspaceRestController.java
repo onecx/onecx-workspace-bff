@@ -121,12 +121,14 @@ public class WorkspaceRestController implements WorkspaceApiService {
         try (Response response = eximClient.importWorkspaces(workspaceMapper.mapSnapshot(workspaceSnapshotDTO))) {
             Map<String, ImportResponseStatusDTO> menuResponses = new HashMap<>();
             workspaceSnapshotDTO.getWorkspaces().forEach((s, eximWorkspaceDTO) -> {
-                try (Response menuImportResponse = eximClient.importMenu(s,
-                        menuItemMapper.mapSnapshot(eximWorkspaceDTO.getMenu()))) {
-                    menuResponses.put(s,
-                            menuItemMapper.map(menuImportResponse.readEntity(ImportMenuResponse.class)).getStatus());
-                } catch (WebApplicationException ex) {
-                    menuResponses.put(s, ImportResponseStatusDTO.ERROR);
+                if (eximWorkspaceDTO.getMenu() != null) {
+                    try (Response menuImportResponse = eximClient.importMenu(s,
+                            menuItemMapper.mapSnapshot(eximWorkspaceDTO.getMenu()))) {
+                        menuResponses.put(s,
+                                menuItemMapper.map(menuImportResponse.readEntity(ImportMenuResponse.class)).getStatus());
+                    } catch (WebApplicationException ex) {
+                        menuResponses.put(s, ImportResponseStatusDTO.ERROR);
+                    }
                 }
             });
             return Response.status(response.getStatus())

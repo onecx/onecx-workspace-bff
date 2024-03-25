@@ -535,15 +535,20 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspace eximWorkspace2 = new EximWorkspace();
         eximWorkspace2.setName("test2");
         eximWorkspace2.setBaseUrl("/test2");
+        EximWorkspace eximWorkspace3 = new EximWorkspace();
+        eximWorkspace3.setName("test3");
+        eximWorkspace3.setBaseUrl("/test3");
         Map<String, EximWorkspace> eximWorkspaceMap = new HashMap<>();
         eximWorkspaceMap.put("test", eximWorkspace);
         eximWorkspaceMap.put("test2", eximWorkspace2);
+        eximWorkspaceMap.put("test3", eximWorkspace3);
         workspaceSnapshot.setWorkspaces(eximWorkspaceMap);
 
         ImportWorkspaceResponse workspaceResponse = new ImportWorkspaceResponse();
         Map<String, ImportResponseStatus> responseStatusMap = new HashMap<>();
         responseStatusMap.put("test", ImportResponseStatus.CREATED);
         responseStatusMap.put("test2", ImportResponseStatus.CREATED);
+        responseStatusMap.put("test3", ImportResponseStatus.CREATED);
         workspaceResponse.setWorkspaces(responseStatusMap);
 
         MenuSnapshot menuSnapshot = new MenuSnapshot();
@@ -589,6 +594,11 @@ class WorkspaceRestControllerTest extends AbstractTest {
         eximWorkspaceDTO2.setName("test2");
         eximWorkspaceDTO2.setBaseUrl("/test2");
 
+        EximWorkspaceDTO eximWorkspaceDTO3 = new EximWorkspaceDTO();
+        eximWorkspaceDTO3.setName("test3");
+        eximWorkspaceDTO3.setBaseUrl("/test3");
+        eximWorkspaceDTO3.setMenu(null);
+
         MenuSnapshotDTO menuSnapshotDTO = new MenuSnapshotDTO();
         EximMenuStructureDTO eximMenuStructureDTO = new EximMenuStructureDTO();
         EximWorkspaceMenuItemDTO itemDTO = new EximWorkspaceMenuItemDTO();
@@ -609,6 +619,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Map<String, EximWorkspaceDTO> workspaceDTOMap = new HashMap<>();
         workspaceDTOMap.put("test", eximWorkspaceDTO);
         workspaceDTOMap.put("test2", eximWorkspaceDTO2);
+        workspaceDTOMap.put("test3", eximWorkspaceDTO3);
+
         workspaceSnapshotDTO.setWorkspaces(workspaceDTOMap);
 
         var output = given()
@@ -626,6 +638,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output);
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
+        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test3"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getMenus().get("test"));
         Assertions.assertEquals(ImportResponseStatusDTO.ERROR, output.getMenus().get("test2"));
 
