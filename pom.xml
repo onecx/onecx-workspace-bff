@@ -250,6 +250,19 @@
                             <skipCache>true</skipCache>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>workspace-svc-user-menu-internal</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-user-internal-openapi.yaml</url>
+                            <outputDirectory>target/tmp/openapi</outputDirectory>
+                            <outputFileName>onecx-workspace-svc-user-menu.yaml</outputFileName>
+                            <skipCache>true</skipCache>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
