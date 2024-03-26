@@ -1,5 +1,7 @@
 package org.tkit.onecx.workspace.bff.rs.controllers;
 
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -43,7 +45,7 @@ public class UserMenuRestController implements UserMenuApiService {
 
     @Override
     public Response getUserMenu(UserWorkspaceMenuRequestDTO userWorkspaceMenuRequestDTO) {
-        var token = headers.getRequestHeader(headers.AUTHORIZATION).get(0);
+        var token = headers.getRequestHeader(AUTHORIZATION).get(0);
         UserWorkspaceMenuRequest request = mapper.map(userWorkspaceMenuRequestDTO, token);
         try (Response response = userMenuClient.getUserMenu(userWorkspaceMenuRequestDTO.getWorkspaceName(), request)) {
             return Response.status(response.getStatus())
