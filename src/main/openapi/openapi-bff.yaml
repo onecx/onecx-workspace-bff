@@ -413,6 +413,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /me/menu:
+    post:
+      x-onecx:
+        permissions:
+          menus:
+            - read
+      tags:
+        - userMenu
+      description: get User specific menu
+      operationId: getUserMenu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserWorkspaceMenuRequest'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWorkspaceMenuStructure'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /workspaces/{id}/products:
     post:
       x-onecx:
@@ -1951,6 +1980,55 @@ components:
           type: string
         workspaceId:
           type: string
+    UserWorkspaceMenuRequest:
+      type: object
+      required:
+        - workspaceName
+      properties:
+        workspaceName:
+          type: string
+        menuKeys:
+          type: array
+          items:
+            type: string
+    UserWorkspaceMenuStructure:
+      type: object
+      properties:
+        workspaceName:
+          type: string
+        menu:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/UserWorkspaceMenuItem'
+    UserWorkspaceMenuItem:
+      type: object
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        applicationId:
+          type: string
+        position:
+          format: int32
+          type: integer
+        badge:
+          type: string
+        external:
+          type: boolean
+        i18n:
+          type: object
+          additionalProperties:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserWorkspaceMenuItem'
     ProblemDetailResponse:
       type: object
       properties:
