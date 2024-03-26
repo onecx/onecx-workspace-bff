@@ -257,8 +257,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <!--<url>https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-user-internal-openapi.yaml</url> -->
-                            <url>https://raw.githubusercontent.com/JordenReuter/onecx-workspace-svc/feature/P002271-6987-user-menu-filter/src/main/openapi/onecx-user-internal-openapi.yaml</url>
+                            <url>https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-user-internal-openapi.yaml</url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-workspace-svc-user-menu.yaml</outputFileName>
                             <skipCache>true</skipCache>
