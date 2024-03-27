@@ -17,9 +17,7 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.workspace.bff.rs.controllers.PsProductsRestController;
 
-import gen.org.tkit.onecx.product.store.client.model.ProductItem;
-import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
-import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
+import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductStorePageResultDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductStoreSearchCriteriaDTO;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
@@ -35,17 +33,18 @@ class PsProductsRestControllerTest extends AbstractTest {
     @Test
     void getAvailableProductsOfProductStoreTest() {
 
-        ProductItemSearchCriteria svcCriteria = new ProductItemSearchCriteria();
+        ProductItemLoadSearchCriteria svcCriteria = new ProductItemLoadSearchCriteria();
         svcCriteria.pageNumber(0).pageSize(100);
 
-        ProductItemPageResult svcResult = new ProductItemPageResult();
-        ProductItem productItem = new ProductItem();
+        ProductsLoadResult svcResult = new ProductsLoadResult();
+        ProductsAbstract productItem = new ProductsAbstract();
         productItem.basePath("test").name("test").classifications("search");
+        productItem.setMicrofrontends(List.of(new MicrofrontendAbstract().appName("app1").appId("app1")));
         svcResult.number(0).totalElements(1L).totalPages(1L).stream(List.of(productItem));
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/v1/products/search")
+                .when(request().withPath("/v1/products/load")
                         .withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(svcCriteria)))
                 .withId("mock")
@@ -68,9 +67,11 @@ class PsProductsRestControllerTest extends AbstractTest {
                 .extract().as(ProductStorePageResultDTO.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getStream().get(0).getName(), productItem.getName());
+        Assertions.assertEquals(output.getStream().get(0).getProductName(), productItem.getName());
         Assertions.assertEquals(output.getStream().get(0).getBasePath(), productItem.getBasePath());
         Assertions.assertEquals(output.getStream().get(0).getClassifications(), productItem.getClassifications());
+        Assertions.assertEquals(output.getStream().get(0).getMicrofrontends().get(0).getAppId(),
+                productItem.getMicrofrontends().get(0).getAppId());
         mockServerClient.clear("mock");
     }
 }
