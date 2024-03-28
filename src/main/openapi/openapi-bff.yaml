@@ -1794,7 +1794,7 @@ components:
           type: string
         imageUrl:
           type: string
-        basePath:
+        baseUrl:
           type: string
         classifications:
           type: string

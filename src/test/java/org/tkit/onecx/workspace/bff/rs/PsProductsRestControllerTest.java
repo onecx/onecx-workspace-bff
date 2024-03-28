@@ -68,7 +68,7 @@ class PsProductsRestControllerTest extends AbstractTest {
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(output.getStream().get(0).getProductName(), productItem.getName());
-        Assertions.assertEquals(output.getStream().get(0).getBasePath(), productItem.getBasePath());
+        Assertions.assertEquals(output.getStream().get(0).getBaseUrl(), productItem.getBasePath());
         Assertions.assertEquals(output.getStream().get(0).getClassifications(), productItem.getClassifications());
         Assertions.assertEquals(output.getStream().get(0).getMicrofrontends().get(0).getAppId(),
                 productItem.getMicrofrontends().get(0).getAppId());
