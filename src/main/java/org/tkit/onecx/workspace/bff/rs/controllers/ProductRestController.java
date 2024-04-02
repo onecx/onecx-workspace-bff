@@ -61,6 +61,14 @@ public class ProductRestController implements WorkspaceProductApiService {
     }
 
     @Override
+    public Response getProductById(String productId) {
+        try (Response response = productClient.getProductById(productId)) {
+            ProductDTO productDTO = productMapper.map(response.readEntity(Product.class));
+            return Response.status(response.getStatus()).entity(productDTO).build();
+        }
+    }
+
+    @Override
     public Response getProductsForWorkspaceId(String id) {
         var criteria = new ProductSearchCriteria().workspaceId(id);
         try (Response response = productClient.searchProducts(criteria)) {

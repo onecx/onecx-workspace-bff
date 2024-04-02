@@ -232,6 +232,39 @@ class ProductRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
 
+
+    @Test
+    void getProductFromWorkspaceByIdTest() {
+        String productId = "p-id";
+        String workspaceId = "w-id";
+
+        Product product = new Product();
+        product.setProductName("Testname");
+        product.setBaseUrl("/testbaseUrl");
+        product.setModificationCount(1);
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/internal/products/" + productId)
+                        .withMethod(HttpMethod.GET))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(product)));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .pathParam("productId", productId)
+                .get("/{productId}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProductDTO.class);
+    }
+
     @Test
     void updateProductTest() {
         String productId = "p-id";
