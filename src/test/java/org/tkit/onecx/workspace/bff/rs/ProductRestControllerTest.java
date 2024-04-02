@@ -232,7 +232,6 @@ class ProductRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
     }
 
-
     @Test
     void getProductFromWorkspaceByIdTest() {
         String productId = "p-id";
