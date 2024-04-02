@@ -564,6 +564,7 @@ paths:
       description: Get a product by the productId
       operationId: getProductById
       parameters:
+        - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/productId'
       responses:
         200:
