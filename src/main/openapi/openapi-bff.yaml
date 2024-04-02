@@ -554,6 +554,26 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Product not found
+    get:
+      x-onecx:
+        permissions:
+          workspaces:
+            - read
+      tags:
+        - workspaceProduct
+      description: Get a product by the productId
+      operationId: getProductById
+      parameters:
+        - $ref: '#/components/parameters/productId'
+      responses:
+        200:
+          description: Corresponding product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        404:
+          description: Product not found
   /products:
     x-onecx:
       permissions:
