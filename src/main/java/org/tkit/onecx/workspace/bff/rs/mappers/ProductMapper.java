@@ -50,6 +50,9 @@ public interface ProductMapper {
                     .filter(productStoreProduct -> productDTO.getProductName().equals(productStoreProduct.getName()))
                     .findFirst();
             optional.ifPresent(productItem -> productDTO.setDisplayName(productItem.getDisplayName()));
+            optional.ifPresent(productItem -> productDTO.setImageUrl(productItem.getImageUrl()));
+            optional.ifPresent(productItem -> productDTO.setClassifications(productItem.getClassifications()));
+            optional.ifPresent(productItem -> productDTO.setDescription(productItem.getDescription()));
             resultList.add(productDTO);
         });
         return resultList;
