@@ -64,7 +64,12 @@ public class ProductRestController implements WorkspaceProductApiService {
     public Response getProductById(String id, String productId) {
         try (Response response = productClient.getProductById(productId)) {
             ProductDTO productDTO = productMapper.map(response.readEntity(Product.class));
-            return Response.status(response.getStatus()).entity(productDTO).build();
+
+            gen.org.tkit.onecx.product.store.client.model.Product product;
+            try (Response productStoreResponse = productStoreClient.getProductByName(productDTO.getProductName())) {
+                product = productStoreResponse.readEntity(gen.org.tkit.onecx.product.store.client.model.Product.class);
+            }
+            return Response.status(response.getStatus()).entity(productMapper.map(productDTO, product)).build();
         }
     }
 
