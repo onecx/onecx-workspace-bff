@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: onecx-workspace-bff
-  description: OneCx workspace Bff
+  description: OneCX Workspace BFF
   version: "1.0"
 servers:
   - url: http://onecx-workspace-bff:8080/
