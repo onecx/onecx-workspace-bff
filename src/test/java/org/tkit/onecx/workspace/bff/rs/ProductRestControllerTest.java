@@ -241,16 +241,31 @@ class ProductRestControllerTest extends AbstractTest {
         product.setProductName("Testname");
         product.setBaseUrl("/testbaseUrl");
         product.setModificationCount(1);
+        product.setProductName("testProductName");
 
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/products/" + productId)
                         .withMethod(HttpMethod.GET))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(product)));
 
-        given()
+        gen.org.tkit.onecx.product.store.client.model.Product productstoreProduct = new gen.org.tkit.onecx.product.store.client.model.Product();
+        productstoreProduct.setDescription("testDescr");
+        productstoreProduct.setClassifications("testClassification");
+        productstoreProduct.setImageUrl("/Testurl");
+
+        // mock endpoint product store
+        mockServerClient
+                .when(request().withPath("/v1/products/testProductName").withMethod(HttpMethod.GET))
+                .withId("mock2")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(productstoreProduct)));
+
+        var output = given()
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
@@ -262,6 +277,13 @@ class ProductRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(ProductDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals(productstoreProduct.getDescription(), output.getDescription());
+        Assertions.assertEquals(productstoreProduct.getDisplayName(), output.getDisplayName());
+        Assertions.assertEquals(productstoreProduct.getImageUrl(), output.getImageUrl());
+        Assertions.assertEquals(productstoreProduct.getClassifications(), output.getClassifications());
+        Assertions.assertEquals(product.getProductName(), output.getProductName());
     }
 
     @Test
