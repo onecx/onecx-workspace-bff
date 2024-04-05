@@ -199,7 +199,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - read
       tags:
         - menuItem
@@ -219,7 +219,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - write
       tags:
         - menuItem
@@ -253,7 +253,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - delete
       tags:
         - menuItem
@@ -274,7 +274,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - write
       tags:
         - menuItem
@@ -309,7 +309,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - read
       tags:
         - menuItem
@@ -334,7 +334,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - write
       tags:
         - menuItem
@@ -367,7 +367,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - read
       tags:
         - menuItem
@@ -396,7 +396,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - delete
       tags:
         - menuItem
@@ -417,7 +417,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          menus:
+          menu:
             - read
       tags:
         - userMenu
@@ -743,7 +743,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspace:
+          role:
             - write
       tags:
         - workspaceRoles
@@ -772,7 +772,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          workspace:
+          role:
             - delete
       tags:
         - workspaceRoles
@@ -792,7 +792,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspace:
+          role:
             - read
       tags:
         - workspaceRoles
@@ -812,7 +812,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          workspace:
+          role:
             - write
       tags:
         - workspaceRoles
@@ -969,7 +969,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          roles:
+          role:
             - read
       tags:
         - role
@@ -998,7 +998,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          assignments:
+          assignment:
             - read
       tags:
         - assignment
@@ -1027,7 +1027,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          assignments:
+          assignment:
             - write
       tags:
         - assignment
@@ -1062,7 +1062,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          assignments:
+          assignment:
             - delete
       tags:
         - assignment
