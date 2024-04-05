@@ -13,11 +13,11 @@
         "json": {
           "appId": "onecx-workspace-bff",
           "permissions": {
-            "workspaces": ["read", "write", "delete"],
-            "roles": ["read"],
-            "assignments": ["read", "write", "delete"],
-            "menus": ["read", "write", "delete"],
-            "permissions": ["admin-write","admin-read"]
+            "workspace": ["read", "write", "delete"],
+            "role": ["read", "write", "delete"],
+            "assignment": ["read", "write", "delete"],
+            "menu": ["read", "write", "delete"],
+            "permission": ["admin-write","admin-read"]
           }
         },
         "contentType": "application/json"
@@ -38,10 +38,10 @@
         "json": {
           "appId": "onecx-workspace-bff",
           "permissions": {
-            "workspaces": ["read"],
-            "assignments": ["read"],
-            "menus": ["read"],
-            "permissions": ["admin-write","admin-read"]
+            "workspace": ["read"],
+            "assignment": ["read"],
+            "menu": ["read"],
+            "permission": ["admin-write","admin-read"]
           }
         },
         "contentType": "application/json"

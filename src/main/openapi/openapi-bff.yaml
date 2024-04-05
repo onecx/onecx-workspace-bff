@@ -8,8 +8,10 @@ servers:
   - url: http://onecx-workspace-bff:8080/
 tags:
   - name: workspace
-  - name: menuItem
-  - name: products
+  - name: menu
+  - name: product
+  - name: role
+  - name: assignment
 paths:
   /workspaces:
     post:

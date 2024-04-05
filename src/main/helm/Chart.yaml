@@ -2,7 +2,7 @@ apiVersion: v2
 name: onecx-workspace-bff
 version: 0.0.0
 appVersion: 0.0.0
-description: Onecx workspace management bff
+description: OneCX Workspace BFF
 keywords:
   - workspace
 sources:
