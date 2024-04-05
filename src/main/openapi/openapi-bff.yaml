@@ -449,7 +449,7 @@ paths:
           workspace:
             - write
       tags:
-        - workspaceProduct
+        - product
       description: Create/Register new product to workspace
       operationId: createProductInWorkspace
       parameters:
@@ -485,7 +485,7 @@ paths:
           workspace:
             - read
       tags:
-        - workspaceProduct
+        - product
       description: Find all products belonging to a workspace
       operationId: getProductsForWorkspaceId
       parameters:
@@ -506,7 +506,7 @@ paths:
           workspace:
             - delete
       tags:
-        - workspaceProduct
+        - product
       description: Delete a product by the workspace id and the productId
       operationId: deleteProductById
       parameters:
@@ -527,7 +527,7 @@ paths:
           workspace:
             - write
       tags:
-        - workspaceProduct
+        - product
       description: Update product and MFEs
       operationId: updateProductById
       parameters:
@@ -560,7 +560,7 @@ paths:
           workspace:
             - read
       tags:
-        - workspaceProduct
+        - product
       description: Get a product by the productId
       operationId: getProductById
       parameters:
@@ -665,7 +665,7 @@ paths:
           workspace:
             - read
       tags:
-        - menuItem
+        - menu
       description: Export menu
       operationId: exportMenuByWorkspaceName
       parameters:
@@ -686,7 +686,7 @@ paths:
           workspace:
             - write
       tags:
-        - menuItem
+        - menu
       description: Import menu
       operationId: importMenuByWorkspaceName
       parameters:
@@ -717,7 +717,7 @@ paths:
           workspace:
             - read
       tags:
-        - workspaceRoles
+        - role
       description: search workspaceRoles
       operationId: searchWorkspaceRoles
       requestBody:
@@ -746,7 +746,7 @@ paths:
           role:
             - write
       tags:
-        - workspaceRoles
+        - role
       description: create role for workspace
       operationId: createWorkspaceRole
       requestBody:
@@ -775,7 +775,7 @@ paths:
           role:
             - delete
       tags:
-        - workspaceRoles
+        - role
       description: delete workspace role
       operationId: deleteWorkspaceRole
       parameters:
@@ -815,7 +815,7 @@ paths:
           role:
             - write
       tags:
-        - workspaceRoles
+        - role
       description: Update workspace role
       operationId: updateWorkspaceRole
       parameters:
@@ -848,7 +848,7 @@ paths:
           workspace:
             - write
       tags:
-        - imagesInternal
+        - image
       description: Upload Images
       parameters:
         - in: header
@@ -891,7 +891,7 @@ paths:
           workspace:
             - read
       tags:
-        - imagesInternal
+        - image
       description: Get Image by id
       operationId: getImage
       parameters:
@@ -925,7 +925,7 @@ paths:
           workspace:
             - write
       tags:
-        - imagesInternal
+        - image
       description: update Images
       operationId: updateImage
       parameters:
