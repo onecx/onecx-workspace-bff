@@ -8,7 +8,7 @@ servers:
   - url: http://onecx-workspace-bff:8080/
 tags:
   - name: workspace
-  - name: menu
+  - name: menuItem
   - name: product
   - name: role
   - name: assignment
@@ -451,7 +451,7 @@ paths:
           workspace:
             - write
       tags:
-        - product
+        - workspaceProduct
       description: Create/Register new product to workspace
       operationId: createProductInWorkspace
       parameters:
@@ -487,7 +487,7 @@ paths:
           workspace:
             - read
       tags:
-        - product
+        - workspaceProduct
       description: Find all products belonging to a workspace
       operationId: getProductsForWorkspaceId
       parameters:
@@ -508,7 +508,7 @@ paths:
           workspace:
             - delete
       tags:
-        - product
+        - workspaceProduct
       description: Delete a product by the workspace id and the productId
       operationId: deleteProductById
       parameters:
@@ -529,7 +529,7 @@ paths:
           workspace:
             - write
       tags:
-        - product
+        - workspaceProduct
       description: Update product and MFEs
       operationId: updateProductById
       parameters:
@@ -562,7 +562,7 @@ paths:
           workspace:
             - read
       tags:
-        - product
+        - workspaceProduct
       description: Get a product by the productId
       operationId: getProductById
       parameters:
@@ -667,7 +667,7 @@ paths:
           workspace:
             - read
       tags:
-        - menu
+        - menuItem
       description: Export menu
       operationId: exportMenuByWorkspaceName
       parameters:
@@ -688,7 +688,7 @@ paths:
           workspace:
             - write
       tags:
-        - menu
+        - menuItem
       description: Import menu
       operationId: importMenuByWorkspaceName
       parameters:
@@ -719,7 +719,7 @@ paths:
           workspace:
             - read
       tags:
-        - role
+        - workspaceRoles
       description: search workspaceRoles
       operationId: searchWorkspaceRoles
       requestBody:
@@ -748,7 +748,7 @@ paths:
           role:
             - write
       tags:
-        - role
+        - workspaceRoles
       description: create role for workspace
       operationId: createWorkspaceRole
       requestBody:
@@ -777,7 +777,7 @@ paths:
           role:
             - delete
       tags:
-        - role
+        - workspaceRoles
       description: delete workspace role
       operationId: deleteWorkspaceRole
       parameters:
@@ -817,7 +817,7 @@ paths:
           role:
             - write
       tags:
-        - role
+        - workspaceRoles
       description: Update workspace role
       operationId: updateWorkspaceRole
       parameters:
@@ -850,7 +850,7 @@ paths:
           workspace:
             - write
       tags:
-        - image
+        - imagesInternal
       description: Upload Images
       parameters:
         - in: header
@@ -893,7 +893,7 @@ paths:
           workspace:
             - read
       tags:
-        - image
+        - imagesInternal
       description: Get Image by id
       operationId: getImage
       parameters:
@@ -927,7 +927,7 @@ paths:
           workspace:
             - write
       tags:
-        - image
+        - imagesInternal
       description: update Images
       operationId: updateImage
       parameters:
