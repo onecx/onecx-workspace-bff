@@ -15,7 +15,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - workspace
@@ -44,7 +44,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspace
@@ -73,7 +73,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspace
@@ -97,7 +97,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - workspace
@@ -128,7 +128,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - delete
       tags:
         - workspace
@@ -149,7 +149,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspace
@@ -174,7 +174,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspace
@@ -446,7 +446,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - workspaceProduct
@@ -482,7 +482,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspaceProduct
@@ -503,7 +503,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - delete
       tags:
         - workspaceProduct
@@ -524,7 +524,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - workspaceProduct
@@ -557,7 +557,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspaceProduct
@@ -578,7 +578,7 @@ paths:
   /products:
     x-onecx:
       permissions:
-        workspaces:
+        workspace:
           - read
     post:
       tags:
@@ -607,7 +607,7 @@ paths:
   /workspaces/export:
     x-onecx:
       permissions:
-        workspaces:
+        workspace:
           - read
     post:
       tags:
@@ -632,7 +632,7 @@ paths:
   /workspaces/import:
     x-onecx:
       permissions:
-        workspaces:
+        workspace:
           - write
     post:
       tags:
@@ -662,7 +662,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - menuItem
@@ -683,7 +683,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - menuItem
@@ -714,7 +714,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspaceRoles
@@ -743,7 +743,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - workspaceRoles
@@ -772,7 +772,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - delete
       tags:
         - workspaceRoles
@@ -792,7 +792,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - workspaceRoles
@@ -812,7 +812,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - workspaceRoles
@@ -845,7 +845,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - imagesInternal
@@ -888,7 +888,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - read
       tags:
         - imagesInternal
@@ -922,7 +922,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          workspaces:
+          workspace:
             - write
       tags:
         - imagesInternal
