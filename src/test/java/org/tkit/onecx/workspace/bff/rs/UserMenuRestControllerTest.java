@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
-import org.tkit.onecx.workspace.bff.rs.controllers.UserMenuRestController;
+import org.tkit.onecx.workspace.bff.rs.controllers.MenuItemRestController;
 
+import gen.org.tkit.onecx.workspace.bff.rs.internal.model.GetMenuItemsRequestDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailResponseDTO;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.model.UserWorkspaceMenuRequestDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.UserWorkspaceMenuStructureDTO;
 import gen.org.tkit.onecx.workspace.user.client.model.UserWorkspaceMenuItem;
 import gen.org.tkit.onecx.workspace.user.client.model.UserWorkspaceMenuRequest;
@@ -28,7 +28,7 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-@TestHTTPEndpoint(UserMenuRestController.class)
+@TestHTTPEndpoint(MenuItemRestController.class)
 class UserMenuRestControllerTest extends AbstractTest {
 
     @InjectMockServerClient
@@ -61,15 +61,15 @@ class UserMenuRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
 
-        UserWorkspaceMenuRequestDTO requestDTO = new UserWorkspaceMenuRequestDTO();
-        requestDTO.workspaceName(workspaceName).menuKeys(List.of("main-menu"));
+        GetMenuItemsRequestDTO requestDTO = new GetMenuItemsRequestDTO()
+                .workspaceName(workspaceName).menuKeys(List.of("main-menu"));
         var output = given()
                 .when()
                 .auth().oauth2(TOKEN)
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
-                .post()
+                .post("/menuItems")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -107,7 +107,7 @@ class UserMenuRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
 
-        UserWorkspaceMenuRequestDTO requestDTO = new UserWorkspaceMenuRequestDTO();
+        GetMenuItemsRequestDTO requestDTO = new GetMenuItemsRequestDTO();
         requestDTO.workspaceName(workspaceName).menuKeys(List.of("main-menu"));
         given()
                 .when()
@@ -115,7 +115,7 @@ class UserMenuRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
-                .post()
+                .post("/menuItems")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -126,7 +126,7 @@ class UserMenuRestControllerTest extends AbstractTest {
     void getUserMenuMissingWorkspaceNameTest() {
         final String TOKEN = keycloakClient.getAccessToken(ADMIN);
 
-        UserWorkspaceMenuRequestDTO requestDTO = new UserWorkspaceMenuRequestDTO();
+        GetMenuItemsRequestDTO requestDTO = new GetMenuItemsRequestDTO();
         requestDTO.menuKeys(List.of("main-menu"));
         var output = given()
                 .when()
@@ -134,7 +134,7 @@ class UserMenuRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
-                .post()
+                .post("/menuItems")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)

@@ -415,29 +415,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /me/menu:
+  /menu/menuItems:
     post:
       x-onecx:
         permissions:
           menu:
             - read
       tags:
-        - userMenu
-      description: get User specific menu
-      operationId: getUserMenu
+        - menuItem
+      description: get User specific menu items
+      operationId: getMenuItems
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserWorkspaceMenuRequest'
+              $ref: '#/components/schemas/GetMenuItemsRequest'
       responses:
         200:
           description: Ok
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWorkspaceMenuStructure'
+                $ref: '#/components/schemas/GetMenuItemsResponse'
         400:
           description: Bad request
           content:
@@ -2022,7 +2022,7 @@ components:
           type: string
         workspaceId:
           type: string
-    UserWorkspaceMenuRequest:
+    GetMenuItemsRequest:
       type: object
       required:
         - workspaceName
@@ -2031,8 +2031,19 @@ components:
           type: string
         menuKeys:
           type: array
+          minItems: 1
           items:
             type: string
+    GetMenuItemsResponse:
+      type: object
+      properties:
+        workspaceName:
+          type: string
+        menu:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/UserWorkspaceMenuItem'
     UserWorkspaceMenuStructure:
       type: object
       properties:
