@@ -14,8 +14,8 @@ public class UserMenuLog implements LogParam {
     @Override
     public List<Item> getClasses() {
         return List.of(
-                this.item(10, UserWorkspaceMenuRequestDTO.class,
-                        x -> UserWorkspaceMenuRequestDTO.class.getSimpleName() + "[workspace:"
-                                + ((UserWorkspaceMenuRequestDTO) x).getWorkspaceName() + "]"));
+                this.item(10, GetMenuItemsRequestDTO.class,
+                        x -> GetMenuItemsRequestDTO.class.getSimpleName() + "[workspace:"
+                                + ((GetMenuItemsRequestDTO) x).getWorkspaceName() + "]"));
     }
 }

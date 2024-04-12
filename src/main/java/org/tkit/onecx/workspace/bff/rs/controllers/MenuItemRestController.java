@@ -1,5 +1,6 @@
 package org.tkit.onecx.workspace.bff.rs.controllers;
 
+import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static jakarta.ws.rs.core.Response.Status.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,6 +8,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -21,6 +24,9 @@ import gen.org.tkit.onecx.workspace.client.api.MenuInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.exim.client.api.WorkspaceExportImportApi;
 import gen.org.tkit.onecx.workspace.exim.client.model.*;
+import gen.org.tkit.onecx.workspace.user.client.api.UserMenuInternalApi;
+import gen.org.tkit.onecx.workspace.user.client.model.UserWorkspaceMenuRequest;
+import gen.org.tkit.onecx.workspace.user.client.model.UserWorkspaceMenuStructure;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -40,6 +46,16 @@ public class MenuItemRestController implements MenuItemApiService {
     @Inject
     @RestClient
     WorkspaceExportImportApi eximClient;
+
+    @Context
+    HttpHeaders headers;
+
+    @Inject
+    UserMenuMapper mapper;
+
+    @Inject
+    @RestClient
+    UserMenuInternalApi userMenuClient;
 
     @Override
     public Response createMenuItemForWorkspace(CreateMenuItemDTO createMenuItemDTO) {
@@ -77,6 +93,16 @@ public class MenuItemRestController implements MenuItemApiService {
         try (Response response = menuClient.getMenuItemById(menuItemId)) {
             MenuItemDTO menuItemDTO = menuItemMapper.map(response.readEntity(MenuItem.class));
             return Response.status(OK).entity(menuItemDTO).build();
+        }
+    }
+
+    @Override
+    public Response getMenuItems(GetMenuItemsRequestDTO getMenuItemsRequestDTO) {
+        var token = headers.getRequestHeader(AUTHORIZATION).get(0);
+        UserWorkspaceMenuRequest request = mapper.map(getMenuItemsRequestDTO, token);
+        try (Response response = userMenuClient.getUserMenu(getMenuItemsRequestDTO.getWorkspaceName(), request)) {
+            return Response.status(response.getStatus())
+                    .entity(mapper.map(response.readEntity(UserWorkspaceMenuStructure.class))).build();
         }
     }
 
