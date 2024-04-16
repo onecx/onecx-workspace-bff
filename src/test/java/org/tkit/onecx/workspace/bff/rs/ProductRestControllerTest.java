@@ -133,8 +133,10 @@ class ProductRestControllerTest extends AbstractTest {
 
         var result = new ProductPageResult()
                 .stream(List.of(
-                        new ProductResult().productName("p1"),
-                        new ProductResult().productName("p2")));
+                        new ProductResult().productName("p1")
+                                .microfrontends(List.of(new Microfrontend().mfeId("mfe1").basePath("/mfe1").id("mfe1"))),
+                        new ProductResult().productName("p2")
+                                .microfrontends(List.of(new Microfrontend().mfeId("mfe2").basePath("/mfe2").id("mfe2")))));
 
         // create mock rest endpoint
         mockServerClient
@@ -179,7 +181,7 @@ class ProductRestControllerTest extends AbstractTest {
         assertThat(output[0]).isNotNull();
         assertThat(output[0].getProductName()).isEqualTo("p1");
         assertThat(output[0].getDisplayName()).isEqualTo("product1");
-
+        assertThat(output[0].getMicrofrontends()).hasSize(1);
         assertThat(output[1]).isNotNull();
         assertThat(output[1].getProductName()).isEqualTo("p2");
         assertThat(output[1].getDisplayName()).isEqualTo("product2");
