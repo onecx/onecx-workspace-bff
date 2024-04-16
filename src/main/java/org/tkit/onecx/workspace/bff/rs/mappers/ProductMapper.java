@@ -62,7 +62,6 @@ public interface ProductMapper {
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "classifications", ignore = true)
     @Mapping(target = "description", ignore = true)
-    @Mapping(target = "microfrontends", ignore = true)
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     ProductDTO map(ProductResult dto);
 
