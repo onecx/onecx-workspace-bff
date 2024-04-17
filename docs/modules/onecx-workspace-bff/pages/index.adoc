@@ -1,0 +1,8 @@
+include::onecx-workspace-bff-attributes.adoc[opts=optional]
+
+== onecx-workspace-bff
+
+include::docs.adoc[opts=optional]
+
+
+include::onecx-workspace-bff-docs.adoc[opts=optional]
