@@ -1,0 +1,109 @@
+
+include::onecx-workspace-bff-attributes.adoc[opts=optional]
+
+=== Default properties
+
+.{properties-file}
+[%collapsible%open]
+====
+[source,properties,subs=attributes+]
+----
+quarkus.http.auth.permission.health.paths=/q/*
+quarkus.http.auth.permission.health.policy=permit
+quarkus.http.auth.permission.default.paths=/*
+quarkus.http.auth.permission.default.policy=authenticated
+onecx.permissions.application-id=${quarkus.application.name}
+org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
+%prod.quarkus.rest-client.onecx_workspace_svc.url=http://onecx-workspace-svc:8080
+%prod.quarkus.rest-client.onecx_image_internal.url=http://onecx-workspace-svc:8080
+%prod.quarkus.rest-client.onecx_theme_svc.url=http://onecx-theme-svc:8080
+%prod.quarkus.rest-client.onecx_product_store_svc.url=http://onecx-product-store-svc:8080
+%prod.quarkus.rest-client.onecx_iam_svc.url=http://onecx-iam-kc-svc:8080
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
+quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.config-key=onecx_image_internal
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.base-package=gen.org.tkit.onecx.workspace.client
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.type-mappings.File=byte[]
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.config-key=onecx_workspace_svc
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.base-package=gen.org.tkit.onecx.workspace.client
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.config-key=onecx_workspace_svc
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.base-package=gen.org.tkit.onecx.workspace.exim.client
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.config-key=onecx_workspace_svc
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.base-package=gen.org.tkit.onecx.workspace.user.client
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.config-key=onecx_theme_svc
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.theme.client
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.config-key=onecx_product_store_svc
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.product.store.client
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.config-key=onecx_iam_svc
+quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.base-package=gen.org.tkit.onecx.iam.client
+quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.return-response=true
+quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+----
+====
+
+=== Extensions
+
+include::onecx-workspace-bff-extensions.adoc[opts=optional]
+
+=== Container
+
+{docker-registry}[Docker registry]
+
+
+=== Helm
+
+{helm-registry}[Helm registry]
+
+Default values
+
+.{helm-file}
+[source,yaml]
+----
+app:
+  name: bff
+  image:
+    repository: "onecx/onecx-workspace-bff"
+  operator:
+    # Permission
+    permission:
+      enabled: true
+      spec:
+        permissions:
+          workspace:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
+          role:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
+          assignment:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
+          menu:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
+
+----
+
