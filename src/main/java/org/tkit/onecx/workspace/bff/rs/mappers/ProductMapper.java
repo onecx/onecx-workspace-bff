@@ -22,6 +22,7 @@ public interface ProductMapper {
 
     CreateProductRequest map(CreateProductRequestDTO dto, String workspaceId);
 
+    @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "classifications", ignore = true)
@@ -58,6 +59,7 @@ public interface ProductMapper {
         return resultList;
     }
 
+    @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "classifications", ignore = true)
@@ -68,6 +70,10 @@ public interface ProductMapper {
     @Mapping(source = ".", target = "resource")
     CreateUpdateProductResponseDTO mapToCreateUpdate(ProductDTO map);
 
+    @Mapping(target = "undeployed", ignore = true)
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "deprecated", ignore = true)
+    @Mapping(target = "appName", ignore = true)
     @Mapping(source = "mfeId", target = "appId")
     MicrofrontendDTO map(Microfrontend mfe);
 

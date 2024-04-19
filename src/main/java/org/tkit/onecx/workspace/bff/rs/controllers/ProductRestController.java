@@ -74,7 +74,7 @@ public class ProductRestController implements WorkspaceProductApiService {
     }
 
     @Override
-    public Response getProductsForWorkspaceId(String id) {
+    public Response getProductsByWorkspaceId(String id) {
         var criteria = new ProductSearchCriteria().workspaceId(id);
         try (Response response = productClient.searchProducts(criteria)) {
             ProductItemSearchCriteria searchCriteria = new ProductItemSearchCriteria();

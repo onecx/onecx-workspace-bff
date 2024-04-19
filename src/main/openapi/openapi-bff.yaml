@@ -489,7 +489,7 @@ paths:
       tags:
         - workspaceProduct
       description: Find all products belonging to a workspace
-      operationId: getProductsForWorkspaceId
+      operationId: getProductsByWorkspaceId
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -1506,6 +1506,8 @@ components:
           type: string
         description:
           type: string
+        undeployed:
+          type: boolean
         microfrontends:
           type: array
           minItems: 1
@@ -1518,8 +1520,16 @@ components:
           type: string
         appId:
           type: string
+        appName:
+          type: string
         basePath:
           type: string
+        deprecated:
+          type: boolean
+        undeployed:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/MicrofrontendType'
     CreateProductRequest:
       required:
         - productName
