@@ -4,6 +4,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.onecx.workspace.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.ProductMapper;
 
 import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
@@ -21,6 +24,9 @@ public class PsProductsRestController implements ProductsApiService {
     @Inject
     ProductMapper productMapper;
 
+    @Inject
+    ExceptionMapper exceptionMapper;
+
     @Override
     public Response searchAvailableProducts(ProductStoreSearchCriteriaDTO productStoreSearchCriteriaDTO) {
         try (Response response = productStoreClient
@@ -28,5 +34,10 @@ public class PsProductsRestController implements ProductsApiService {
             ProductStorePageResultDTO availableProducts = productMapper.map(response.readEntity(ProductsLoadResult.class));
             return Response.status(response.getStatus()).entity(availableProducts).build();
         }
+    }
+
+    @ServerExceptionMapper
+    public Response restException(ClientWebApplicationException ex) {
+        return exceptionMapper.clientException(ex);
     }
 }

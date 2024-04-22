@@ -11,6 +11,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.*;
@@ -159,7 +160,7 @@ public class WorkspaceRestController implements WorkspaceApiService {
     }
 
     @ServerExceptionMapper
-    public Response restException(WebApplicationException ex) {
-        return Response.status(ex.getResponse().getStatus()).build();
+    public Response restException(ClientWebApplicationException ex) {
+        return exceptionMapper.clientException(ex);
     }
 }

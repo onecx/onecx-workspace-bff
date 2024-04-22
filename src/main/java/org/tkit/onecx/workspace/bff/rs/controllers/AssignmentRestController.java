@@ -4,10 +4,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.AssignmentMapper;
@@ -19,7 +19,6 @@ import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.AssignmentInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.Assignment;
 import gen.org.tkit.onecx.workspace.client.model.AssignmentPageResult;
-import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
@@ -66,8 +65,7 @@ public class AssignmentRestController implements AssignmentApiService {
     }
 
     @ServerExceptionMapper
-    public Response restException(WebApplicationException ex) {
-        return Response.status(ex.getResponse().getStatus())
-                .entity(exceptionMapper.map(ex.getResponse().readEntity(ProblemDetailResponse.class))).build();
+    public Response restException(ClientWebApplicationException ex) {
+        return exceptionMapper.clientException(ex);
     }
 }

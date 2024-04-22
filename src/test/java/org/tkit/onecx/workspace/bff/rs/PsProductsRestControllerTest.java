@@ -74,4 +74,33 @@ class PsProductsRestControllerTest extends AbstractTest {
                 productItem.getMicrofrontends().get(0).getAppId());
         mockServerClient.clear("mock");
     }
+
+    @Test
+    void getAvailableProductsOfProductStore_SeverError_Test() {
+
+        ProductItemLoadSearchCriteria svcCriteria = new ProductItemLoadSearchCriteria();
+        svcCriteria.pageNumber(0).pageSize(100);
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/v1/products/load")
+                        .withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(svcCriteria)))
+                .withId("mock")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        ProductStoreSearchCriteriaDTO storeSearchCriteriaDTO = new ProductStoreSearchCriteriaDTO();
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(storeSearchCriteriaDTO)
+                .post()
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
+        mockServerClient.clear("mock");
+    }
 }
