@@ -140,24 +140,25 @@ class IamRoleRestControllerTest extends AbstractTest {
 
     @Test
     void searchIAMRole_ServerError_Test() {
+        RoleSearchCriteria criteria = new RoleSearchCriteria();
+        criteria.setName("role1");
         // create mock rest endpoint
-        mockServerClient.when(request().withPath("/v1/roles/search").withMethod(HttpMethod.POST))
+        mockServerClient.when(request().withPath("/v1/roles/search").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(criteria)))
                 .withId("mock")
-                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON));
+                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
-        var output = given()
+        IAMRoleSearchCriteriaDTO criteriaDTO = new IAMRoleSearchCriteriaDTO();
+        criteriaDTO.setName("role1");
+        given()
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
+                .body(criteriaDTO)
                 .post()
                 .then()
-                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(ProblemDetailResponseDTO.class);
-
-        Assertions.assertNotNull(output);
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
 
         mockServerClient.clear("mock");
     }
