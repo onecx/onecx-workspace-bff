@@ -137,4 +137,28 @@ class IamRoleRestControllerTest extends AbstractTest {
 
         mockServerClient.clear("mock");
     }
+
+    @Test
+    void searchIAMRole_ServerError_Test() {
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/v1/roles/search").withMethod(HttpMethod.POST))
+                .withId("mock")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .post()
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProblemDetailResponseDTO.class);
+
+        Assertions.assertNotNull(output);
+
+        mockServerClient.clear("mock");
+    }
 }
