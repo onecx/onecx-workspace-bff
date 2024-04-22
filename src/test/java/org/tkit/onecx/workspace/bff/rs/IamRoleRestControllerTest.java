@@ -143,7 +143,7 @@ class IamRoleRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/v1/roles/search").withMethod(HttpMethod.POST))
                 .withId("mock")
-                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
         var output = given()
