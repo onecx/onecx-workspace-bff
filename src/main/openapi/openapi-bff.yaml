@@ -1236,6 +1236,7 @@ components:
           type: string
         disabled:
           type: boolean
+          default: false
         position:
           format: int32
           type: integer
@@ -1243,6 +1244,7 @@ components:
           type: string
         external:
           type: boolean
+          default: false
         scope:
           $ref: '#/components/schemas/Scope'
         parentItemId:
@@ -1268,6 +1270,7 @@ components:
           type: string
         disabled:
           type: boolean
+          default: false
         position:
           format: int32
           type: integer
@@ -1277,6 +1280,7 @@ components:
           $ref: '#/components/schemas/Scope'
         external:
           type: boolean
+          default: false
         parentItemId:
           type: string
         i18n:
@@ -1304,6 +1308,7 @@ components:
           type: string
         disabled:
           type: boolean
+          default: false
         position:
           minimum: 0
           format: int32
@@ -1314,6 +1319,7 @@ components:
           $ref: '#/components/schemas/Scope'
         external:
           type: boolean
+          default: false
         parentItemId:
           type: string
         i18n:
@@ -1392,6 +1398,7 @@ components:
           type: string
         disabled:
           type: boolean
+          default: false
         position:
           format: int32
           type: integer
@@ -1401,6 +1408,7 @@ components:
           $ref: '#/components/schemas/Scope'
         external:
           type: boolean
+          default: false
         parentItemId:
           type: string
     MenuItemStructure:
@@ -1444,6 +1452,7 @@ components:
           type: string
         disabled:
           type: boolean
+          default: false
         position:
           format: int32
           type: integer
@@ -1453,6 +1462,7 @@ components:
           $ref: '#/components/schemas/Scope'
         external:
           type: boolean
+          default: false
         parentItemId:
           type: string
         i18n:
@@ -1508,6 +1518,7 @@ components:
           type: string
         undeployed:
           type: boolean
+          default: false
         microfrontends:
           type: array
           minItems: 1
@@ -1526,8 +1537,10 @@ components:
           type: string
         deprecated:
           type: boolean
+          default: false
         undeployed:
           type: boolean
+          default: false
         type:
           $ref: '#/components/schemas/MicrofrontendType'
     CreateProductRequest:
@@ -1729,6 +1742,7 @@ components:
           type: string
         disabled:
           type: boolean
+          default: false
         position:
           format: int32
           type: integer
@@ -1738,6 +1752,7 @@ components:
           $ref: '#/components/schemas/EximScope'
         external:
           type: boolean
+          default: false
         roles:
           type: array
           uniqueItems: true
@@ -1839,6 +1854,7 @@ components:
           type: string
         undeployed:
           type: boolean
+          default: false
         microfrontends:
           type: array
           minItems: 1
@@ -1853,13 +1869,16 @@ components:
           type: string
         deprecated:
           type: boolean
+          default: false
         undeployed:
           type: boolean
+          default: false
         type:
           $ref: '#/components/schemas/MicrofrontendType'
     MicrofrontendType:
       type: string
       enum: [ MODULE, COMPONENT ]
+      default: 'MODULE'
     IAMRoleSearchCriteria:
       type: object
       properties:
@@ -2094,6 +2113,7 @@ components:
           type: string
         external:
           type: boolean
+          default: false
         i18n:
           type: object
           additionalProperties:
