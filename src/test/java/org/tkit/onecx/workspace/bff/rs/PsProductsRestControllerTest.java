@@ -40,6 +40,8 @@ class PsProductsRestControllerTest extends AbstractTest {
         ProductsAbstract productItem = new ProductsAbstract();
         productItem.basePath("test").name("test").classifications("search");
         productItem.setMicrofrontends(List.of(new MicrofrontendAbstract().appName("app1").appId("app1")));
+        productItem.slots(List.of(new SlotAbstract().name("slot1").deprecated(false).undeployed(false),
+                new SlotAbstract().name("slot2")));
         svcResult.number(0).totalElements(1L).totalPages(1L).stream(List.of(productItem));
 
         // create mock rest endpoint
@@ -72,6 +74,8 @@ class PsProductsRestControllerTest extends AbstractTest {
         Assertions.assertEquals(output.getStream().get(0).getClassifications(), productItem.getClassifications());
         Assertions.assertEquals(output.getStream().get(0).getMicrofrontends().get(0).getAppId(),
                 productItem.getMicrofrontends().get(0).getAppId());
+        Assertions.assertEquals(output.getStream().get(0).getSlots().get(0).getName(),
+                productItem.getSlots().get(0).getName());
         mockServerClient.clear("mock");
     }
 

@@ -9,7 +9,7 @@ servers:
 tags:
   - name: workspace
   - name: menuItem
-  - name: product
+  - name: products
   - name: role
   - name: assignment
 paths:
@@ -1860,6 +1860,21 @@ components:
           minItems: 1
           items:
             $ref: '#/components/schemas/MicrofrontendPS'
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlotPS'
+    SlotPS:
+      type: object
+      properties:
+        name:
+          type: string
+        deprecated:
+          type: boolean
+          default: false
+        undeployed:
+          type: boolean
+          default: false
     MicrofrontendPS:
       type: object
       properties:
