@@ -26,7 +26,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestHTTPEndpoint(SlotRestController.class)
-public class SlotRestControllerTest extends AbstractTest {
+class SlotRestControllerTest extends AbstractTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
