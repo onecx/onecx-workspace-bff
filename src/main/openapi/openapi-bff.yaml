@@ -9,7 +9,7 @@ servers:
 tags:
   - name: workspace
   - name: menuItem
-  - name: product
+  - name: products
   - name: role
   - name: assignment
 paths:
@@ -584,7 +584,7 @@ paths:
           - read
     post:
       tags:
-        - product
+        - products
       description: search all available products of product-store
       operationId: searchAvailableProducts
       requestBody:
