@@ -17,6 +17,7 @@
             "role": ["read", "write", "delete"],
             "assignment": ["read", "write", "delete"],
             "menu": ["read", "write", "delete"],
+            "slot": ["read", "write", "delete"],
             "permission": ["admin-write","admin-read"]
           }
         },
@@ -41,6 +42,7 @@
             "workspace": ["read"],
             "assignment": ["read"],
             "menu": ["read"],
+            "slot": ["read"],
             "permission": ["admin-write","admin-read"]
           }
         },

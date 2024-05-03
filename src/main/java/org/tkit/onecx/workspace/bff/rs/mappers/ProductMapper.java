@@ -92,6 +92,7 @@ public interface ProductMapper {
     @Mapping(target = "removeStreamItem", ignore = true)
     ProductStorePageResultDTO map(ProductsLoadResult pageResult);
 
+    @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "baseUrl", source = "basePath")
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     @Mapping(target = "productName", source = "name")

@@ -11,11 +11,11 @@ import org.tkit.onecx.workspace.bff.rs.mappers.ProductMapper;
 
 import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
 import gen.org.tkit.onecx.product.store.client.model.ProductsLoadResult;
-import gen.org.tkit.onecx.workspace.bff.rs.internal.ProductsApiService;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.ProductApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductStorePageResultDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProductStoreSearchCriteriaDTO;
 
-public class PsProductsRestController implements ProductsApiService {
+public class PsProductsRestController implements ProductApiService {
 
     @Inject
     @RestClient
