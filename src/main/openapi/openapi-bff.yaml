@@ -1890,6 +1890,8 @@ components:
           default: false
         type:
           $ref: '#/components/schemas/MicrofrontendType'
+        exposedModule:
+          type: string
     MicrofrontendType:
       type: string
       enum: [ MODULE, COMPONENT ]
