@@ -14,7 +14,7 @@ import org.tkit.onecx.workspace.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.SlotMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.workspace.bff.rs.internal.SlotsApiService;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.SlotApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.SlotInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.Slot;
@@ -23,7 +23,7 @@ import gen.org.tkit.onecx.workspace.client.model.WorkspaceSlots;
 @ApplicationScoped
 @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
 @LogService
-public class SlotRestController implements SlotsApiService {
+public class SlotRestController implements SlotApiService {
 
     @Inject
     @RestClient

@@ -9,10 +9,10 @@ servers:
 tags:
   - name: workspace
   - name: menuItem
-  - name: products
+  - name: product
   - name: role
   - name: assignment
-  - name: slots
+  - name: slot
 paths:
   /workspaces:
     post:
@@ -585,7 +585,7 @@ paths:
           - read
     post:
       tags:
-        - products
+        - product
       description: search all available products of product-store
       operationId: searchAvailableProducts
       requestBody:
@@ -1083,7 +1083,7 @@ paths:
           slot:
             - write
       tags:
-        - slots
+        - slot
       description: Add a new slot to workspace
       operationId: createSlot
       requestBody:
@@ -1118,7 +1118,7 @@ paths:
           slot:
             - read
       tags:
-        - slots
+        - slot
       description: Get slots for workspace
       operationId: getSlotsForWorkspace
       parameters:
@@ -1143,7 +1143,7 @@ paths:
           slot:
             - read
       tags:
-        - slots
+        - slot
       description: Retrieve slot detail info
       operationId: getSlotById
       parameters:
@@ -1163,7 +1163,7 @@ paths:
           slot:
             - delete
       tags:
-        - slots
+        - slot
       description: Delete a slot
       operationId: deleteSlotById
       parameters:
@@ -1183,7 +1183,7 @@ paths:
           slot:
             - write
       tags:
-        - slots
+        - slot
       description: Update an existing slot
       operationId: updateSlot
       parameters:
