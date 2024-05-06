@@ -267,7 +267,6 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
                 .header(APM_HEADER_PARAM, ADMIN)
-                .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
                 .when()
@@ -392,6 +391,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .withPriority(100)
                 .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
 
         var exception = given()
@@ -406,6 +406,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode())
+                .contentType(APPLICATION_JSON)
                 .extract().as(ProblemDetailResponseDTO.class);
 
         assertThat(exception.getErrorCode()).isEqualTo("CONSTRAINT_VIOLATIONS");
