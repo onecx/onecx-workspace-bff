@@ -854,13 +854,6 @@ paths:
         - imagesInternal
       description: Upload Images
       parameters:
-        - in: header
-          name: Content-Length
-          required: true
-          schema:
-            minimum: 1
-            maximum: 110000
-            type: integer
         - name: refId
           in: path
           required: true
@@ -932,12 +925,6 @@ paths:
       description: update Images
       operationId: updateImage
       parameters:
-        - in: header
-          name: Content-Length
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 110000
         - name: refId
           in: path
           required: true
