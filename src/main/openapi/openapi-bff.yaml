@@ -1318,6 +1318,9 @@ components:
           type: string
         address:
           $ref: '#/components/schemas/WorkspaceAddress'
+        mandatory:
+          type: boolean
+          default: false
     WorkspaceAbstract:
       required:
         - name

@@ -163,6 +163,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         data.setId("test-id-1");
         data.setName("test-name");
         data.setDescription("this is a test workspace");
+        data.setMandatory(true);
 
         // create mock rest endpoint
         mockServerClient
@@ -187,6 +188,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
+        Assertions.assertEquals(data.getMandatory(), output.getResource().getMandatory());
+
     }
 
     @Test
