@@ -403,7 +403,6 @@ class ImagesRestControllerTest extends AbstractTest {
     void updateImage() {
 
         var refId = "themeName";
-        var refType = "LOGO";
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
