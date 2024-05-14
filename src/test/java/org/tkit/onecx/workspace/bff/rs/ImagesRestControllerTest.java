@@ -88,7 +88,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refId}/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG)
@@ -123,13 +123,102 @@ class ImagesRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refId}/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_JPG)
                 .extract().body().asByteArray();
 
         assertThat(res).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    void getProductLogo_Test() {
+
+        var refId = "productName";
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        mockServerClient.when(request()
+                .withPath("/v1/image/" + refId + "/" + RefType.LOGO)
+                .withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .withId(mockId)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG))
+                        .withBody(bytesRes));
+
+        var res = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("productName", refId)
+                .get("/product/{productName}/logo")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG)
+                .extract().body().asByteArray();
+
+        assertThat(res).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    void getProductLogo_Empty_Body_Test() {
+
+        var refId = "productName";
+        byte[] bytesRes = new byte[] {};
+
+        mockServerClient.when(request()
+                .withPath("/v1/image/" + refId + "/" + RefType.LOGO)
+                .withMethod(HttpMethod.GET))
+                .withPriority(100)
+                .withId(mockId)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withHeaders(
+                                new Header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG))
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("productName", refId)
+                .get("/product/{productName}/logo")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+    }
+
+    @Test
+    void getProductLogo_Missing_ContentType_Test() {
+
+        var refId = "productName";
+        byte[] bytesRes = new byte[] { (byte) 0xe0, 0x4f, (byte) 0xd0,
+                0x20, (byte) 0xea, 0x3a, 0x69, 0x10, (byte) 0xa2, (byte) 0xd8, 0x08, 0x00, 0x2b,
+                0x30, 0x30, (byte) 0x9d };
+
+        mockServerClient.when(request()
+                .withPath("/v1/image/" + refId + "/" + RefType.LOGO)
+                .withMethod(HttpMethod.GET))
+                .withId(mockId)
+                .withPriority(100)
+                .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
+                        .withBody(bytesRes));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("productName", refId)
+                .get("/product/{productName}/logo")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
     }
 
     @Test
@@ -156,7 +245,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
-                .get()
+                .get("/{refId}/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
     }
@@ -185,7 +274,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refId}/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -215,7 +304,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refId}/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -241,7 +330,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .pathParam("refId", refId)
                 .pathParam("refType", refType)
-                .get()
+                .get("/{refId}/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -272,7 +361,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .post()
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -304,7 +393,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
                 .when()
-                .post()
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
@@ -314,7 +403,6 @@ class ImagesRestControllerTest extends AbstractTest {
     void updateImage() {
 
         var refId = "themeName";
-        var refType = "LOGO";
 
         ImageInfoDTO imageInfoDTO = new ImageInfoDTO();
         imageInfoDTO.setId("11-111");
@@ -336,7 +424,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .put()
+                .put("/{refId}/{refType}")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -369,7 +457,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .put()
+                .put("/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
@@ -403,7 +491,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(body)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .post()
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
