@@ -955,6 +955,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /images/product/{productName}/logo:
+    get:
+      x-onecx:
+        permissions:
+          workspace:
+            - read
+      tags:
+        - imagesInternal
+      description: Get product logo by name
+      operationId: getProductLogo
+      parameters:
+        - name: productName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /roles/iam/search:
     post:
       x-onecx:
