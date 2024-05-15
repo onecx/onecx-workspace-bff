@@ -141,7 +141,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 0x30, 0x30, (byte) 0x9d };
 
         mockServerClient.when(request()
-                .withPath("/v1/image/" + refId + "/" + RefType.LOGO)
+                .withPath("/v1/image/" + refId + "/logo")
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .withId(mockId)
@@ -156,7 +156,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("productName", refId)
-                .get("/product/{productName}/logo")
+                .get("/product/{productName}")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .header(HttpHeaders.CONTENT_TYPE, MEDIA_TYPE_IMAGE_PNG)
@@ -172,7 +172,7 @@ class ImagesRestControllerTest extends AbstractTest {
         byte[] bytesRes = new byte[] {};
 
         mockServerClient.when(request()
-                .withPath("/v1/image/" + refId + "/" + RefType.LOGO)
+                .withPath("/v1/image/" + refId + "/logo")
                 .withMethod(HttpMethod.GET))
                 .withPriority(100)
                 .withId(mockId)
@@ -187,7 +187,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("productName", refId)
-                .get("/product/{productName}/logo")
+                .get("/product/{productName}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 
@@ -202,7 +202,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 0x30, 0x30, (byte) 0x9d };
 
         mockServerClient.when(request()
-                .withPath("/v1/image/" + refId + "/" + RefType.LOGO)
+                .withPath("/v1/image/" + refId + "/logo")
                 .withMethod(HttpMethod.GET))
                 .withId(mockId)
                 .withPriority(100)
@@ -215,7 +215,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .contentType(APPLICATION_JSON)
                 .pathParam("productName", refId)
-                .get("/product/{productName}/logo")
+                .get("/product/{productName}")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
 

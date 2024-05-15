@@ -955,7 +955,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /images/product/{productName}/logo:
+  /images/product/{productName}:
     get:
       x-onecx:
         permissions:

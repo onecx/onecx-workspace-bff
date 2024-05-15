@@ -14,7 +14,6 @@ import org.tkit.onecx.workspace.bff.rs.mappers.ImagesMapper;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.product.store.client.api.ImagesApi;
-import gen.org.tkit.onecx.product.store.client.model.RefType;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.ImagesInternalApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ImageInfoDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.RefTypeDTO;
@@ -66,7 +65,7 @@ public class ImagesRestController implements ImagesInternalApiService {
     @Override
     public Response getProductLogo(String productName) {
         Response.ResponseBuilder responseBuilder;
-        try (Response response = productStoreImageClient.getImage(productName, RefType.LOGO)) {
+        try (Response response = productStoreImageClient.getProductLogo(productName)) {
             var contentType = response.getHeaderString(HttpHeaders.CONTENT_TYPE);
             var contentLength = response.getHeaderString(HttpHeaders.CONTENT_LENGTH);
             var body = response.readEntity(byte[].class);
