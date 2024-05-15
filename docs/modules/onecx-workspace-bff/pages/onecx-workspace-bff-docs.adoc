@@ -13,6 +13,8 @@ quarkus.http.auth.permission.health.policy=permit
 quarkus.http.auth.permission.default.paths=/*
 quarkus.http.auth.permission.default.policy=authenticated
 onecx.permissions.application-id=${quarkus.application.name}
+quarkus.http.filter.images.header."Cache-Control"=max-age=432000
+quarkus.http.filter.images.matches=/images/*
 org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 %prod.quarkus.rest-client.onecx_workspace_svc.url=http://onecx-workspace-svc:8080
 %prod.quarkus.rest-client.onecx_image_internal.url=http://onecx-workspace-svc:8080
