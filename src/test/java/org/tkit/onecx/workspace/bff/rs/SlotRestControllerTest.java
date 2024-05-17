@@ -5,6 +5,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ws.rs.HttpMethod;
@@ -45,12 +46,11 @@ class SlotRestControllerTest extends AbstractTest {
     @Test
     void createSlotTest() {
         CreateSlotRequest request = new CreateSlotRequest();
-        request.setName("slot1");
+        request.setSlots(List.of(new CreateSlot().name("slot1")));
         request.setWorkspaceId("w1");
 
-        Slot response = new Slot();
-        response.setName("slot1");
-        response.setWorkspaceId("w1");
+        List<Slot> response = new ArrayList<>();
+        response.add(new Slot().name("slot1").workspaceId("w1"));
 
         mockServerClient.when(request().withPath("/internal/slots").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
@@ -86,7 +86,7 @@ class SlotRestControllerTest extends AbstractTest {
                 .statusCode(Response.Status.FORBIDDEN.getStatusCode());
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(request.getName(), output.getName());
+        Assertions.assertEquals(request.getSlots().get(0).getName(), output.getName());
         Assertions.assertEquals(request.getWorkspaceId(), output.getWorkspaceId());
     }
 

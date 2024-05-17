@@ -22,6 +22,7 @@ import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.WorkspaceProductApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.ProductInternalApi;
+import gen.org.tkit.onecx.workspace.client.api.SlotInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
 
 @ApplicationScoped
@@ -43,13 +44,29 @@ public class ProductRestController implements WorkspaceProductApiService {
     @RestClient
     ProductsApi productStoreClient;
 
+    @Inject
+    @RestClient
+    SlotInternalApi slotClient;
+
+    @Inject
+    SlotMapper slotMapper;
+
     @Override
     public Response createProductInWorkspace(String id, CreateProductRequestDTO createProductRequestDTO) {
         CreateProductRequest request = productMapper.map(createProductRequestDTO, id);
         try (Response response = productClient.createProduct(request)) {
+            Response.ResponseBuilder responseBuilder = null;
             CreateUpdateProductResponseDTO createdProduct = productMapper
                     .mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
-            return Response.status(response.getStatus()).entity(createdProduct).build();
+            if (!createProductRequestDTO.getSlots().isEmpty()) {
+                try (Response slotsResponse = slotClient.createSlot(slotMapper.map(createProductRequestDTO.getSlots(), id))) {
+                    responseBuilder = Response.status(response.getStatus()).entity(createdProduct);
+
+                }
+            } else {
+                responseBuilder = Response.status(response.getStatus()).entity(createdProduct);
+            }
+            return responseBuilder.build();
         }
     }
 

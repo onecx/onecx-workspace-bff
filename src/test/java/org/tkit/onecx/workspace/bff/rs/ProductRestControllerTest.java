@@ -96,6 +96,61 @@ class ProductRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void registerNewProductWithSlotsTest() {
+        String workspaceId = "test";
+        CreateProductRequest request = new CreateProductRequest();
+        request.setProductName("test-product");
+        request.setBaseUrl("/");
+
+        Product response = new Product();
+        response.setProductName("test-product");
+        response.setBaseUrl("/");
+        mockServerClient
+                .when(request().withPath("/internal/products").withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(request)))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(response)));
+
+        CreateSlotRequest slotRequest = new CreateSlotRequest();
+        slotRequest.setWorkspaceId("test");
+        slotRequest.setSlots(List.of(new CreateSlot().name("slot1"), new CreateSlot().name("slot2")));
+
+        List<Slot> createdSlots = new ArrayList<>();
+        createdSlots.add(new Slot().workspaceId("test").name("slot1"));
+        createdSlots.add(new Slot().workspaceId("test").name("slot2"));
+
+        mockServerClient
+                .when(request().withPath("/internal/slots").withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(slotRequest)))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(createdSlots)));
+
+        CreateProductRequestDTO input = new CreateProductRequestDTO();
+        input.setProductName("test-product");
+        input.setBaseUrl("/");
+        input.setSlots(List.of(new CreateSlotDTO().name("slot1"), new CreateSlotDTO().name("slot2")));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.CREATED.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(CreateUpdateProductResponseDTO.class);
+
+        Assertions.assertNotNull(output.getResource());
+        Assertions.assertEquals(request.getProductName(), output.getResource().getProductName());
+        Assertions.assertEquals(request.getBaseUrl(), output.getResource().getBaseUrl());
+    }
+
+    @Test
     void registerNewProductFailTest() {
         String workspaceId = "test";
         CreateProductRequest request = new CreateProductRequest();
