@@ -39,7 +39,7 @@ public class SlotRestController implements SlotApiService {
     public Response createSlot(CreateSlotRequestDTO createSlotRequestDTO) {
         try (Response response = slotClient
                 .createSlot(slotMapper.map(createSlotRequestDTO))) {
-            SlotDTO responseDTO = slotMapper.map(response.readEntity(Slot.class));
+            SlotDTO responseDTO = slotMapper.map(response.readEntity(Slot[].class));
             return Response.status(response.getStatus()).entity(responseDTO).build();
         }
     }

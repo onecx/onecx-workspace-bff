@@ -1780,6 +1780,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CreateUpdateMicrofrontend'
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateSlot'
+    CreateSlot:
+      type: object
+      properties:
+        name:
+          type: string
     CreateUpdateMicrofrontend:
       required:
         - appId
