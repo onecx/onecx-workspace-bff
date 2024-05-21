@@ -1901,8 +1901,34 @@ components:
             $ref: '#/components/schemas/EximProduct'
         address:
           $ref: '#/components/schemas/EximWorkspaceAddress'
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximSlot'
         menu:
           $ref: '#/components/schemas/MenuSnapshot'
+    EximSlot:
+      type: object
+      properties:
+        name:
+          type: string
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/EximComponent'
+    EximComponent:
+      type: object
+      required:
+        - productName
+        - appId
+        - name
+      properties:
+        productName:
+          type: string
+        appId:
+          type: string
+        name:
+          type: string
     EximWorkspaceRole:
       type: object
       properties:
