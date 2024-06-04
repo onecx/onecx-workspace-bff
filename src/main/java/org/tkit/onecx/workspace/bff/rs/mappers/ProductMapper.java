@@ -22,6 +22,8 @@ public interface ProductMapper {
 
     CreateProductRequest map(CreateProductRequestDTO dto, String workspaceId);
 
+    @Mapping(target = "slots", ignore = true)
+    @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
@@ -59,6 +61,8 @@ public interface ProductMapper {
         return resultList;
     }
 
+    @Mapping(target = "slots", ignore = true)
+    @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)

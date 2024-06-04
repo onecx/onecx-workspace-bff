@@ -1750,6 +1750,10 @@ components:
           minItems: 1
           items:
             $ref: '#/components/schemas/Microfrontend'
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/Slot'
     Microfrontend:
       type: object
       properties:
