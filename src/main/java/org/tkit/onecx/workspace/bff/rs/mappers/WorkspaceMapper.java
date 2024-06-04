@@ -1,6 +1,7 @@
 package org.tkit.onecx.workspace.bff.rs.mappers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
@@ -50,8 +51,8 @@ public abstract class WorkspaceMapper {
 
     public abstract ImportWorkspaceResponseDTO map(ImportWorkspaceResponse response);
 
-    public ArrayList<String> mapThemeList(ThemeInfoList themeInfoList) {
-        ArrayList<String> themeNames = new ArrayList<>();
+    public List<String> mapThemeList(ThemeInfoList themeInfoList) {
+        List<String> themeNames = new ArrayList<>();
         themeInfoList.getThemes().forEach(themeInfo -> themeNames.add(themeInfo.getName()));
         return themeNames;
     }

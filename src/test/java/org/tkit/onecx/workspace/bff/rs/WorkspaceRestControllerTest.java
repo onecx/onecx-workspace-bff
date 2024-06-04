@@ -459,8 +459,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
                 eximWorkspace.getName());
         var p = output.getWorkspaces().get("testWorkspace").getProducts().get(0);
-        Assertions.assertEquals(p.getBaseUrl(), "/product1");
-        Assertions.assertEquals(p.getProductName(), "product1");
+        Assertions.assertEquals("/product1", p.getBaseUrl());
+        Assertions.assertEquals("product1", p.getProductName());
         assertThat(p.getMicrofrontends()).isNotNull().hasSize(1);
     }
 
