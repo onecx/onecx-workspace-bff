@@ -148,6 +148,7 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertNotNull(output.getResource());
         Assertions.assertEquals(request.getProductName(), output.getResource().getProductName());
         Assertions.assertEquals(request.getBaseUrl(), output.getResource().getBaseUrl());
+        Assertions.assertNotNull(output.getResource().getSlots());
     }
 
     @Test

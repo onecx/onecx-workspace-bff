@@ -29,6 +29,7 @@ public interface SlotMapper {
     CreateSlot mapSlot(CreateSlotRequestDTO createSlotRequestDTO);
 
     default SlotDTO map(Slot[] slots) {
+
         return map(slots[0]);
     }
 
@@ -40,4 +41,6 @@ public interface SlotMapper {
     }
 
     List<CreateSlot> map(List<CreateSlotDTO> slots);
+
+    List<SlotDTO> mapArray(Slot[] slots);
 }
