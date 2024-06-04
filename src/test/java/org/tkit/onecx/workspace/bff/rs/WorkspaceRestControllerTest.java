@@ -2,6 +2,7 @@ package org.tkit.onecx.workspace.bff.rs;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -434,6 +435,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(snapshot)));
@@ -451,14 +453,15 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
-                .extract().as(WorkspaceSnapshotDTO.class);
+                .extract().as(WorkspaceSnapshot.class);
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
                 eximWorkspace.getName());
-        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getProducts().get(0),
-                new EximProductDTO().baseUrl("/product1").productName("product1")
-                        .microfrontends(List.of(new EximMicrofrontendDTO().appId("app1").basePath("/app1"))));
+        var p = output.getWorkspaces().get("testWorkspace").getProducts().get(0);
+        Assertions.assertEquals("/product1", p.getBaseUrl());
+        Assertions.assertEquals("product1", p.getProductName());
+        assertThat(p.getMicrofrontends()).isNotNull().hasSize(1);
     }
 
     @Test
@@ -467,40 +470,26 @@ class WorkspaceRestControllerTest extends AbstractTest {
         ExportWorkspacesRequest request = new ExportWorkspacesRequest();
         request.setNames(Set.of("testWorkspace", "error"));
 
-        WorkspaceSnapshot workspaceSnapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
         eximWorkspace.setName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
-        Map<String, EximWorkspace> workspaceMap = new HashMap<>();
-        workspaceMap.put("testWorkspace", eximWorkspace);
+        eximWorkspace.addMenuItemsItem(new EximWorkspaceMenuItem().position(0).key("key1"));
+
         EximWorkspace errorWorkspace = new EximWorkspace();
         errorWorkspace.setName("error");
         errorWorkspace.setBaseUrl("/error");
-        workspaceMap.put("error", eximWorkspace);
-        workspaceSnapshot.setWorkspaces(workspaceMap);
+
+        WorkspaceSnapshot workspaceSnapshot = new WorkspaceSnapshot()
+                .putWorkspacesItem("testWorkspace", eximWorkspace)
+                .putWorkspacesItem("error", errorWorkspace);
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceSnapshot)));
-
-        MenuSnapshot menuSnapshot = new MenuSnapshot();
-        EximMenuStructure menu = new EximMenuStructure();
-        EximWorkspaceMenuItem menuItem = new EximWorkspaceMenuItem();
-        menuItem.setName("test");
-        menuItem.setKey("testKey");
-        menu.setMenuItems(List.of(menuItem));
-        menuSnapshot.setMenu(menu);
-
-        // create mock rest endpoint
-        mockServerClient
-                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getName() + "/menu/export")
-                        .withMethod(HttpMethod.GET))
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(menuSnapshot)));
 
         ExportWorkspacesRequestDTO requestDTO = new ExportWorkspacesRequestDTO();
         requestDTO.setNames(Set.of("testWorkspace", "error"));
@@ -513,17 +502,17 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .post("/export")
-                .then()
+                .then().log().all()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
-                .extract().as(WorkspaceSnapshotDTO.class);
+                .extract().as(WorkspaceSnapshot.class);
 
         Assertions.assertNotNull(output);
         Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
                 eximWorkspace.getName());
-        Assertions.assertNotNull(output.getWorkspaces().get("testWorkspace").getMenu());
-        Assertions.assertEquals("testKey", output.getWorkspaces()
-                .get("testWorkspace").getMenu().getMenu().getMenuItems().get(0).getKey());
+        Assertions.assertNotNull(output.getWorkspaces().get("testWorkspace").getMenuItems());
+        Assertions.assertEquals("key1", output.getWorkspaces()
+                .get("testWorkspace").getMenuItems().get(0).getKey());
 
     }
 
@@ -554,72 +543,46 @@ class WorkspaceRestControllerTest extends AbstractTest {
         responseStatusMap.put("test3", ImportResponseStatus.CREATED);
         workspaceResponse.setWorkspaces(responseStatusMap);
 
-        MenuSnapshot menuSnapshot = new MenuSnapshot();
-        EximMenuStructure eximMenuStructure = new EximMenuStructure();
-
-        eximMenuStructure.setMenuItems(List.of(new EximWorkspaceMenuItem().key("test")));
-        menuSnapshot.setMenu(eximMenuStructure);
-
-        ImportMenuResponse menuResponse = new ImportMenuResponse();
-        menuResponse.setStatus(ImportResponseStatus.CREATED);
-        menuResponse.setId("test");
-
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/import").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(workspaceSnapshot)))
+                .withId(mockId)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceResponse)));
 
-        // create mock rest endpoint
-        mockServerClient
-                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace.getName() + "/menu/import")
-                        .withBody(JsonBody.json(menuSnapshot))
-                        .withMethod(HttpMethod.POST))
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(menuResponse)));
-
-        mockServerClient
-                .when(request().withPath("/exim/v1/workspace/" + eximWorkspace2.getName() + "/menu/import")
-                        .withBody(JsonBody.json(menuSnapshot))
-                        .withMethod(HttpMethod.POST))
-                .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode()));
-
-        WorkspaceSnapshotDTO workspaceSnapshotDTO = new WorkspaceSnapshotDTO();
-        EximWorkspaceDTO eximWorkspaceDTO = new EximWorkspaceDTO();
+        WorkspaceSnapshot workspaceSnapshotDTO = new WorkspaceSnapshot();
+        EximWorkspace eximWorkspaceDTO = new EximWorkspace();
         eximWorkspaceDTO.setName("test");
         eximWorkspaceDTO.setBaseUrl("/test");
-        eximWorkspaceDTO.setProducts(List.of(new EximProductDTO().productName("product1").baseUrl("/product1")
-                .microfrontends(List.of(new EximMicrofrontendDTO().basePath("/app1").appId("app1")))));
+        eximWorkspaceDTO.setProducts(List.of(new EximProduct().productName("product1").baseUrl("/product1")
+                .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1")))));
 
-        EximWorkspaceDTO eximWorkspaceDTO2 = new EximWorkspaceDTO();
+        EximWorkspace eximWorkspaceDTO2 = new EximWorkspace();
         eximWorkspaceDTO2.setName("test2");
         eximWorkspaceDTO2.setBaseUrl("/test2");
 
-        EximWorkspaceDTO eximWorkspaceDTO3 = new EximWorkspaceDTO();
+        EximWorkspace eximWorkspaceDTO3 = new EximWorkspace();
         eximWorkspaceDTO3.setName("test3");
         eximWorkspaceDTO3.setBaseUrl("/test3");
-        eximWorkspaceDTO3.setMenu(null);
+        eximWorkspaceDTO3.setMenuItems(null);
 
-        MenuSnapshotDTO menuSnapshotDTO = new MenuSnapshotDTO();
-        EximMenuStructureDTO eximMenuStructureDTO = new EximMenuStructureDTO();
-        EximWorkspaceMenuItemDTO itemDTO = new EximWorkspaceMenuItemDTO();
+        EximWorkspaceMenuItem eximMenuStructureDTO = new EximWorkspaceMenuItem();
+        EximWorkspaceMenuItem itemDTO = new EximWorkspaceMenuItem();
         itemDTO.setKey("test");
 
-        MenuSnapshotDTO menuSnapshotDTO2 = new MenuSnapshotDTO();
-        EximMenuStructureDTO eximMenuStructureDTO2 = new EximMenuStructureDTO();
-        EximWorkspaceMenuItemDTO itemDTO2 = new EximWorkspaceMenuItemDTO();
+        EximWorkspaceMenuItem eximMenuStructureDTO2 = new EximWorkspaceMenuItem();
+        EximWorkspaceMenuItem itemDTO2 = new EximWorkspaceMenuItem();
         itemDTO2.setKey("test2");
 
-        eximMenuStructureDTO.setMenuItems(List.of(itemDTO));
-        menuSnapshotDTO.setMenu(eximMenuStructureDTO);
-        eximWorkspaceDTO.setMenu(menuSnapshotDTO);
+        eximMenuStructureDTO.setChildren(List.of(itemDTO));
 
-        eximMenuStructureDTO2.setMenuItems(List.of(itemDTO2));
-        menuSnapshotDTO2.setMenu(eximMenuStructureDTO2);
-        eximWorkspaceDTO2.setMenu(menuSnapshotDTO2);
-        Map<String, EximWorkspaceDTO> workspaceDTOMap = new HashMap<>();
+        eximWorkspaceDTO.setMenuItems(List.of(eximMenuStructureDTO));
+
+        eximMenuStructureDTO2.setChildren(List.of(itemDTO2));
+
+        eximWorkspaceDTO2.setMenuItems(List.of(eximMenuStructureDTO2));
+        Map<String, EximWorkspace> workspaceDTOMap = new HashMap<>();
         workspaceDTOMap.put("test", eximWorkspaceDTO);
         workspaceDTOMap.put("test2", eximWorkspaceDTO2);
         workspaceDTOMap.put("test3", eximWorkspaceDTO3);
@@ -642,8 +605,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test3"));
-        Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getMenus().get("test"));
-        Assertions.assertEquals(ImportResponseStatusDTO.ERROR, output.getMenus().get("test2"));
 
     }
 

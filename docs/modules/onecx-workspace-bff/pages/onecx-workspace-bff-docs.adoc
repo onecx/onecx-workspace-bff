@@ -113,3 +113,16 @@ app:
 
 ----
 
+ where objects are saved or updated
+            delete: permission on all DELETE requests
+
+----
+
+equests
+
+----
+
+    delete: permission on all DELETE requests
+
+----
+

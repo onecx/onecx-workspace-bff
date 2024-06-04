@@ -629,7 +629,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceSnapshot'
+                type: object
         "404":
           description: No themes founds
   /workspaces/import:
@@ -647,7 +647,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkspaceSnapshot'
+              type: object
       responses:
         "200":
           description: Import result
@@ -1832,20 +1832,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CreateUpdateMicrofrontend'
-    WorkspaceSnapshot:
-      type: object
-      properties:
-        id:
-          type: string
-          minLength: 10
-          description: ID of the request
-        created:
-          $ref: '#/components/schemas/OffsetDateTime'
-        workspaces:
-          type: object
-          nullable: false
-          additionalProperties:
-            $ref: '#/components/schemas/EximWorkspace'
     ImportMenuResponse:
       type: object
       properties:
@@ -1875,120 +1861,6 @@ components:
         - CREATED
         - SKIPPED
         - ERROR
-    EximWorkspace:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        theme:
-          type: string
-        homePage:
-          type: string
-        baseUrl:
-          type: string
-        companyName:
-          type: string
-        phoneNumber:
-          type: string
-        rssFeedUrl:
-          type: string
-        footerLabel:
-          type: string
-        logoUrl:
-          type: string
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/EximWorkspaceRole'
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/EximProduct'
-        address:
-          $ref: '#/components/schemas/EximWorkspaceAddress'
-        slots:
-          type: array
-          items:
-            $ref: '#/components/schemas/EximSlot'
-        menu:
-          $ref: '#/components/schemas/MenuSnapshot'
-        images:
-          $ref: '#/components/schemas/Images'
-    Images:
-      type: object
-      nullable: false
-      additionalProperties:
-        $ref: '#/components/schemas/Image'
-    Image:
-      type: object
-      properties:
-        imageData:
-          type: string
-          format: byte
-        mimeType:
-          type: string
-    EximSlot:
-      type: object
-      properties:
-        name:
-          type: string
-        components:
-          type: array
-          items:
-            $ref: '#/components/schemas/EximComponent'
-    EximComponent:
-      type: object
-      required:
-        - productName
-        - appId
-        - name
-      properties:
-        productName:
-          type: string
-        appId:
-          type: string
-        name:
-          type: string
-    EximWorkspaceRole:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-    EximProduct:
-      type: object
-      properties:
-        productName:
-          type: string
-        baseUrl:
-          type: string
-        microfrontends:
-          type: array
-          items:
-            $ref: '#/components/schemas/EximMicrofrontend'
-    EximMicrofrontend:
-      type: object
-      properties:
-        appId:
-          type: string
-        basePath:
-          type: string
-    EximWorkspaceAddress:
-      type: object
-      properties:
-        street:
-          type: string
-        streetNo:
-          type: string
-        city:
-          type: string
-        country:
-          type: string
-        postalCode:
-          type: string
     MenuSnapshot:
       type: object
       properties:
@@ -2054,6 +1926,8 @@ components:
       type: string
     ExportWorkspacesRequest:
       type: object
+      required:
+        - includeMenus
       properties:
         names:
           type: array
@@ -2062,7 +1936,7 @@ components:
             type: string
         includeMenus:
           type: boolean
-          default: false
+          default: true
     Scope:
       enum:
         - WORKSPACE

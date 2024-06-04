@@ -46,7 +46,6 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void createMenuItemForWorkspace() {
-        String id = "1";
         CreateMenuItem menuItem = new CreateMenuItem();
         menuItem.setName("newItem");
         menuItem.setWorkspaceId("w1");
@@ -318,7 +317,6 @@ class MenuItemRestControllerTest extends AbstractTest {
 
     @Test
     void getMenuItemByIdTest() {
-        String workspaceName = "test";
         String menuItemId = "1";
 
         MenuItem m1 = new MenuItem();

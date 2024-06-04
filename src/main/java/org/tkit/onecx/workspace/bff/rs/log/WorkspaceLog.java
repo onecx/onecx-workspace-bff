@@ -25,10 +25,6 @@ public class WorkspaceLog implements LogParam {
                         x -> ExportWorkspacesRequestDTO.class.getSimpleName() + "[names:"
                                 + ((ExportWorkspacesRequestDTO) x).getNames().toString()
                                 + "]"),
-                this.item(10, WorkspaceSnapshotDTO.class,
-                        x -> WorkspaceSnapshotDTO.class.getSimpleName() + "[id:"
-                                + ((WorkspaceSnapshotDTO) x).getId()
-                                + "]"),
                 this.item(10, SearchWorkspacesRequestDTO.class,
                         x -> {
                             SearchWorkspacesRequestDTO d = (SearchWorkspacesRequestDTO) x;
