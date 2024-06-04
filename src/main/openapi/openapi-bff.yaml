@@ -1351,6 +1351,9 @@ components:
         mandatory:
           type: boolean
           default: false
+        operator:
+          type: boolean
+          default: false
     WorkspaceAbstract:
       required:
         - name
@@ -2406,6 +2409,8 @@ components:
         external:
           type: boolean
           default: false
+        disabled:
+          type: boolean
         i18n:
           type: object
           additionalProperties:
