@@ -1,13 +1,11 @@
 package org.tkit.onecx.workspace.bff.rs.controllers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -24,9 +22,7 @@ import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.WorkspaceInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.exim.client.api.WorkspaceExportImportApi;
-import gen.org.tkit.onecx.workspace.exim.client.model.ImportMenuResponse;
 import gen.org.tkit.onecx.workspace.exim.client.model.ImportWorkspaceResponse;
-import gen.org.tkit.onecx.workspace.exim.client.model.MenuSnapshot;
 import gen.org.tkit.onecx.workspace.exim.client.model.WorkspaceSnapshot;
 
 @ApplicationScoped
@@ -74,19 +70,8 @@ public class WorkspaceRestController implements WorkspaceApiService {
     @Override
     public Response exportWorkspaces(ExportWorkspacesRequestDTO exportWorkspacesRequestDTO) {
         try (Response response = eximClient.exportWorkspacesByNames(workspaceMapper.map(exportWorkspacesRequestDTO))) {
-            Map<String, MenuSnapshotDTO> menuSnapshots = new HashMap<>();
-            if (Boolean.TRUE.equals(exportWorkspacesRequestDTO.getIncludeMenus())) {
-                exportWorkspacesRequestDTO.getNames().forEach(s -> {
-                    try (Response menuResponse = eximClient.exportMenuByWorkspaceName(s)) {
-                        menuSnapshots.put(s, menuItemMapper.mapSnapshot(menuResponse.readEntity(MenuSnapshot.class)));
-                    } catch (WebApplicationException ex) {
-                        menuSnapshots.put(s, null);
-                    }
-                });
-            }
             return Response.status(response.getStatus())
-                    .entity(workspaceMapper.mapSnapshotIncludingMenus(response.readEntity(WorkspaceSnapshot.class),
-                            menuSnapshots))
+                    .entity(response.readEntity(WorkspaceSnapshot.class))
                     .build();
         }
     }
@@ -118,22 +103,10 @@ public class WorkspaceRestController implements WorkspaceApiService {
     }
 
     @Override
-    public Response importWorkspaces(WorkspaceSnapshotDTO workspaceSnapshotDTO) {
-        try (Response response = eximClient.importWorkspaces(workspaceMapper.mapSnapshot(workspaceSnapshotDTO))) {
-            Map<String, ImportResponseStatusDTO> menuResponses = new HashMap<>();
-            workspaceSnapshotDTO.getWorkspaces().forEach((s, eximWorkspaceDTO) -> {
-                if (eximWorkspaceDTO.getMenu() != null) {
-                    try (Response menuImportResponse = eximClient.importMenu(s,
-                            menuItemMapper.mapSnapshot(eximWorkspaceDTO.getMenu()))) {
-                        menuResponses.put(s,
-                                menuItemMapper.map(menuImportResponse.readEntity(ImportMenuResponse.class)).getStatus());
-                    } catch (WebApplicationException ex) {
-                        menuResponses.put(s, ImportResponseStatusDTO.ERROR);
-                    }
-                }
-            });
+    public Response importWorkspaces(Map dto) {
+        try (Response response = eximClient.importWorkspaces(workspaceMapper.createSnapshot(dto))) {
             return Response.status(response.getStatus())
-                    .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class), menuResponses)).build();
+                    .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
         }
     }
 

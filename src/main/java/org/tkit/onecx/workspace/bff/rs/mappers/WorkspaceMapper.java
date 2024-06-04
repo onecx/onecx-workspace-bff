@@ -3,10 +3,14 @@ package org.tkit.onecx.workspace.bff.rs.mappers;
 import java.util.ArrayList;
 import java.util.Map;
 
+import jakarta.inject.Inject;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
@@ -14,54 +18,39 @@ import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.exim.client.model.*;
 
 @Mapper(uses = { OffsetDateTimeMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface WorkspaceMapper {
-    CreateWorkspaceRequest map(WorkspaceDTO workspaceDTO);
+public abstract class WorkspaceMapper {
 
-    WorkspaceDTO map(Workspace workspace);
+    @Inject
+    ObjectMapper mapper;
 
-    WorkspaceSearchCriteria map(SearchWorkspacesRequestDTO criteria);
+    public abstract CreateWorkspaceRequest map(WorkspaceDTO workspaceDTO);
+
+    public abstract WorkspaceDTO map(Workspace workspace);
+
+    public abstract WorkspaceSearchCriteria map(SearchWorkspacesRequestDTO criteria);
 
     @Mapping(target = "removeStreamItem", ignore = true)
-    SearchWorkspacesResponseDTO map(WorkspacePageResult pageResult);
+    public abstract SearchWorkspacesResponseDTO map(WorkspacePageResult pageResult);
 
-    UpdateWorkspaceRequest mapUpdate(WorkspaceDTO requestDTO);
-
-    @Mapping(source = ".", target = "resource")
-    CreateWorkspaceResponseDTO mapToCreate(Workspace workspace);
+    public abstract UpdateWorkspaceRequest mapUpdate(WorkspaceDTO requestDTO);
 
     @Mapping(source = ".", target = "resource")
-    GetWorkspaceResponseDTO mapToGetResponse(WorkspaceDTO workspaceDTO);
+    public abstract CreateWorkspaceResponseDTO mapToCreate(Workspace workspace);
 
-    ExportWorkspacesRequest map(ExportWorkspacesRequestDTO requestDTO);
+    @Mapping(source = ".", target = "resource")
+    public abstract GetWorkspaceResponseDTO mapToGetResponse(WorkspaceDTO workspaceDTO);
 
-    @Mapping(target = "removeWorkspacesItem", ignore = true)
-    WorkspaceSnapshotDTO mapSnapshot(WorkspaceSnapshot snapshot);
+    public abstract ExportWorkspacesRequest map(ExportWorkspacesRequestDTO requestDTO);
 
-    default WorkspaceSnapshotDTO mapSnapshotIncludingMenus(WorkspaceSnapshot snapshot, Map<String, MenuSnapshotDTO> menus) {
-        WorkspaceSnapshotDTO workspaceSnapshot = mapSnapshot(snapshot);
-        menus.forEach((s, menuSnapshotDTO) -> {
-            if (workspaceSnapshot.getWorkspaces().get(s) != null) {
-                workspaceSnapshot.getWorkspaces().get(s).setMenu(menuSnapshotDTO);
-            }
-        });
-        return workspaceSnapshot;
+    public WorkspaceSnapshot createSnapshot(Map<?, ?> object) {
+        return mapper.convertValue(object, WorkspaceSnapshot.class);
     }
 
-    WorkspaceSnapshot mapSnapshot(WorkspaceSnapshotDTO snapshot);
+    public abstract Map<String, ImportResponseStatusDTO> map(Map<String, ImportResponseStatus> responseStatusMap);
 
-    Map<String, ImportResponseStatusDTO> map(Map<String, ImportResponseStatus> responseStatusMap);
+    public abstract ImportWorkspaceResponseDTO map(ImportWorkspaceResponse response);
 
-    @Mapping(target = "removeWorkspacesItem", ignore = true)
-    @Mapping(target = "id", source = "response.id")
-    default ImportWorkspaceResponseDTO map(ImportWorkspaceResponse response,
-            Map<String, ImportResponseStatusDTO> menuResponseStatus) {
-        ImportWorkspaceResponseDTO responseDTO = new ImportWorkspaceResponseDTO();
-        responseDTO.setWorkspaces(map(response.getWorkspaces()));
-        responseDTO.setMenus(menuResponseStatus);
-        return responseDTO;
-    }
-
-    default ArrayList<String> mapThemeList(ThemeInfoList themeInfoList) {
+    public ArrayList<String> mapThemeList(ThemeInfoList themeInfoList) {
         ArrayList<String> themeNames = new ArrayList<>();
         themeInfoList.getThemes().forEach(themeInfo -> themeNames.add(themeInfo.getName()));
         return themeNames;
