@@ -422,6 +422,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         ExportWorkspacesRequest request = new ExportWorkspacesRequest();
         request.setNames(Set.of("testWorkspace"));
+        request.setIncludeMenus(false);
 
         WorkspaceSnapshot snapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
@@ -440,6 +441,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         ExportWorkspacesRequestDTO requestDTO = new ExportWorkspacesRequestDTO();
         requestDTO.setNames(Set.of("testWorkspace"));
+        requestDTO.setIncludeMenus(false);
 
         var output = given()
                 .when()
