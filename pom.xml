@@ -128,7 +128,7 @@
                             <inputSpec>src/main/openapi/openapi-bff.yaml</inputSpec>
                             <apiPackage>gen.org.tkit.onecx.workspace.bff.rs.internal</apiPackage>
                             <modelPackage>gen.org.tkit.onecx.workspace.bff.rs.internal.model</modelPackage>
-                            <typeMappings>File=byte[]</typeMappings>
+                            <typeMappings>File=byte[],Object=Map</typeMappings>
                         </configuration>
                     </execution>
                 </executions>
