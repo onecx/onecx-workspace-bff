@@ -1407,7 +1407,8 @@ components:
         pageSize:
           format: int32
           description: The size of page
-          default: 10
+          default: 100
+          maximum: 1000
           type: integer
     SearchWorkspacesResponse:
       allOf:
@@ -1571,6 +1572,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     MenuItemPageResult:
       type: object
@@ -1968,6 +1970,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     ProductStorePageResult:
       type: object
@@ -2064,6 +2067,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     IAMRolePageResult:
       type: object
@@ -2110,6 +2114,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     CreateWorkspaceRoleRequest:
       type: object
@@ -2190,6 +2195,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     AssignmentPageResult:
       type: object
