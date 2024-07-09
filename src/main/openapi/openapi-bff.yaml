@@ -1306,6 +1306,7 @@ components:
     Workspace:
       required:
         - name
+        - displayName
       type: object
       properties:
         id:
@@ -1325,6 +1326,8 @@ components:
           type: string
           readOnly: true
         name:
+          type: string
+        displayName:
           type: string
         description:
           type: string
@@ -1355,9 +1358,12 @@ components:
     WorkspaceAbstract:
       required:
         - name
+        - displayName
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
         description:
           type: string
