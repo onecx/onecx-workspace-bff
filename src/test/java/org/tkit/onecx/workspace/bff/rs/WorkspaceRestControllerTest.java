@@ -54,6 +54,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         Workspace response = new Workspace();
         response.setName("test");
+        response.setDisplayName("testdisplay");
         response.setDescription("description1");
         response.setCompanyName("company1");
 
@@ -69,6 +70,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         dto.setDescription("description1");
         dto.setCompanyName("company1");
         dto.setName("test");
+        dto.setDisplayName("testdisplay");
         dto.setModificationCount(0);
         input.setResource(dto);
         var output = given()
@@ -351,6 +353,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Workspace updatedResponse = new Workspace();
         updatedResponse.setDescription("test-desc");
         updatedResponse.setName("test-workspace");
+        updatedResponse.setDisplayName("test-workspace");
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
@@ -364,6 +367,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         WorkspaceDTO dto = new WorkspaceDTO();
         dto.setDescription("test-desc");
         dto.setName("test-workspace");
+        dto.setDisplayName("test-workspace");
         input.setResource(dto);
 
         var output = given()
