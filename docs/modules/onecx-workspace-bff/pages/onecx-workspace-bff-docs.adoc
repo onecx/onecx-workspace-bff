@@ -28,43 +28,48 @@ quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.return-response
 quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.type-mappings.File=byte[]
 quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_image_internal_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.config-key=onecx_workspace_svc
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.base-package=gen.org.tkit.onecx.workspace.client
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.config-key=onecx_workspace_svc
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.base-package=gen.org.tkit.onecx.workspace.exim.client
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_exim_v1_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.config-key=onecx_workspace_svc
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.base-package=gen.org.tkit.onecx.workspace.user.client
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_workspace_svc_user_menu_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.config-key=onecx_theme_svc
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.theme.client
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_theme_svc_external_v1_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.config-key=onecx_product_store_svc
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.base-package=gen.org.tkit.onecx.product.store.client
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
+quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.config-key=onecx_iam_svc
 quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.base-package=gen.org.tkit.onecx.iam.client
 quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.return-response=true
 quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
-%prod.quarkus.rest-client.onecx_image_internal_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.rest-client.onecx_workspace_svc_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.rest-client.onecx_workspace_svc_exim_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.rest-client.onecx_workspace_svc_user_menu_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.rest-client.onecx_theme_svc_external_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.rest-client.onecx_product_store_svc_external_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.rest-client.onecx_iam_svc_v1_yaml.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+quarkus.openapi-generator.codegen.spec.onecx_iam_svc_v1_yaml.enable-security-generation=false
+%prod.quarkus.rest-client.onecx_image_internal.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_workspace_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_theme_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_product_store_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_iam_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 ----
 ====
@@ -120,6 +125,9 @@ app:
     keycloak:
       client:
         enabled: true
+        spec:
+          kcConfig:
+            defaultClientScopes: [ ocx-ws:all, ocx-th:read, ocx-ps:read, ocx-ia:read, ocx-pm:read ]
 
 ----
 
