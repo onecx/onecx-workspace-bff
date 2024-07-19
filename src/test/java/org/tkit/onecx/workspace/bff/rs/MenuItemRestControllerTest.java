@@ -33,12 +33,12 @@ class MenuItemRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    static final String mockId = "MOCK";
+    static final String MOCK_ID = "MOCK";
 
     @BeforeEach
     void resetMockserver() {
         try {
-            mockServerClient.clear(mockId);
+            mockServerClient.clear(MOCK_ID);
         } catch (Exception ex) {
             // mockId not existing
         }
@@ -55,7 +55,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/menuItems").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(menuItem)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(createdItem)));
@@ -99,7 +99,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/menuItems").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(menuItem)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -131,7 +131,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/menuItems/search").withMethod(HttpMethod.POST)
                         .withContentType(MediaType.APPLICATION_JSON).withBody(JsonBody.json(criteria)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(result)));
@@ -183,7 +183,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/menuItems/" + menuId).withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(m1)));
@@ -442,7 +442,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/menuItems/" + menuItemId + "/parentItemId").withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(responseItem)));
@@ -496,7 +496,7 @@ class MenuItemRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/menuItems/" + menuItemId + "/parentItemId").withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         UpdateMenuItemParentRequestDTO requestDTO = new UpdateMenuItemParentRequestDTO();

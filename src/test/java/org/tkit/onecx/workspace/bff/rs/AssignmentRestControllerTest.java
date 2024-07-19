@@ -31,12 +31,12 @@ class AssignmentRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    static final String mockId = "MOCK";
+    static final String MOCK_ID = "MOCK";
 
     @BeforeEach
     void resetExpectation() {
         try {
-            mockServerClient.clear(mockId);
+            mockServerClient.clear(MOCK_ID);
         } catch (Exception ex) {
             //  mockId not existing
         }
@@ -56,7 +56,7 @@ class AssignmentRestControllerTest extends AbstractTest {
 
         mockServerClient.when(request().withPath("/internal/assignments").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
@@ -91,7 +91,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         Assertions.assertEquals(request.getRoleId(), output.getRoleId());
         Assertions.assertEquals(request.getMenuItemId(), output.getMenuItemId());
         Assertions.assertEquals("assignmentId1", output.getId());
-        mockServerClient.clear(mockId);
+        mockServerClient.clear(MOCK_ID);
 
         //creating same assignment second time should throw error
         ProblemDetailResponse errorResponse = new ProblemDetailResponse();
@@ -99,7 +99,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         errorResponse.setDetail("duplicated key");
         mockServerClient.when(request().withPath("/internal/assignments").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(errorResponse)));
@@ -138,7 +138,7 @@ class AssignmentRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/assignments/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -174,7 +174,7 @@ class AssignmentRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/assignments/search").withMethod(HttpMethod.POST))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -200,7 +200,7 @@ class AssignmentRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/assignments/" + id).withMethod(HttpMethod.DELETE))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 

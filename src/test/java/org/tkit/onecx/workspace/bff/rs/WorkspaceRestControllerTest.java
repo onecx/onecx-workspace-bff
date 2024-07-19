@@ -34,12 +34,12 @@ class WorkspaceRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    static final String mockId = "MOCK";
+    static final String MOCK_ID = "MOCK";
 
     @BeforeEach
     void resetExpectation() {
         try {
-            mockServerClient.clear(mockId);
+            mockServerClient.clear(MOCK_ID);
         } catch (Exception ex) {
             //  mockId not existing
         }
@@ -60,7 +60,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         mockServerClient.when(request().withPath("/internal/workspaces").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
@@ -112,7 +112,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(data)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -144,7 +144,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + id).withMethod(HttpMethod.DELETE))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -171,7 +171,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + data.getId()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -201,7 +201,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/" + notFoundId).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
@@ -226,7 +226,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/search/" + data.getName()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -254,7 +254,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/workspaces/name/" + notFoundName).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
@@ -294,7 +294,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/search").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(criteria)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -324,7 +324,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/search").withMethod(HttpMethod.POST))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(problemDetailResponse)));
@@ -358,7 +358,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateWorkspace)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(updatedResponse)));
@@ -396,7 +396,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/workspaces/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateWorkspace)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                         .withBody(JsonBody.json(problemDetailResponse))
                         .withContentType(MediaType.APPLICATION_JSON));
@@ -439,7 +439,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(snapshot)));
@@ -490,7 +490,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/export").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceSnapshot)));
@@ -550,7 +550,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/exim/v1/workspace/import").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(workspaceSnapshot)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceResponse)));
@@ -630,7 +630,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/v1/themes")
                         .withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(infoList)));

@@ -34,12 +34,12 @@ import io.quarkus.test.junit.QuarkusTest;
 class ProductRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
-    static final String mockId = "MOCK";
+    static final String MOCK_ID = "MOCK";
 
     @BeforeEach
     void resetMockserver() {
         try {
-            mockServerClient.clear(mockId);
+            mockServerClient.clear(MOCK_ID);
         } catch (Exception ex) {
             // mockId not existing
         }
@@ -197,7 +197,7 @@ class ProductRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/products/search").withMethod(HttpMethod.POST))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(result)));
@@ -252,7 +252,7 @@ class ProductRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/products").withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
         var output = given()
                 .when()
@@ -305,7 +305,7 @@ class ProductRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/products/" + productId)
                         .withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(product)));
