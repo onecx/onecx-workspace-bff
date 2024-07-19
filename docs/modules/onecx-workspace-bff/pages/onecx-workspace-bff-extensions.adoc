@@ -47,38 +47,38 @@ h| Version
 | tkit-quarkus-log-cdi
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-log-cdi.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.27.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-log-cdi.adoc[Link]
-| 2.27.0
+| https://github.com/1000kit/tkit-quarkus/blob/2.28.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-log-cdi.adoc[Link]
+| 2.28.0
 
 | tkit-quarkus-log-rs
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-log-rs.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.27.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-log-rs.adoc[Link]
-| 2.27.0
+| https://github.com/1000kit/tkit-quarkus/blob/2.28.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-log-rs.adoc[Link]
+| 2.28.0
 
 | tkit-quarkus-log-json
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-log-json.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.27.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-log-json.adoc[Link]
-| 2.27.0
+| https://github.com/1000kit/tkit-quarkus/blob/2.28.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-log-json.adoc[Link]
+| 2.28.0
 
 | tkit-quarkus-rest
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-rest.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.27.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-rest.adoc[Link]
-| 2.27.0
+| https://github.com/1000kit/tkit-quarkus/blob/2.28.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-rest.adoc[Link]
+| 2.28.0
 
 | tkit-quarkus-rest-context
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-rest-context.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.27.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-rest-context.adoc[Link]
-| 2.27.0
+| https://github.com/1000kit/tkit-quarkus/blob/2.28.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-rest-context.adoc[Link]
+| 2.28.0
 
 | tkit-quarkus-security
 
 | https://1000kit.github.io/tkit-quarkus/current/tkit-quarkus/tkit-quarkus-security.html[Link]
-| https://github.com/1000kit/tkit-quarkus/blob/2.27.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-security.adoc[Link]
-| 2.27.0
+| https://github.com/1000kit/tkit-quarkus/blob/2.28.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-security.adoc[Link]
+| 2.28.0
 
 | quarkus-hibernate-validator
 
@@ -89,8 +89,8 @@ h| Version
 | onecx-permissions
 
 | https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-permissions.html[Link]
-| https://github.com/onecx/onecx-quarkus/blob/0.22.0/docs/modules/onecx-quarkus/pages/includes/onecx-permissions.adoc[Link]
-| 0.22.0
+| https://github.com/onecx/onecx-quarkus/blob/0.24.0/docs/modules/onecx-quarkus/pages/includes/onecx-permissions.adoc[Link]
+| 0.24.0
 
 | quarkus-oidc
 
@@ -102,7 +102,7 @@ h| Version
 
 | https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-core.html[Link]
 | 
-| 0.22.0
+| 0.24.0
 
 | quarkus-micrometer-registry-prometheus
 

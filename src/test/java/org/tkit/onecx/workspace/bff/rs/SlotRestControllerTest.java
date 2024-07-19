@@ -32,12 +32,12 @@ class SlotRestControllerTest extends AbstractTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    static final String mockId = "MOCK";
+    static final String MOCK_ID = "MOCK";
 
     @BeforeEach
     void resetExpectation() {
         try {
-            mockServerClient.clear(mockId);
+            mockServerClient.clear(MOCK_ID);
         } catch (Exception ex) {
             //  mockId not existing
         }
@@ -54,7 +54,7 @@ class SlotRestControllerTest extends AbstractTest {
 
         mockServerClient.when(request().withPath("/internal/slots").withMethod(HttpMethod.POST)
                 .withBody(JsonBody.json(request)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(response)));
@@ -117,7 +117,7 @@ class SlotRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/slots/" + testId).withMethod(HttpMethod.PUT)
                 .withBody(JsonBody.json(updateSlot)))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(updatedResponse)));
@@ -154,7 +154,7 @@ class SlotRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/slots/" + data.getId()).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(data)));
@@ -182,7 +182,7 @@ class SlotRestControllerTest extends AbstractTest {
         // create mock rest endpoint
         mockServerClient
                 .when(request().withPath("/internal/slots/" + notFoundId).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
 
         var output = given()
@@ -204,7 +204,7 @@ class SlotRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/slots/" + id).withMethod(HttpMethod.DELETE))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON));
 
@@ -227,7 +227,7 @@ class SlotRestControllerTest extends AbstractTest {
         slots.setSlots(List.of(new Slot().name("s1").workspaceId("w1"), new Slot().name("s2").workspaceId("w1")));
         // create mock rest endpoint
         mockServerClient.when(request().withPath("/internal/slots/workspace/" + id).withMethod(HttpMethod.GET))
-                .withId(mockId)
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(slots)));
