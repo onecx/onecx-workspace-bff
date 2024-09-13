@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.tkit.onecx</groupId>
         <artifactId>onecx-quarkus3-parent</artifactId>
-        <version>0.63.0</version>
+        <version>0.64.0</version>
     </parent>
 
     <artifactId>onecx-workspace-bff</artifactId>
