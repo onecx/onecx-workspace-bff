@@ -23,6 +23,7 @@ import org.tkit.onecx.workspace.bff.rs.controllers.ProductRestController;
 import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
+import gen.org.tkit.onecx.product.store.client.model.UIEndpoint;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
@@ -300,6 +301,7 @@ class ProductRestControllerTest extends AbstractTest {
         product.setBaseUrl("/testbaseUrl");
         product.setModificationCount(1);
         product.setProductName("testProductName");
+        product.setMicrofrontends(List.of(new Microfrontend().mfeId("mfe1")));
 
         // create mock rest endpoint
         mockServerClient
@@ -314,6 +316,9 @@ class ProductRestControllerTest extends AbstractTest {
         productstoreProduct.setDescription("testDescr");
         productstoreProduct.setClassifications("testClassification");
         productstoreProduct.setImageUrl("/Testurl");
+        productstoreProduct.setVersion("version1");
+        productstoreProduct.setMicrofrontends(List.of(new gen.org.tkit.onecx.product.store.client.model.Microfrontend()
+                .appId("mfe1").endpoints(List.of(new UIEndpoint().name("endpoint1").path("path1")))));
 
         // mock endpoint product store
         mockServerClient
@@ -342,6 +347,12 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertEquals(productstoreProduct.getImageUrl(), output.getImageUrl());
         Assertions.assertEquals(productstoreProduct.getClassifications(), output.getClassifications());
         Assertions.assertEquals(product.getProductName(), output.getProductName());
+        Assertions.assertEquals(product.getMicrofrontends().get(0).getMfeId(), output.getMicrofrontends().get(0).getAppId());
+        Assertions.assertEquals(productstoreProduct.getMicrofrontends().get(0).getEndpoints().get(0).getName(),
+                output.getMicrofrontends().get(0).getEndpoints().get(0).getName());
+        Assertions.assertEquals(productstoreProduct.getMicrofrontends().get(0).getAppVersion(),
+                output.getMicrofrontends().get(0).getAppVersion());
+
     }
 
     @Test

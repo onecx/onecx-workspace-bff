@@ -22,6 +22,7 @@ public interface ProductMapper {
 
     CreateProductRequest map(CreateProductRequestDTO dto, String workspaceId);
 
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "slots", ignore = true)
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
@@ -32,13 +33,32 @@ public interface ProductMapper {
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     ProductDTO map(Product product);
 
-    default ProductDTO map(ProductDTO dto, gen.org.tkit.onecx.product.store.client.model.Product product) {
-        dto.setDisplayName(product.getDisplayName());
-        dto.setImageUrl(product.getImageUrl());
-        dto.setClassifications(product.getClassifications());
-        dto.setDescription(product.getDescription());
+    default ProductDTO map(ProductDTO dto, gen.org.tkit.onecx.product.store.client.model.Product productPS) {
+        dto.setDisplayName(productPS.getDisplayName());
+        dto.setImageUrl(productPS.getImageUrl());
+        dto.setClassifications(productPS.getClassifications());
+        dto.setDescription(productPS.getDescription());
+        dto.setVersion(productPS.getVersion());
+        dto.setMicrofrontends(enrichMfes(dto.getMicrofrontends(), productPS.getMicrofrontends()));
         return dto;
     }
+
+    default List<MicrofrontendDTO> enrichMfes(List<MicrofrontendDTO> microfrontends,
+            List<gen.org.tkit.onecx.product.store.client.model.Microfrontend> microfrontendsPS) {
+        if (microfrontends != null && !microfrontends.isEmpty()) {
+            microfrontends.forEach(microfrontendDTO -> {
+                var matchingMfe = microfrontendsPS.stream().filter(m -> m.getAppId().equals(microfrontendDTO.getAppId()))
+                        .findFirst();
+                matchingMfe.ifPresent(mfe -> microfrontendDTO.setAppVersion(mfe.getAppVersion()));
+                matchingMfe.ifPresent(mfe -> microfrontendDTO.setEndpoints(mapEndpoints(mfe.getEndpoints())));
+            });
+        }
+        return microfrontends;
+    }
+
+    List<UIEndpointDTO> mapEndpoints(List<UIEndpoint> endpoints);
+
+    UIEndpointDTO map(UIEndpoint endpoint);
 
     UpdateProductRequest map(UpdateProductRequestDTO dto);
 
@@ -61,6 +81,7 @@ public interface ProductMapper {
         return resultList;
     }
 
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "slots", ignore = true)
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
@@ -74,6 +95,9 @@ public interface ProductMapper {
     @Mapping(source = ".", target = "resource")
     CreateUpdateProductResponseDTO mapToCreateUpdate(ProductDTO map);
 
+    @Mapping(target = "removeEndpointsItem", ignore = true)
+    @Mapping(target = "endpoints", ignore = true)
+    @Mapping(target = "appVersion", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "type", ignore = true)
     @Mapping(target = "deprecated", ignore = true)
@@ -102,4 +126,8 @@ public interface ProductMapper {
     @Mapping(target = "productName", source = "name")
     ProductStoreItemDTO map(ProductsAbstract productsAbstract);
 
+    @Mapping(target = "removeEndpointsItem", ignore = true)
+    @Mapping(target = "endpoints", ignore = true)
+    @Mapping(target = "appVersion", source = "version")
+    MicrofrontendPSDTO map(MicrofrontendAbstract microfrontendAbstract);
 }
