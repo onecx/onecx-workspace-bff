@@ -1,0 +1,31 @@
+:summaryTableId: onecx-workspace-bff
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a| [[onecx-workspace-bff_onecx-workspace-rest-client-onecx_iam_svc-enabled]] [.property-path]##link:#onecx-workspace-bff_onecx-workspace-rest-client-onecx_iam_svc-enabled[`onecx.workspace.rest-client.onecx_iam_svc.enabled`]##
+
+[.description]
+--
+Enable or disable client
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++ONECX_WORKSPACE_REST_CLIENT_ONECX_IAM_SVC_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++ONECX_WORKSPACE_REST_CLIENT_ONECX_IAM_SVC_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+|===
+
+
+:!summaryTableId:
