@@ -35,7 +35,7 @@ import io.smallrye.config.SmallRyeConfig;
 
 @QuarkusTest
 @TestHTTPEndpoint(IamRoleRestController.class)
-public class IamRoleRestControllerDisabledTest extends AbstractTest {
+class IamRoleRestControllerDisabledTest extends AbstractTest {
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
