@@ -10,6 +10,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.tkit.onecx.workspace.bff.rs.WorkspaceConfig;
 import org.tkit.onecx.workspace.bff.rs.mappers.ExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.IamRoleMapper;
 import org.tkit.quarkus.log.cdi.LogService;
@@ -36,8 +37,14 @@ public class IamRoleRestController implements RoleApiService {
     @Inject
     ExceptionMapper exceptionMapper;
 
+    @Inject
+    WorkspaceConfig config;
+
     @Override
     public Response searchAvailableRoles(IAMRoleSearchCriteriaDTO searchCriteriaDTO) {
+        if (!config.restClients().iam().enabled()) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         try (Response response = iamClient.rolesSearchByCriteria(mapper.map(searchCriteriaDTO))) {
             IAMRolePageResultDTO responseDTO = mapper
                     .map(response.readEntity(RolePageResult.class));
