@@ -162,4 +162,22 @@ class IamRoleRestControllerTest extends AbstractTest {
 
         mockServerClient.clear("mock");
     }
+
+    @Test
+    void searchIAMRole_Server_Not_Active_Test() {
+
+        IAMRoleSearchCriteriaDTO criteriaDTO = new IAMRoleSearchCriteriaDTO();
+        criteriaDTO.setName("role1");
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .body(criteriaDTO)
+                .post()
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+
+        mockServerClient.clear("mock");
+    }
 }
