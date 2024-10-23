@@ -96,7 +96,7 @@ class IamRoleRestControllerDisabledTest extends AbstractTest {
                 .body(criteriaDTO)
                 .post()
                 .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+                .statusCode(418);
 
         mockServerClient.clear("mock");
     }
