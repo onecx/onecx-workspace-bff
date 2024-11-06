@@ -13,6 +13,7 @@
         "json": {
           "appId": "onecx-workspace-bff",
           "permissions": {
+            "product": ["read", "write", "delete"],
             "workspace": ["read", "write", "delete"],
             "role": ["read", "write", "delete"],
             "assignment": ["read", "write", "delete"],
@@ -39,6 +40,7 @@
         "json": {
           "appId": "onecx-workspace-bff",
           "permissions": {
+            "product": ["read"],
             "workspace": ["read"],
             "assignment": ["read"],
             "menu": ["read"],
