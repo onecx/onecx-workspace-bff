@@ -106,6 +106,10 @@ app:
             read: permission on all GET requests and POST search
             write: permission on PUT, POST, PATCH requests, where objects are saved or updated
             delete: permission on all DELETE requests
+          product:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
           role:
             read: permission on all GET requests and POST search
             write: permission on PUT, POST, PATCH requests, where objects are saved or updated
@@ -128,10 +132,6 @@ app:
         spec:
           kcConfig:
             defaultClientScopes: [ ocx-ws:all, ocx-th:read, ocx-ps:read, ocx-ia:read, ocx-pm:read ]
-
-----
-
-
 
 ----
 

@@ -447,7 +447,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          workspace:
+          product:
             - write
       tags:
         - workspaceProduct
@@ -483,7 +483,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspace:
+          product:
             - read
       tags:
         - workspaceProduct
@@ -504,7 +504,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          workspace:
+          product:
             - delete
       tags:
         - workspaceProduct
@@ -525,7 +525,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          workspace:
+          product:
             - write
       tags:
         - workspaceProduct
@@ -558,7 +558,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspace:
+          product:
             - read
       tags:
         - workspaceProduct
@@ -579,7 +579,7 @@ paths:
   /products:
     x-onecx:
       permissions:
-        workspace:
+        product:
           - read
     post:
       tags:
@@ -957,7 +957,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          workspace:
+          product:
             - read
       tags:
         - imagesInternal
