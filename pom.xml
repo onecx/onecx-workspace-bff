@@ -176,7 +176,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://raw.githubusercontent.com/onecx/onecx-workspace-svc/main/src/main/openapi/onecx-workspace-internal-openapi.yaml</url>
+                            <url>https://raw.githubusercontent.com/JordenReuter/onecx-workspace-svc/refs/heads/feature/role-based-menu-structure/src/main/openapi/onecx-workspace-internal-openapi.yaml</url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-workspace-svc.yaml</outputFileName>
                             <skipCache>true</skipCache>
