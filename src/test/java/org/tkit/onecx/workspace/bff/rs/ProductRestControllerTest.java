@@ -20,12 +20,12 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.workspace.bff.rs.controllers.ProductRestController;
 
-import gen.org.tkit.onecx.product.store.client.model.ProductItem;
-import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
-import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
-import gen.org.tkit.onecx.product.store.client.model.UIEndpoint;
+import gen.org.tkit.onecx.product.store.client.model.*;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.model.*;
+import gen.org.tkit.onecx.workspace.client.model.Microfrontend;
+import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
+import gen.org.tkit.onecx.workspace.client.model.Product;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -190,9 +190,9 @@ class ProductRestControllerTest extends AbstractTest {
 
         var result = new ProductPageResult()
                 .stream(List.of(
-                        new ProductResult().productName("p1")
+                        new ProductResult().productName("p1").displayName("product1")
                                 .microfrontends(List.of(new Microfrontend().mfeId("mfe1").basePath("/mfe1").id("mfe1"))),
-                        new ProductResult().productName("p2")
+                        new ProductResult().productName("p2").displayName("product2")
                                 .microfrontends(List.of(new Microfrontend().mfeId("mfe2").basePath("/mfe2").id("mfe2")))));
 
         // create mock rest endpoint
@@ -207,9 +207,9 @@ class ProductRestControllerTest extends AbstractTest {
         productStoreSearchCriteria.productNames(List.of("p1", "p2")).pageSize(100);
         ProductItemPageResult productStoreResponse = new ProductItemPageResult();
         ProductItem item1 = new ProductItem();
-        item1.name("p1").displayName("product1").basePath("/abc");
+        item1.name("p1").basePath("/abc");
         ProductItem item2 = new ProductItem();
-        item2.name("p2").displayName("product2").basePath("/abcd");
+        item2.name("p2").basePath("/abcd");
         productStoreResponse.setStream(List.of(item1, item2));
         productStoreResponse.totalElements(2L).number(0).size(2);
 

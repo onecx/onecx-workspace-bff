@@ -34,7 +34,7 @@ public interface ProductMapper {
     ProductDTO map(Product product);
 
     default ProductDTO map(ProductDTO dto, gen.org.tkit.onecx.product.store.client.model.Product productPS) {
-        dto.setDisplayName(productPS.getDisplayName());
+        dto.setDisplayName(dto.getDisplayName());
         dto.setImageUrl(productPS.getImageUrl());
         dto.setClassifications(productPS.getClassifications());
         dto.setDescription(productPS.getDescription());
@@ -72,7 +72,11 @@ public interface ProductMapper {
             var optional = productStoreProducts.stream()
                     .filter(productStoreProduct -> productDTO.getProductName().equals(productStoreProduct.getName()))
                     .findFirst();
-            optional.ifPresent(productItem -> productDTO.setDisplayName(productItem.getDisplayName()));
+            optional.ifPresent(productItem -> {
+                if (productDTO.getDisplayName() == null) {
+                    productDTO.setDisplayName(productItem.getDisplayName());
+                }
+            });
             optional.ifPresent(productItem -> productDTO.setImageUrl(productItem.getImageUrl()));
             optional.ifPresent(productItem -> productDTO.setClassifications(productItem.getClassifications()));
             optional.ifPresent(productItem -> productDTO.setDescription(productItem.getDescription()));
@@ -85,7 +89,6 @@ public interface ProductMapper {
     @Mapping(target = "slots", ignore = true)
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
-    @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "classifications", ignore = true)
     @Mapping(target = "description", ignore = true)
