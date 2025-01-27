@@ -26,7 +26,6 @@ public interface ProductMapper {
     @Mapping(target = "slots", ignore = true)
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
-    @Mapping(target = "displayName", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
     @Mapping(target = "classifications", ignore = true)
     @Mapping(target = "description", ignore = true)
