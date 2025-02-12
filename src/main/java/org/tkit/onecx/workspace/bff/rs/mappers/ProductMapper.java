@@ -132,4 +132,11 @@ public interface ProductMapper {
     @Mapping(target = "endpoints", ignore = true)
     @Mapping(target = "appVersion", source = "version")
     MicrofrontendPSDTO map(MicrofrontendAbstract microfrontendAbstract);
+
+    default ProductItemSearchCriteria createCriteria(List<String> productNames) {
+        ProductItemSearchCriteria criteria = new ProductItemSearchCriteria();
+        criteria.setProductNames(productNames);
+        criteria.setPageSize(productNames.size());
+        return criteria;
+    }
 }

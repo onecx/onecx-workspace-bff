@@ -56,4 +56,27 @@ public abstract class WorkspaceMapper {
         themeInfoList.getThemes().forEach(themeInfo -> themeNames.add(themeInfo.getName()));
         return themeNames;
     }
+
+    public List<String> extractProductNames(WorkspaceSnapshot snapshot) {
+        List<String> productNames = new ArrayList<>();
+        for (EximWorkspace workspace : snapshot.getWorkspaces().values()) {
+            List<EximProduct> products = workspace.getProducts();
+            if (products != null) {
+                for (EximProduct product : products) {
+                    productNames.add(product.getProductName());
+                }
+            }
+        }
+        return productNames;
+    }
+
+    public WorkspaceSnapshot removeNonExistingProducts(WorkspaceSnapshot snapshot, List<String> existingProducts) {
+        snapshot.getWorkspaces().values().forEach(workspace -> {
+            List<EximProduct> products = workspace.getProducts();
+            if (products != null) {
+                products.removeIf(product -> !existingProducts.contains(product.getProductName()));
+            }
+        });
+        return snapshot;
+    }
 }

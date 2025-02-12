@@ -19,6 +19,9 @@ import org.mockserver.model.JsonBody;
 import org.mockserver.model.MediaType;
 import org.tkit.onecx.workspace.bff.rs.controllers.WorkspaceRestController;
 
+import gen.org.tkit.onecx.product.store.client.model.ProductItem;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.theme.client.model.ThemeInfo;
 import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
@@ -526,7 +529,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspace eximWorkspace = new EximWorkspace();
         eximWorkspace.setName("test");
         eximWorkspace.setBaseUrl("/test");
-        eximWorkspace.setProducts(List.of(new EximProduct().baseUrl("product1").baseUrl("/product1")
+        eximWorkspace.setProducts(List.of(new EximProduct().baseUrl("product1").baseUrl("/product1").productName("product1")
                 .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1")))));
         EximWorkspace eximWorkspace2 = new EximWorkspace();
         eximWorkspace2.setName("test2");
@@ -555,12 +558,29 @@ class WorkspaceRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(workspaceResponse)));
 
+        ProductItemSearchCriteria criteria = new ProductItemSearchCriteria();
+        criteria.setProductNames(List.of("product1", "notExisting"));
+        criteria.setPageSize(2);
+
+        ProductItemPageResult pageResult = new ProductItemPageResult();
+        pageResult.setSize(1);
+        pageResult.setStream(List.of(new ProductItem().name("product1")));
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/v1/products/search").withMethod(HttpMethod.POST)
+                .withBody(JsonBody.json(criteria)))
+                .withId("MOCK_PS")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(pageResult)));
+
         WorkspaceSnapshot workspaceSnapshotDTO = new WorkspaceSnapshot();
         EximWorkspace eximWorkspaceDTO = new EximWorkspace();
         eximWorkspaceDTO.setName("test");
         eximWorkspaceDTO.setBaseUrl("/test");
         eximWorkspaceDTO.setProducts(List.of(new EximProduct().productName("product1").baseUrl("/product1")
-                .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1")))));
+                .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1"))),
+                new EximProduct().productName("notExisting").baseUrl("notExisting").baseUrl("notExisting")));
 
         EximWorkspace eximWorkspaceDTO2 = new EximWorkspace();
         eximWorkspaceDTO2.setName("test2");
@@ -609,7 +629,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test3"));
-
+        mockServerClient.clear("MOCK_PS");
     }
 
     @Test

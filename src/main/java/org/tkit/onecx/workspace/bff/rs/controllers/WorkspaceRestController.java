@@ -1,5 +1,6 @@
 package org.tkit.onecx.workspace.bff.rs.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,6 +16,10 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.workspace.bff.rs.mappers.*;
 import org.tkit.quarkus.log.cdi.LogService;
 
+import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
+import gen.org.tkit.onecx.product.store.client.model.ProductItem;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
+import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.theme.client.api.ThemesApi;
 import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.WorkspaceApiService;
@@ -37,11 +42,15 @@ public class WorkspaceRestController implements WorkspaceApiService {
     WorkspaceMapper workspaceMapper;
 
     @Inject
-    MenuItemMapper menuItemMapper;
+    ProductMapper productMapper;
 
     @Inject
     @RestClient
     WorkspaceInternalApi workspaceClient;
+
+    @Inject
+    @RestClient
+    ProductsApi productStoreClient;
 
     @Inject
     @RestClient
@@ -104,9 +113,18 @@ public class WorkspaceRestController implements WorkspaceApiService {
 
     @Override
     public Response importWorkspaces(Map dto) {
-        try (Response response = eximClient.importWorkspaces(workspaceMapper.createSnapshot(dto))) {
-            return Response.status(response.getStatus())
-                    .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
+        var snapshot = workspaceMapper.createSnapshot(dto);
+        List<String> productNames = workspaceMapper.extractProductNames(snapshot);
+
+        ProductItemSearchCriteria criteria = productMapper.createCriteria(productNames);
+        try (Response psResponse = productStoreClient.searchProductsByCriteria(criteria)) {
+            var existingProducts = psResponse.readEntity(ProductItemPageResult.class).getStream().stream()
+                    .map(ProductItem::getName).toList();
+            snapshot = workspaceMapper.removeNonExistingProducts(snapshot, existingProducts);
+            try (Response response = eximClient.importWorkspaces(snapshot)) {
+                return Response.status(response.getStatus())
+                        .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
+            }
         }
     }
 
