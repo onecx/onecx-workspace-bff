@@ -913,46 +913,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-    put:
-      x-onecx:
-        permissions:
-          workspace:
-            - write
-      tags:
-        - imagesInternal
-      description: update Images
-      operationId: updateImage
-      parameters:
-        - name: refId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: refType
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RefType"
-      requestBody:
-        required: true
-        content:
-          image/*:
-            schema:
-              type: string
-              format: binary
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImageInfo'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /images/product/{productName}:
     get:
       x-onecx:

@@ -408,7 +408,7 @@ class ImagesRestControllerTest extends AbstractTest {
         imageInfoDTO.setId("11-111");
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.PUT))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(CREATED.getStatusCode())
@@ -424,7 +424,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .put("/{refId}/{refType}")
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -457,7 +457,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .put("/{refId}/{refType}")
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
