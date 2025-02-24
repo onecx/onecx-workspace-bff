@@ -913,15 +913,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-    put:
+    delete:
       x-onecx:
         permissions:
           workspace:
-            - write
+            - delete
       tags:
         - imagesInternal
-      description: update Images
-      operationId: updateImage
+      description: delete Image
+      operationId: deleteImage
       parameters:
         - name: refId
           in: path
@@ -933,26 +933,9 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RefType"
-      requestBody:
-        required: true
-        content:
-          image/*:
-            schema:
-              type: string
-              format: binary
       responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImageInfo'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
+        "204":
+          description: No content
   /images/product/{productName}:
     get:
       x-onecx:

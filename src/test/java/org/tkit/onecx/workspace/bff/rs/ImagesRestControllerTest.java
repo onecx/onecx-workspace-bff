@@ -373,6 +373,28 @@ class ImagesRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void deleteImage() {
+
+        var refId = "themeName";
+        mockServerClient
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.DELETE))
+                .withPriority(100)
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(NO_CONTENT.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .pathParam("refId", refId)
+                .pathParam("refType", RefTypeDTO.LOGO)
+                .when()
+                .delete("/{refId}/{refType}")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+    }
+
+    @Test
     void uploadImage_shouldReturnNotFound() {
 
         var refId = "themeName";
@@ -408,7 +430,7 @@ class ImagesRestControllerTest extends AbstractTest {
         imageInfoDTO.setId("11-111");
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.PUT))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(CREATED.getStatusCode())
@@ -424,7 +446,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .put("/{refId}/{refType}")
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -457,7 +479,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
-                .put("/{refId}/{refType}")
+                .post("/{refId}/{refType}")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
         Assertions.assertNotNull(res);
