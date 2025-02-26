@@ -21,6 +21,7 @@ import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
 import gen.org.tkit.onecx.theme.client.api.ThemesApi;
+import gen.org.tkit.onecx.theme.client.model.ThemeInfo;
 import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.WorkspaceApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
@@ -121,9 +122,14 @@ public class WorkspaceRestController implements WorkspaceApiService {
             var existingProducts = psResponse.readEntity(ProductItemPageResult.class).getStream().stream()
                     .map(ProductItem::getName).toList();
             snapshot = workspaceMapper.removeNonExistingProducts(snapshot, existingProducts);
-            try (Response response = eximClient.importWorkspaces(snapshot)) {
-                return Response.status(response.getStatus())
-                        .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
+            try (Response themeResponse = themeClient.getThemesInfo()) {
+                var existingThemes = themeResponse.readEntity(ThemeInfoList.class).getThemes().stream().map(ThemeInfo::getName)
+                        .toList();
+                snapshot = workspaceMapper.replaceNonExistingThemes(snapshot, existingThemes);
+                try (Response response = eximClient.importWorkspaces(snapshot)) {
+                    return Response.status(response.getStatus())
+                            .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
+                }
             }
         }
     }

@@ -79,4 +79,14 @@ public abstract class WorkspaceMapper {
         });
         return snapshot;
     }
+
+    public WorkspaceSnapshot replaceNonExistingThemes(WorkspaceSnapshot snapshot, List<String> existingThemes) {
+        snapshot.getWorkspaces().values().forEach(eximWorkspace -> {
+            var theme = eximWorkspace.getTheme();
+            if (theme == null || existingThemes.stream().noneMatch(s -> s.equals(theme))) {
+                eximWorkspace.setTheme("OneCX");
+            }
+        });
+        return snapshot;
+    }
 }

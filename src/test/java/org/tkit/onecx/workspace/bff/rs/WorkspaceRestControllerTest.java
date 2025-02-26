@@ -531,12 +531,18 @@ class WorkspaceRestControllerTest extends AbstractTest {
         eximWorkspace.setBaseUrl("/test");
         eximWorkspace.setProducts(List.of(new EximProduct().baseUrl("product1").baseUrl("/product1").productName("product1")
                 .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1")))));
+        eximWorkspace.setTheme("theme1");
+
         EximWorkspace eximWorkspace2 = new EximWorkspace();
         eximWorkspace2.setName("test2");
         eximWorkspace2.setBaseUrl("/test2");
+        eximWorkspace2.setTheme("OneCX");
+
         EximWorkspace eximWorkspace3 = new EximWorkspace();
         eximWorkspace3.setName("test3");
         eximWorkspace3.setBaseUrl("/test3");
+        eximWorkspace3.setTheme("OneCX");
+
         Map<String, EximWorkspace> eximWorkspaceMap = new HashMap<>();
         eximWorkspaceMap.put("test", eximWorkspace);
         eximWorkspaceMap.put("test2", eximWorkspace2);
@@ -574,6 +580,16 @@ class WorkspaceRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(pageResult)));
 
+        ThemeInfoList themes = new ThemeInfoList();
+        themes.setThemes(List.of(new ThemeInfo().name("theme1"), new ThemeInfo().name("abc")));
+
+        // create mock rest endpoint
+        mockServerClient.when(request().withPath("/v1/themes").withMethod(HttpMethod.GET))
+                .withId("MOCK_THEME")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(themes)));
+
         WorkspaceSnapshot workspaceSnapshotDTO = new WorkspaceSnapshot();
         EximWorkspace eximWorkspaceDTO = new EximWorkspace();
         eximWorkspaceDTO.setName("test");
@@ -581,10 +597,11 @@ class WorkspaceRestControllerTest extends AbstractTest {
         eximWorkspaceDTO.setProducts(List.of(new EximProduct().productName("product1").baseUrl("/product1")
                 .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1"))),
                 new EximProduct().productName("notExisting").baseUrl("notExisting").baseUrl("notExisting")));
-
+        eximWorkspaceDTO.setTheme("theme1");
         EximWorkspace eximWorkspaceDTO2 = new EximWorkspace();
         eximWorkspaceDTO2.setName("test2");
         eximWorkspaceDTO2.setBaseUrl("/test2");
+        eximWorkspaceDTO2.setTheme("notExisting");
 
         EximWorkspace eximWorkspaceDTO3 = new EximWorkspace();
         eximWorkspaceDTO3.setName("test3");
@@ -630,6 +647,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test3"));
         mockServerClient.clear("MOCK_PS");
+        mockServerClient.clear("MOCK_THEME");
+
     }
 
     @Test
