@@ -84,7 +84,7 @@ public abstract class WorkspaceMapper {
         snapshot.getWorkspaces().values().forEach(eximWorkspace -> {
             var theme = eximWorkspace.getTheme();
             if (theme == null || existingThemes.stream().noneMatch(s -> s.equals(theme))) {
-                eximWorkspace.setTheme("OneCXDefaultTheme");
+                eximWorkspace.setTheme("OneCX");
             }
         });
         return snapshot;

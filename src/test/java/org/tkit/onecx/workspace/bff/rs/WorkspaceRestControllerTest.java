@@ -536,12 +536,12 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspace eximWorkspace2 = new EximWorkspace();
         eximWorkspace2.setName("test2");
         eximWorkspace2.setBaseUrl("/test2");
-        eximWorkspace2.setTheme("OneCXDefaultTheme");
+        eximWorkspace2.setTheme("OneCX");
 
         EximWorkspace eximWorkspace3 = new EximWorkspace();
         eximWorkspace3.setName("test3");
         eximWorkspace3.setBaseUrl("/test3");
-        eximWorkspace3.setTheme("OneCXDefaultTheme");
+        eximWorkspace3.setTheme("OneCX");
 
         Map<String, EximWorkspace> eximWorkspaceMap = new HashMap<>();
         eximWorkspaceMap.put("test", eximWorkspace);
