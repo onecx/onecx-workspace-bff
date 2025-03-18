@@ -243,19 +243,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>iam-svc-external-v1</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://raw.githubusercontent.com/onecx/onecx-iam-kc-svc/main/src/main/openapi/onecx-iam-kc-svc-v1.yaml</url>
-                            <outputDirectory>target/tmp/openapi</outputDirectory>
-                            <outputFileName>onecx-iam-svc-v1.yaml</outputFileName>
-                            <skipCache>true</skipCache>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>workspace-svc-user-menu-internal</id>
                         <phase>generate-resources</phase>
                         <goals>
