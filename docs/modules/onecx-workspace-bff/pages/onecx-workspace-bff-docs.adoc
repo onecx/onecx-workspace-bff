@@ -124,12 +124,13 @@ app:
         spec:
           kcConfig:
             defaultClientScopes: [ ocx-ws:all, ocx-th:read, ocx-ps:read, ocx-ia:read, ocx-pm:read ]
-
+    microservice:
+      spec:
+        description: OneCX Workspace Backend For Frontend
+        name: OneCX Workspace BFF
 ----
 
-signment:
-            read: permission on all GET requests and POST search
-            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+TCH requests, where objects are saved or updated
             delete: permission on all DELETE requests
           menu:
             read: permission on all GET requests and POST search
