@@ -20,9 +20,6 @@ import gen.org.tkit.onecx.product.store.client.api.ProductsApi;
 import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
-import gen.org.tkit.onecx.theme.client.api.ThemesApi;
-import gen.org.tkit.onecx.theme.client.model.ThemeInfo;
-import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.WorkspaceApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.api.WorkspaceInternalApi;
@@ -57,10 +54,6 @@ public class WorkspaceRestController implements WorkspaceApiService {
     @RestClient
     WorkspaceExportImportApi eximClient;
 
-    @Inject
-    @RestClient
-    ThemesApi themeClient;
-
     @Override
     public Response createWorkspace(CreateWorkspaceRequestDTO createWorkspaceRequestDTO) {
         try (Response response = workspaceClient
@@ -83,14 +76,6 @@ public class WorkspaceRestController implements WorkspaceApiService {
             return Response.status(response.getStatus())
                     .entity(response.readEntity(WorkspaceSnapshot.class))
                     .build();
-        }
-    }
-
-    @Override
-    public Response getAllThemes() {
-        try (Response response = themeClient.getThemesInfo()) {
-            return Response.status(response.getStatus())
-                    .entity(workspaceMapper.mapThemeList(response.readEntity(ThemeInfoList.class))).build();
         }
     }
 
@@ -122,14 +107,10 @@ public class WorkspaceRestController implements WorkspaceApiService {
             var existingProducts = psResponse.readEntity(ProductItemPageResult.class).getStream().stream()
                     .map(ProductItem::getName).toList();
             snapshot = workspaceMapper.removeNonExistingProducts(snapshot, existingProducts);
-            try (Response themeResponse = themeClient.getThemesInfo()) {
-                var existingThemes = themeResponse.readEntity(ThemeInfoList.class).getThemes().stream().map(ThemeInfo::getName)
-                        .toList();
-                snapshot = workspaceMapper.replaceNonExistingThemes(snapshot, existingThemes);
-                try (Response response = eximClient.importWorkspaces(snapshot)) {
-                    return Response.status(response.getStatus())
-                            .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
-                }
+            try (Response response = eximClient.importWorkspaces(snapshot)) {
+                return Response.status(response.getStatus())
+                        .entity(workspaceMapper.map(response.readEntity(ImportWorkspaceResponse.class))).build();
+
             }
         }
     }

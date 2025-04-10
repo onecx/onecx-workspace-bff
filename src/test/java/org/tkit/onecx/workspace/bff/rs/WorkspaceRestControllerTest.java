@@ -22,8 +22,6 @@ import org.tkit.onecx.workspace.bff.rs.controllers.WorkspaceRestController;
 import gen.org.tkit.onecx.product.store.client.model.ProductItem;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemPageResult;
 import gen.org.tkit.onecx.product.store.client.model.ProductItemSearchCriteria;
-import gen.org.tkit.onecx.theme.client.model.ThemeInfo;
-import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.exim.client.model.*;
@@ -580,16 +578,6 @@ class WorkspaceRestControllerTest extends AbstractTest {
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(pageResult)));
 
-        ThemeInfoList themes = new ThemeInfoList();
-        themes.setThemes(List.of(new ThemeInfo().name("theme1"), new ThemeInfo().name("abc")));
-
-        // create mock rest endpoint
-        mockServerClient.when(request().withPath("/v1/themes").withMethod(HttpMethod.GET))
-                .withId("MOCK_THEME")
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(themes)));
-
         WorkspaceSnapshot workspaceSnapshotDTO = new WorkspaceSnapshot();
         EximWorkspace eximWorkspaceDTO = new EximWorkspace();
         eximWorkspaceDTO.setName("test");
@@ -601,12 +589,13 @@ class WorkspaceRestControllerTest extends AbstractTest {
         EximWorkspace eximWorkspaceDTO2 = new EximWorkspace();
         eximWorkspaceDTO2.setName("test2");
         eximWorkspaceDTO2.setBaseUrl("/test2");
-        eximWorkspaceDTO2.setTheme("notExisting");
+        eximWorkspaceDTO2.setTheme("OneCX");
 
         EximWorkspace eximWorkspaceDTO3 = new EximWorkspace();
         eximWorkspaceDTO3.setName("test3");
         eximWorkspaceDTO3.setBaseUrl("/test3");
         eximWorkspaceDTO3.setMenuItems(null);
+        eximWorkspaceDTO3.setTheme("OneCX");
 
         EximWorkspaceMenuItem eximMenuStructureDTO = new EximWorkspaceMenuItem();
         EximWorkspaceMenuItem itemDTO = new EximWorkspaceMenuItem();
@@ -647,52 +636,5 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test2"));
         Assertions.assertEquals(ImportResponseStatusDTO.CREATED, output.getWorkspaces().get("test3"));
         mockServerClient.clear("MOCK_PS");
-        mockServerClient.clear("MOCK_THEME");
-
-    }
-
-    @Test
-    void getThemeNamesTest() {
-
-        ThemeInfoList infoList = new ThemeInfoList();
-        ThemeInfo theme1 = new ThemeInfo();
-        theme1.setName("theme1");
-        theme1.setDescription("theme1");
-
-        ThemeInfo theme2 = new ThemeInfo();
-        theme2.setName("theme2");
-        theme2.setDescription("theme2");
-
-        infoList.setThemes(List.of(theme1, theme2));
-
-        // create mock rest endpoint
-        mockServerClient
-                .when(request().withPath("/v1/themes")
-                        .withMethod(HttpMethod.GET))
-                .withId(MOCK_ID)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(infoList)));
-
-        ArrayList<String> themeNames = new ArrayList<>();
-        themeNames.add("theme1");
-        themeNames.add("theme2");
-
-        var output = given()
-                .when()
-                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
-                .header(APM_HEADER_PARAM, ADMIN)
-                .contentType(APPLICATION_JSON)
-                .body(themeNames)
-                .get("/themes")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(List.class);
-
-        Assertions.assertNotNull(output);
-        Assertions.assertTrue(output.contains("theme1"));
-        Assertions.assertTrue(output.contains("theme2"));
-
     }
 }

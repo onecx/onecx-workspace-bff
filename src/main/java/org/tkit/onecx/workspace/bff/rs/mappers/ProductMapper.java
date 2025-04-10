@@ -27,7 +27,6 @@ public interface ProductMapper {
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
-    @Mapping(target = "classifications", ignore = true)
     @Mapping(target = "description", ignore = true)
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     ProductDTO map(Product product);
@@ -35,7 +34,6 @@ public interface ProductMapper {
     default ProductDTO map(ProductDTO dto, gen.org.tkit.onecx.product.store.client.model.Product productPS) {
         dto.setDisplayName(dto.getDisplayName());
         dto.setImageUrl(productPS.getImageUrl());
-        dto.setClassifications(productPS.getClassifications());
         dto.setDescription(productPS.getDescription());
         dto.setVersion(productPS.getVersion());
         dto.setMicrofrontends(enrichMfes(dto.getMicrofrontends(), productPS.getMicrofrontends()));
@@ -77,7 +75,6 @@ public interface ProductMapper {
                 }
             });
             optional.ifPresent(productItem -> productDTO.setImageUrl(productItem.getImageUrl()));
-            optional.ifPresent(productItem -> productDTO.setClassifications(productItem.getClassifications()));
             optional.ifPresent(productItem -> productDTO.setDescription(productItem.getDescription()));
             resultList.add(productDTO);
         });
@@ -89,7 +86,6 @@ public interface ProductMapper {
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
-    @Mapping(target = "classifications", ignore = true)
     @Mapping(target = "description", ignore = true)
     @Mapping(target = "removeMicrofrontendsItem", ignore = true)
     ProductDTO map(ProductResult dto);
