@@ -314,7 +314,6 @@ class ProductRestControllerTest extends AbstractTest {
 
         gen.org.tkit.onecx.product.store.client.model.Product productstoreProduct = new gen.org.tkit.onecx.product.store.client.model.Product();
         productstoreProduct.setDescription("testDescr");
-        productstoreProduct.setClassifications("testClassification");
         productstoreProduct.setImageUrl("/Testurl");
         productstoreProduct.setVersion("version1");
         productstoreProduct.setMicrofrontends(List.of(new gen.org.tkit.onecx.product.store.client.model.Microfrontend()
@@ -345,7 +344,6 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertEquals(productstoreProduct.getDescription(), output.getDescription());
         Assertions.assertEquals(productstoreProduct.getDisplayName(), output.getDisplayName());
         Assertions.assertEquals(productstoreProduct.getImageUrl(), output.getImageUrl());
-        Assertions.assertEquals(productstoreProduct.getClassifications(), output.getClassifications());
         Assertions.assertEquals(product.getProductName(), output.getProductName());
         Assertions.assertEquals(product.getMicrofrontends().get(0).getMfeId(), output.getMicrofrontends().get(0).getAppId());
         Assertions.assertEquals(productstoreProduct.getMicrofrontends().get(0).getEndpoints().get(0).getName(),
@@ -484,7 +482,7 @@ class ProductRestControllerTest extends AbstractTest {
 
         ProductItemPageResult svcResult = new ProductItemPageResult();
         ProductItem productItem = new ProductItem();
-        productItem.basePath("test").name("test").classifications("search");
+        productItem.basePath("test").name("test");
         svcResult.number(0).totalElements(1L).totalPages(1L).stream(List.of(productItem));
 
         // create mock rest endpoint

@@ -13,7 +13,6 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gen.org.tkit.onecx.theme.client.model.ThemeInfoList;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.*;
 import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.exim.client.model.*;
@@ -51,12 +50,6 @@ public abstract class WorkspaceMapper {
 
     public abstract ImportWorkspaceResponseDTO map(ImportWorkspaceResponse response);
 
-    public List<String> mapThemeList(ThemeInfoList themeInfoList) {
-        List<String> themeNames = new ArrayList<>();
-        themeInfoList.getThemes().forEach(themeInfo -> themeNames.add(themeInfo.getName()));
-        return themeNames;
-    }
-
     public List<String> extractProductNames(WorkspaceSnapshot snapshot) {
         List<String> productNames = new ArrayList<>();
         for (EximWorkspace workspace : snapshot.getWorkspaces().values()) {
@@ -75,16 +68,6 @@ public abstract class WorkspaceMapper {
             List<EximProduct> products = workspace.getProducts();
             if (products != null) {
                 products.removeIf(product -> !existingProducts.contains(product.getProductName()));
-            }
-        });
-        return snapshot;
-    }
-
-    public WorkspaceSnapshot replaceNonExistingThemes(WorkspaceSnapshot snapshot, List<String> existingThemes) {
-        snapshot.getWorkspaces().values().forEach(eximWorkspace -> {
-            var theme = eximWorkspace.getTheme();
-            if (theme == null || existingThemes.stream().noneMatch(s -> s.equals(theme))) {
-                eximWorkspace.setTheme("OneCX");
             }
         });
         return snapshot;
