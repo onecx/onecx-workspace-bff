@@ -1366,6 +1366,8 @@ components:
                 $ref: '#/components/schemas/WorkspaceAbstract'
     GetWorkspaceResponse:
       type: object
+      required:
+        - resource
       properties:
         resource:
           $ref: '#/components/schemas/Workspace'
