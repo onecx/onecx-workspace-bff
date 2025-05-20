@@ -507,7 +507,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .post("/export")
-                .then().log().all()
+                .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
                 .extract().as(WorkspaceSnapshot.class);
