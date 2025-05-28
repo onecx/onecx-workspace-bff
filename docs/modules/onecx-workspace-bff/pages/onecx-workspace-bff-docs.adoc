@@ -54,7 +54,7 @@ quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.
 %prod.quarkus.rest-client.onecx_image_internal.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_workspace_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
 %prod.quarkus.rest-client.onecx_product_store_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
-%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
+%prod.quarkus.oidc-client.client-id=${ONECX_OIDC_CLIENT_CLIENT_ID:${quarkus.application.name}}
 ----
 ====
 
@@ -78,6 +78,8 @@ Default values
 ----
 app:
   name: bff
+  template:
+    oidc_client_id: "ONECX_OIDC_CLIENT_CLIENT_ID"
   image:
     repository: "onecx/onecx-workspace-bff"
   operator:
@@ -122,8 +124,7 @@ app:
         name: OneCX Workspace BFF
 ----
 
-T requests and POST search
-            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+objects are saved or updated
             delete: permission on all DELETE requests
           menu:
             read: permission on all GET requests and POST search
