@@ -2,17 +2,21 @@
 openapi: 3.0.3
 info:
   title: onecx-workspace-bff
-  description: OneCX Workspace BFF
+  description: Backend-For-Frontend (BFF) service for onecx-workspace. This API provides endpoints for managing Workspaces, Menus, Products, Roles and Assignments.
   version: "1.0"
 servers:
   - url: http://onecx-workspace-bff:8080/
 tags:
   - name: workspace
+    description: Managing Workspaces
   - name: menuItem
+    description: Managing Menus
   - name: product
-  - name: role
+    description: Managing Products
   - name: assignment
+    description: Managing Menu-to-Role-Assignments
   - name: slot
+    description: Managing Slots
 paths:
   /workspaces:
     post:
@@ -22,7 +26,7 @@ paths:
             - write
       tags:
         - workspace
-      description: Create new workspace
+      description: Create a new workspace
       operationId: createWorkspace
       requestBody:
         required: true
@@ -32,7 +36,7 @@ paths:
               $ref: '#/components/schemas/CreateWorkspaceRequest'
       responses:
         "201":
-          description: Created
+          description: Workspace created successfully
           content:
             application/json:
               schema:
@@ -51,7 +55,7 @@ paths:
             - read
       tags:
         - workspace
-      description: Search workspaces by criteria
+      description: Search workspaces by search criteria
       operationId: searchWorkspaces
       requestBody:
         required: true
@@ -61,7 +65,7 @@ paths:
               $ref: '#/components/schemas/SearchWorkspacesRequest'
       responses:
         "200":
-          description: OK
+          description: Workspace search results retrieved successfully
           content:
             application/json:
               schema:
@@ -80,13 +84,13 @@ paths:
             - read
       tags:
         - workspace
-      description: Get workspace by id
+      description: Get a workspace by its id
       operationId: getWorkspaceById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "200":
-          description: OK
+          description: Workspace retrieved successfully
           content:
             application/json:
               schema:
@@ -104,7 +108,7 @@ paths:
             - write
       tags:
         - workspace
-      description: Update workspace
+      description: Update a workspace by its id
       operationId: updateWorkspace
       parameters:
         - $ref: '#/components/parameters/id'
@@ -115,7 +119,7 @@ paths:
               $ref: '#/components/schemas/UpdateWorkspaceRequest'
       responses:
         "200":
-          description: Updated
+          description: Workspace updated successfully
           content:
             application/json:
               schema:
@@ -127,7 +131,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
-          description: Not found
+          description: Workspace not found
     delete:
       x-onecx:
         permissions:
@@ -135,13 +139,13 @@ paths:
             - delete
       tags:
         - workspace
-      description: Delete workspace
+      description: Delete a workspace by its id
       operationId: deleteWorkspace
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "204":
-          description: No Content
+          description: Workspace deleted successfully
         "400":
           description: Bad Request
           content:
@@ -156,13 +160,13 @@ paths:
             - read
       tags:
         - workspace
-      description: Get workspace by name
+      description: Get workspace by its name
       operationId: getWorkspaceByName
       parameters:
         - $ref: '#/components/parameters/workspaceName'
       responses:
         "200":
-          description: OK
+          description: Workspace retrieved successfully
           content:
             application/json:
               schema:
@@ -181,19 +185,19 @@ paths:
             - read
       tags:
         - menuItem
-      description: Retrieve menu item detail info
+      description: Get a menu item by its id
       operationId: getMenuItemById
       parameters:
         - $ref: '#/components/parameters/menuItemId'
       responses:
         "200":
-          description: OK
+          description: Menu item retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MenuItem'
         "404":
-          description: Not found
+          description: Menu item not found
     put:
       x-onecx:
         permissions:
@@ -201,7 +205,7 @@ paths:
             - write
       tags:
         - menuItem
-      description: Update menu Item
+      description: Update a menu item by its id
       operationId: updateMenuItem
       parameters:
         - $ref: '#/components/parameters/menuItemId'
@@ -213,7 +217,7 @@ paths:
               $ref: '#/components/schemas/UpdateMenuItemRequest'
       responses:
         "200":
-          description: OK
+          description: Menu item updated successfully
           content:
             application/json:
               schema:
@@ -225,7 +229,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
-          description: Menu items not found
+          description: Menu item not found
     delete:
       x-onecx:
         permissions:
@@ -233,15 +237,15 @@ paths:
             - delete
       tags:
         - menuItem
-      description: Delete a menuItem by the workspace name and the menuItemId
+      description: Delete a menu item by its id
       operationId: deleteMenuItemById
       parameters:
         - $ref: '#/components/parameters/menuItemId'
       responses:
         "204":
-          description: OK
+          description: Menu item deleted successfully
         "400":
-          description: Internal Server Error
+          description: Bad request
           content:
             application/json:
               schema:
@@ -254,7 +258,7 @@ paths:
             - write
       tags:
         - menuItem
-      description: Add a new menu item to workspace menu
+      description: Create a new menu item to workspace menu
       operationId: createMenuItemForWorkspace
       requestBody:
         required: true
@@ -264,7 +268,7 @@ paths:
               $ref: '#/components/schemas/CreateMenuItem'
       responses:
         "201":
-          description: OK
+          description: Menu item created successfully
           headers:
             Location:
               required: true
@@ -289,7 +293,7 @@ paths:
             - read
       tags:
         - menuItem
-      description: Fetch the menuItems of the workspace in the tree structure
+      description: Get menu items as a tree structure for a specific workspace
       operationId: getMenuStructure
       requestBody:
         required: true
@@ -299,13 +303,13 @@ paths:
               $ref: '#/components/schemas/MenuStructureSearchCriteria'
       responses:
         "200":
-          description: OK
+          description: Menu items retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MenuItemStructure'
         "404":
-          description: Not found
+          description: Menu items not found
   /menu/{menuItemId}/parentItemId:
     put:
       x-onecx:
@@ -314,7 +318,7 @@ paths:
             - write
       tags:
         - menuItem
-      description: Update an existing menu item parent
+      description: Update an existing menu item parent by its id
       operationId: updateMenuItemParent
       parameters:
         - $ref: '#/components/parameters/menuItemId'
@@ -326,7 +330,7 @@ paths:
               $ref: '#/components/schemas/UpdateMenuItemParentRequest'
       responses:
         "200":
-          description: OK
+          description: Menu item parent updated successfully
           content:
             application/json:
               schema:
@@ -357,7 +361,7 @@ paths:
               $ref: '#/components/schemas/MenuItemSearchCriteria'
       responses:
         "200":
-          description: Corresponding menu items
+          description: Menu item search results retrieved successfully
           content:
             application/json:
               schema:
@@ -376,13 +380,13 @@ paths:
             - delete
       tags:
         - menuItem
-      description: Delete all menu items in workspace
+      description: Delete all menu items of a workspace by its id
       operationId: deleteAllMenuItemsForWorkspace
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "204":
-          description: No content
+          description: Menu items deleted successfully
         "400":
           description: Bad request
           content:
@@ -397,7 +401,7 @@ paths:
             - read
       tags:
         - menuItem
-      description: get User specific menu items
+      description: Get user specific menu items
       operationId: getMenuItems
       requestBody:
         required: true
@@ -407,7 +411,7 @@ paths:
               $ref: '#/components/schemas/GetMenuItemsRequest'
       responses:
         200:
-          description: Ok
+          description: Menu items retrieved successfully
           content:
             application/json:
               schema:
@@ -426,7 +430,7 @@ paths:
             - write
       tags:
         - workspaceProduct
-      description: Create/Register new product to workspace
+      description: Create/Register a new product to workspace
       operationId: createProductInWorkspace
       parameters:
         - $ref: '#/components/parameters/id'
@@ -438,7 +442,7 @@ paths:
               $ref: '#/components/schemas/CreateProductRequest'
       responses:
         "201":
-          description: Product added
+          description: Product created/registered successfully
           headers:
             Location:
               required: true
@@ -462,19 +466,19 @@ paths:
             - read
       tags:
         - workspaceProduct
-      description: Find all products belonging to a workspace
+      description: Get all products belonging to a workspace
       operationId: getProductsByWorkspaceId
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "200":
-          description: OK
+          description: Products retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetProductsResponse'
         "404":
-          description: Not found
+          description: Products not found
   /workspaces/{id}/products/{productId}:
     delete:
       x-onecx:
@@ -483,14 +487,14 @@ paths:
             - delete
       tags:
         - workspaceProduct
-      description: Delete a product by the workspace id and the productId
+      description: Delete a product by the workspace id and the product id
       operationId: deleteProductById
       parameters:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/productId'
       responses:
         "204":
-          description: OK
+          description: Product deleted successfully
         "400":
           description: Bad Request
           content:
@@ -504,7 +508,7 @@ paths:
             - write
       tags:
         - workspaceProduct
-      description: Update product and MFEs
+      description: Update a product and MFEs by workspace id and product id
       operationId: updateProductById
       parameters:
         - $ref: '#/components/parameters/id'
@@ -517,7 +521,7 @@ paths:
               $ref: '#/components/schemas/UpdateProductRequest'
       responses:
         "200":
-          description: OK
+          description: Product updated successfully
           content:
             application/json:
               schema:
@@ -537,14 +541,14 @@ paths:
             - read
       tags:
         - workspaceProduct
-      description: Get a product by the productId
+      description: Get a product by the workspace id and product id
       operationId: getProductById
       parameters:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/productId'
       responses:
         200:
-          description: Corresponding product
+          description: Product retrieved successfully
           content:
             application/json:
               schema:
@@ -559,7 +563,7 @@ paths:
     post:
       tags:
         - product
-      description: search all available products of product-store
+      description: search all available products of the product-store by search criteria
       operationId: searchAvailableProducts
       requestBody:
         required: true
@@ -569,7 +573,7 @@ paths:
               $ref: '#/components/schemas/ProductStoreSearchCriteria'
       responses:
         "200":
-          description: Corresponding products
+          description: Products from product-store retrieved successfully
           content:
             application/json:
               schema:
@@ -598,13 +602,13 @@ paths:
               $ref: '#/components/schemas/ExportWorkspacesRequest'
       responses:
         "200":
-          description: OK
+          description: Workspaces exported successfully
           content:
             application/json:
               schema:
                 type: object
         "404":
-          description: No workspaces found
+          description: Workspaces not found
   /workspaces/import:
     x-onecx:
       permissions:
@@ -613,7 +617,7 @@ paths:
     post:
       tags:
         - workspace
-      description: Import workspaces
+      description: Import workspaces by a previously exported snapshot
       operationId: importWorkspaces
       requestBody:
         required: true
@@ -623,7 +627,7 @@ paths:
               type: object
       responses:
         "200":
-          description: Import result
+          description: Workspaces imported successfully
           content:
             application/json:
               schema:
@@ -642,19 +646,19 @@ paths:
             - read
       tags:
         - menuItem
-      description: Export menu
+      description: Export a menu of a workspace by its name
       operationId: exportMenuByWorkspaceName
       parameters:
         - $ref: '#/components/parameters/workspaceName'
       responses:
         "200":
-          description: OK
+          description: Menu exported successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MenuSnapshot'
         "404":
-          description: No menus found
+          description: Menu not found
   /menu/{workspaceName}/import:
     post:
       x-onecx:
@@ -663,7 +667,7 @@ paths:
             - write
       tags:
         - menuItem
-      description: Import menu
+      description: Import a menu into a workspace by its name
       operationId: importMenuByWorkspaceName
       parameters:
         - $ref: '#/components/parameters/workspaceName'
@@ -675,7 +679,7 @@ paths:
               $ref: '#/components/schemas/MenuSnapshot'
       responses:
         "200":
-          description: Import result
+          description: Menu imported successfully
           content:
             application/json:
               schema:
@@ -694,7 +698,7 @@ paths:
             - read
       tags:
         - workspaceRoles
-      description: search workspaceRoles
+      description: Search workspace roles by search criteria
       operationId: searchWorkspaceRoles
       requestBody:
         required: true
@@ -704,7 +708,7 @@ paths:
               $ref: '#/components/schemas/WorkspaceRoleSearchCriteria'
       responses:
         "200":
-          description: Corresponding roles
+          description: Role search results retrieved successfully
           content:
             application/json:
               schema:
@@ -723,7 +727,7 @@ paths:
             - write
       tags:
         - workspaceRoles
-      description: create role for workspace
+      description: Create a new role for a workspace
       operationId: createWorkspaceRole
       requestBody:
         required: true
@@ -733,7 +737,7 @@ paths:
               $ref: '#/components/schemas/CreateWorkspaceRoleRequest'
       responses:
         "201":
-          description: New role created
+          description: Role created successfully
           content:
             application/json:
               schema:
@@ -752,13 +756,13 @@ paths:
             - delete
       tags:
         - workspaceRoles
-      description: delete workspace role
+      description: Delete a workspace role by its id
       operationId: deleteWorkspaceRole
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         204:
-          description: No Content
+          description: Role deleted successfully
         400:
           description: Bad Request
           content:
@@ -772,13 +776,13 @@ paths:
             - read
       tags:
         - workspaceRoles
-      description: Retrieve workspace role
+      description: Get a workspace role by its id
       operationId: getWorkspaceRole
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         200:
-          description: OK
+          description: Role retrieved successfully
           content:
             application/json:
               schema:
@@ -792,7 +796,7 @@ paths:
             - write
       tags:
         - workspaceRoles
-      description: Update workspace role
+      description: Update a workspace role by its id
       operationId: updateWorkspaceRole
       parameters:
         - $ref: '#/components/parameters/id'
@@ -804,7 +808,7 @@ paths:
               $ref: '#/components/schemas/UpdateWorkspaceRoleRequest'
       responses:
         200:
-          description: OK
+          description: Role updated successfully
           content:
             application/json:
               schema:
@@ -816,7 +820,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         404:
-          description: Workspace role not found
+          description: Role not found
   /images/{refId}/{refType}:
     post:
       x-onecx:
@@ -825,7 +829,7 @@ paths:
             - write
       tags:
         - imagesInternal
-      description: Upload Images
+      description: Upload an image by its reference id and type
       parameters:
         - name: refId
           in: path
@@ -847,7 +851,7 @@ paths:
               format: binary
       responses:
         "201":
-          description: CREATED
+          description: Image created successfully
           content:
             application/json:
               schema:
@@ -861,7 +865,7 @@ paths:
             - read
       tags:
         - imagesInternal
-      description: Get Image by id
+      description: Get an image by its reference id and type
       operationId: getImage
       parameters:
         - name: refId
@@ -876,7 +880,7 @@ paths:
             $ref: "#/components/schemas/RefType"
       responses:
         "200":
-          description: OK
+          description: Image retrieved successfully
           content:
             image/*:
               schema:
@@ -895,7 +899,7 @@ paths:
             - delete
       tags:
         - imagesInternal
-      description: delete Image
+      description: Delete an image by its reference id and type
       operationId: deleteImage
       parameters:
         - name: refId
@@ -910,7 +914,7 @@ paths:
             $ref: "#/components/schemas/RefType"
       responses:
         "204":
-          description: No content
+          description: Image deleted successfully
   /images/product/{productName}:
     get:
       x-onecx:
@@ -919,7 +923,7 @@ paths:
             - read
       tags:
         - imagesInternal
-      description: Get product logo by name
+      description: Get a logo of a product by its name
       operationId: getProductLogo
       parameters:
         - name: productName
@@ -929,7 +933,7 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
+          description: Product retrieved successfully
           content:
             image/*:
               schema:
@@ -959,7 +963,7 @@ paths:
               $ref: '#/components/schemas/AssignmentSearchCriteria'
       responses:
         "200":
-          description: Corresponding assignments
+          description: Assignment search results retrieved successfully
           content:
             application/json:
               schema:
@@ -978,7 +982,7 @@ paths:
             - write
       tags:
         - assignment
-      description: Create new Assignment
+      description: Create a new assignment
       operationId: createAssignment
       requestBody:
         required: true
@@ -988,7 +992,7 @@ paths:
               $ref: '#/components/schemas/CreateAssignmentRequest'
       responses:
         "201":
-          description: New workspace created
+          description: Assignment created successfully
           headers:
             Location:
               required: true
@@ -1013,13 +1017,13 @@ paths:
             - delete
       tags:
         - assignment
-      description: Delete assignment
+      description: Delete an assignment by its id
       operationId: deleteAssignment
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         204:
-          description: Assignment deleted
+          description: Assignment deleted successfully
   /slots:
     post:
       x-onecx:
@@ -1028,7 +1032,7 @@ paths:
             - write
       tags:
         - slot
-      description: Add a new slot to workspace
+      description: Create/Add a new slot to a workspace
       operationId: createSlot
       requestBody:
         required: true
@@ -1038,7 +1042,7 @@ paths:
               $ref: '#/components/schemas/CreateSlotRequest'
       responses:
         "201":
-          description: OK
+          description: Slot created successfully
           headers:
             Location:
               required: true
@@ -1063,13 +1067,13 @@ paths:
             - read
       tags:
         - slot
-      description: Get slots for workspace
+      description: Get all slots of a workspace by its id
       operationId: getSlotsForWorkspace
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "200":
-          description: Corresponding menu items
+          description: Slots retrieved successfully
           content:
             application/json:
               schema:
@@ -1088,19 +1092,19 @@ paths:
             - read
       tags:
         - slot
-      description: Retrieve slot detail info
+      description: Get a slot by its id
       operationId: getSlotById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "200":
-          description: OK
+          description: Slot retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Slot'
         "404":
-          description: Not found
+          description: Slot not found
     delete:
       x-onecx:
         permissions:
@@ -1108,13 +1112,13 @@ paths:
             - delete
       tags:
         - slot
-      description: Delete a slot
+      description: Delete a slot by its id
       operationId: deleteSlotById
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         "204":
-          description: OK
+          description: Slot deleted successfully
         "400":
           description: Internal Server Error
           content:
@@ -1128,7 +1132,7 @@ paths:
             - write
       tags:
         - slot
-      description: Update an existing slot
+      description: Update an existing slot by its id
       operationId: updateSlot
       parameters:
         - $ref: '#/components/parameters/id'
@@ -1140,7 +1144,7 @@ paths:
               $ref: '#/components/schemas/UpdateSlotRequest'
       responses:
         "200":
-          description: OK
+          description: Slot updated successfully
           content:
             application/json:
               schema:
@@ -1226,7 +1230,7 @@ components:
             $ref: '#/components/schemas/Slot'
     RefType:
       type: string
-      enum: [ logo, favicon ]
+      enum: [ logo, logo-small, favicon ]
     ImageInfo:
       type: object
       properties:
