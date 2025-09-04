@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: onecx-workspace-bff
-  description: This API provides endpoints for managing Workspaces, Menus, Products, Roles and Assignments.
+  description: Backend-For-Frontend (BFF) service for onecx-workspace. This API provides endpoints for managing Workspaces, Menus, Products, Roles and Assignments.
   version: "1.0"
 servers:
   - url: http://onecx-workspace-bff:8080/
