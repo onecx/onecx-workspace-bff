@@ -1,6 +1,7 @@
 package org.tkit.onecx.workspace.bff.rs.mappers;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ValueMapping;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ImageInfoDTO;
@@ -15,6 +16,7 @@ public interface ImagesMapper {
 
     ImageInfo map(ImageInfoDTO image);
 
+    @ValueMapping(source = "LOGO_SMALL", target = "LOGO_MINUS_SMALL")
     RefType map(RefTypeDTO refType);
 
 }
