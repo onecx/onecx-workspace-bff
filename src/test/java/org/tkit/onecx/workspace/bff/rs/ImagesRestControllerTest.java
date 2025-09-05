@@ -25,8 +25,10 @@ import org.tkit.onecx.workspace.bff.rs.controllers.ImagesRestController;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ImageInfoDTO;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.model.MimeTypeDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ProblemDetailResponseDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.RefTypeDTO;
+import gen.org.tkit.onecx.workspace.client.model.MimeType;
 import gen.org.tkit.onecx.workspace.client.model.ProblemDetailResponse;
 import gen.org.tkit.onecx.workspace.client.model.RefType;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
@@ -345,7 +347,8 @@ class ImagesRestControllerTest extends AbstractTest {
         imageInfoDTO.setId("11-111");
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST)
+                        .withHeader("mimeType", String.valueOf(MimeType.IMAGE_SLASH_PNG)))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(OK.getStatusCode())
@@ -358,6 +361,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
+                .header("mimeType", MimeTypeDTO.IMAGE_PNG)
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
@@ -400,7 +404,8 @@ class ImagesRestControllerTest extends AbstractTest {
         var refId = "themeName";
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST)
+                        .withHeader("mimeType", String.valueOf(MimeType.IMAGE_SLASH_PNG)))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(NOT_FOUND.getStatusCode()));
@@ -411,6 +416,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
+                .header("mimeType", MimeTypeDTO.IMAGE_PNG)
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
@@ -430,7 +436,8 @@ class ImagesRestControllerTest extends AbstractTest {
         imageInfoDTO.setId("11-111");
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST)
+                        .withHeader("mimeType", String.valueOf(MimeType.IMAGE_SLASH_PNG)))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(CREATED.getStatusCode())
@@ -443,6 +450,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
+                .header("mimeType", MimeTypeDTO.IMAGE_PNG)
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
@@ -465,7 +473,8 @@ class ImagesRestControllerTest extends AbstractTest {
         imageInfoDTO.setId("11-111");
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.PUT))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.PUT)
+                        .withHeader("mimeType", String.valueOf(MimeType.IMAGE_SLASH_PNG)))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(NOT_FOUND.getStatusCode()));
@@ -476,6 +485,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
+                .header("mimeType", MimeTypeDTO.IMAGE_PNG)
                 .when()
                 .body(FILE)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
@@ -497,7 +507,8 @@ class ImagesRestControllerTest extends AbstractTest {
         problemDetailResponse.setDetail("uploadImage.contentLength: must be less than or equal to 110000");
 
         mockServerClient
-                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST))
+                .when(request().withPath("/internal/images/" + refId + "/" + RefType.LOGO).withMethod(HttpMethod.POST)
+                        .withHeader("mimeType", String.valueOf(MimeType.IMAGE_SLASH_PNG)))
                 .withPriority(100)
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(BAD_REQUEST.getStatusCode())
@@ -510,6 +521,7 @@ class ImagesRestControllerTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, ADMIN)
                 .pathParam("refId", refId)
                 .pathParam("refType", RefTypeDTO.LOGO)
+                .header("mimeType", MimeTypeDTO.IMAGE_PNG)
                 .when()
                 .body(body)
                 .contentType(MEDIA_TYPE_IMAGE_PNG)
