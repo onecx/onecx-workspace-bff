@@ -16,6 +16,7 @@ import org.tkit.quarkus.log.cdi.LogService;
 import gen.org.tkit.onecx.product.store.client.api.ImagesApi;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.ImagesInternalApiService;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.ImageInfoDTO;
+import gen.org.tkit.onecx.workspace.bff.rs.internal.model.MimeTypeDTO;
 import gen.org.tkit.onecx.workspace.bff.rs.internal.model.RefTypeDTO;
 import gen.org.tkit.onecx.workspace.client.api.ImagesInternalApi;
 import gen.org.tkit.onecx.workspace.client.model.ImageInfo;
@@ -90,10 +91,10 @@ public class ImagesRestController implements ImagesInternalApiService {
     }
 
     @Override
-    public Response uploadImage(String refId, RefTypeDTO refType, byte[] body) {
+    public Response uploadImage(String refId, RefTypeDTO refType, MimeTypeDTO mimeType, byte[] body) {
 
         try (Response response = imageApi.uploadImage(headers.getLength(), refId, imageMapper.map(refType),
-                body)) {
+                imageMapper.mapMimeType(mimeType), body)) {
             ImageInfoDTO imageInfoDTO = imageMapper.map(response.readEntity(ImageInfo.class));
             return Response.status(response.getStatus()).entity(imageInfoDTO).build();
         }

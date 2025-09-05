@@ -841,6 +841,11 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RefType"
+        - name: mimeType
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/MimeType"
       operationId: uploadImage
       requestBody:
         required: true
@@ -1228,6 +1233,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Slot'
+    MimeType:
+      type: string
+      enum: [ "image/x-icon", "image/svg+xml", "image/png", "image/jpg", "image/jpeg" ]
     RefType:
       type: string
       enum: [ logo, logo-small, favicon ]
