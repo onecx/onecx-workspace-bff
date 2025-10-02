@@ -13,7 +13,7 @@ import gen.org.tkit.onecx.workspace.exim.client.model.EximWorkspaceMenuItem;
 import gen.org.tkit.onecx.workspace.exim.client.model.ImportMenuResponse;
 import gen.org.tkit.onecx.workspace.exim.client.model.MenuSnapshot;
 
-@Mapper(uses = { OffsetDateTimeMapper.class })
+@Mapper(uses = { OffsetDateTimeMapper.class, TargetMapper.class })
 public interface MenuItemMapper {
 
     @Mapping(target = "removeI18nItem", ignore = true)
@@ -56,4 +56,5 @@ public interface MenuItemMapper {
     ImportMenuResponseDTO map(ImportMenuResponse response);
 
     UpdateMenuItemParentRequest map(UpdateMenuItemParentRequestDTO updateMenuItemParentRequestDTO);
+
 }
