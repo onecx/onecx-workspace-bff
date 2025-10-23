@@ -431,7 +431,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         WorkspaceSnapshot snapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
-        eximWorkspace.setName("testWorkspace");
+        eximWorkspace.setDisplayName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
         eximWorkspace.setProducts(List.of(new EximProduct().productName("product1").baseUrl("/product1")
                 .microfrontends(List.of(new EximMicrofrontend().appId("app1").basePath("/app1")))));
@@ -461,8 +461,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .extract().as(WorkspaceSnapshot.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
-                eximWorkspace.getName());
+        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getDisplayName(),
+                eximWorkspace.getDisplayName());
         var p = output.getWorkspaces().get("testWorkspace").getProducts().get(0);
         Assertions.assertEquals("/product1", p.getBaseUrl());
         Assertions.assertEquals("product1", p.getProductName());
@@ -476,12 +476,12 @@ class WorkspaceRestControllerTest extends AbstractTest {
         request.setNames(Set.of("testWorkspace", "error"));
 
         EximWorkspace eximWorkspace = new EximWorkspace();
-        eximWorkspace.setName("testWorkspace");
+        eximWorkspace.setDisplayName("testWorkspace");
         eximWorkspace.setBaseUrl("/test");
         eximWorkspace.addMenuItemsItem(new EximWorkspaceMenuItem().position(0).key("key1"));
 
         EximWorkspace errorWorkspace = new EximWorkspace();
-        errorWorkspace.setName("error");
+        errorWorkspace.setDisplayName("error");
         errorWorkspace.setBaseUrl("/error");
 
         WorkspaceSnapshot workspaceSnapshot = new WorkspaceSnapshot()
@@ -513,8 +513,8 @@ class WorkspaceRestControllerTest extends AbstractTest {
                 .extract().as(WorkspaceSnapshot.class);
 
         Assertions.assertNotNull(output);
-        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getName(),
-                eximWorkspace.getName());
+        Assertions.assertEquals(output.getWorkspaces().get("testWorkspace").getDisplayName(),
+                eximWorkspace.getDisplayName());
         Assertions.assertNotNull(output.getWorkspaces().get("testWorkspace").getMenuItems());
         Assertions.assertEquals("key1", output.getWorkspaces()
                 .get("testWorkspace").getMenuItems().get(0).getKey());
@@ -525,19 +525,19 @@ class WorkspaceRestControllerTest extends AbstractTest {
     void importWorkspacesTest() {
         WorkspaceSnapshot workspaceSnapshot = new WorkspaceSnapshot();
         EximWorkspace eximWorkspace = new EximWorkspace();
-        eximWorkspace.setName("test");
+        eximWorkspace.setDisplayName("test");
         eximWorkspace.setBaseUrl("/test");
         eximWorkspace.setProducts(List.of(new EximProduct().baseUrl("product1").baseUrl("/product1").productName("product1")
                 .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1")))));
         eximWorkspace.setTheme("theme1");
 
         EximWorkspace eximWorkspace2 = new EximWorkspace();
-        eximWorkspace2.setName("test2");
+        eximWorkspace2.setDisplayName("test2");
         eximWorkspace2.setBaseUrl("/test2");
         eximWorkspace2.setTheme("OneCX");
 
         EximWorkspace eximWorkspace3 = new EximWorkspace();
-        eximWorkspace3.setName("test3");
+        eximWorkspace3.setDisplayName("test3");
         eximWorkspace3.setBaseUrl("/test3");
         eximWorkspace3.setTheme("OneCX");
 
@@ -580,19 +580,19 @@ class WorkspaceRestControllerTest extends AbstractTest {
 
         WorkspaceSnapshot workspaceSnapshotDTO = new WorkspaceSnapshot();
         EximWorkspace eximWorkspaceDTO = new EximWorkspace();
-        eximWorkspaceDTO.setName("test");
+        eximWorkspaceDTO.setDisplayName("test");
         eximWorkspaceDTO.setBaseUrl("/test");
         eximWorkspaceDTO.setProducts(List.of(new EximProduct().productName("product1").baseUrl("/product1")
                 .microfrontends(List.of(new EximMicrofrontend().basePath("/app1").appId("app1"))),
                 new EximProduct().productName("notExisting").baseUrl("notExisting").baseUrl("notExisting")));
         eximWorkspaceDTO.setTheme("theme1");
         EximWorkspace eximWorkspaceDTO2 = new EximWorkspace();
-        eximWorkspaceDTO2.setName("test2");
+        eximWorkspaceDTO2.setDisplayName("test2");
         eximWorkspaceDTO2.setBaseUrl("/test2");
         eximWorkspaceDTO2.setTheme("OneCX");
 
         EximWorkspace eximWorkspaceDTO3 = new EximWorkspace();
-        eximWorkspaceDTO3.setName("test3");
+        eximWorkspaceDTO3.setDisplayName("test3");
         eximWorkspaceDTO3.setBaseUrl("/test3");
         eximWorkspaceDTO3.setMenuItems(null);
         eximWorkspaceDTO3.setTheme("OneCX");
