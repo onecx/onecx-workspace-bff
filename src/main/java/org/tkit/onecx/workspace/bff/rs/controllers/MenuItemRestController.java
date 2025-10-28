@@ -123,14 +123,6 @@ public class MenuItemRestController implements MenuItemApiService {
     }
 
     @Override
-    public Response searchMenuItemsByCriteria(MenuItemSearchCriteriaDTO menuItemSearchCriteriaDTO) {
-        try (Response response = menuClient.searchMenuItemsByCriteria(menuItemMapper.map(menuItemSearchCriteriaDTO))) {
-            return Response.status(response.getStatus())
-                    .entity(menuItemMapper.map(response.readEntity(MenuItemPageResult.class))).build();
-        }
-    }
-
-    @Override
     public Response updateMenuItem(String menuItemId, UpdateMenuItemRequestDTO updateMenuItemRequestDTO) {
         var request = menuItemMapper.createUpdateRequest(updateMenuItemRequestDTO);
         try (Response response = menuClient.updateMenuItem(menuItemId, request)) {

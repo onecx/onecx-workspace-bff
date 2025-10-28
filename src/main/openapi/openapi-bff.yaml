@@ -310,7 +310,7 @@ paths:
                 $ref: '#/components/schemas/MenuItemStructure'
         "404":
           description: Menu items not found
-  /menu/{menuItemId}/parentItemId:
+  /menu/{menuItemId}/reorder:
     put:
       x-onecx:
         permissions:
@@ -343,35 +343,6 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
           description: Menu item not found
-  /menu/search:
-    post:
-      x-onecx:
-        permissions:
-          menu:
-            - read
-      tags:
-        - menuItem
-      description: Search for menu items by search criteria
-      operationId: searchMenuItemsByCriteria
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MenuItemSearchCriteria'
-      responses:
-        "200":
-          description: Menu item search results retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MenuItemPageResult'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /menu/workspace/{id}:
     delete:
       x-onecx:
@@ -1531,95 +1502,11 @@ components:
             type: string
         workspaceId:
           type: string
-    MenuItemSearchCriteria:
-      type: object
-      properties:
-        workspaceId:
-          type: string
-        pageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        pageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          maximum: 1000
-          type: integer
-    MenuItemPageResult:
-      type: object
-      properties:
-        totalElements:
-          format: int64
-          description: The total elements in the resource.
-          type: integer
-        number:
-          format: int32
-          type: integer
-        size:
-          format: int32
-          type: integer
-        totalPages:
-          format: int64
-          type: integer
-        stream:
-          type: array
-          items:
-            $ref: '#/components/schemas/MenuItemResult'
-    MenuItemResult:
-      type: object
-      required:
-        - modificationCount
-      properties:
-        modificationCount:
-          format: int32
-          type: integer
-        creationDate:
-          $ref: '#/components/schemas/OffsetDateTime'
-        creationUser:
-          type: string
-        modificationDate:
-          $ref: '#/components/schemas/OffsetDateTime'
-        modificationUser:
-          type: string
-        id:
-          type: string
-        key:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        url:
-          type: string
-        applicationId:
-          type: string
-        disabled:
-          type: boolean
-          default: false
-        position:
-          format: int32
-          type: integer
-        badge:
-          type: string
-        scope:
-          $ref: '#/components/schemas/Scope'
-        external:
-          type: boolean
-          default: false
-        target:
-          $ref: '#/components/schemas/Target'
-        parentItemId:
-          type: string
     MenuItemStructure:
       type: object
       required:
         - menuItems
-        - workspaceId
       properties:
-        workspaceId:
-          type: string
         menuItems:
           type: array
           minItems: 1

@@ -34,12 +34,7 @@ public interface MenuItemMapper {
     @Mapping(target = "removeMenuItemsItem", ignore = true)
     MenuItemStructureDTO map(MenuItemStructure menuItemStructure);
 
-    MenuItemSearchCriteria map(MenuItemSearchCriteriaDTO criteriaDTO);
-
     MenuStructureSearchCriteria map(MenuStructureSearchCriteriaDTO criteria);
-
-    @Mapping(target = "removeStreamItem", ignore = true)
-    MenuItemPageResultDTO map(MenuItemPageResult pageResult);
 
     MenuSnapshot mapSnapshot(MenuSnapshotDTO menuSnapshotDTO);
 

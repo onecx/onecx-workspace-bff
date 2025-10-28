@@ -121,55 +121,6 @@ class MenuItemRestControllerTest extends AbstractTest {
     }
 
     @Test
-    void getAllMenuItemsOfWorkspaceTest() {
-        var result = new MenuItemPageResult().stream(List.of(
-                new MenuItemResult().name("m1"),
-                new MenuItemResult().name("m2")));
-
-        MenuItemSearchCriteria criteria = new MenuItemSearchCriteria();
-        criteria.setWorkspaceId("1");
-        mockServerClient
-                .when(request().withPath("/internal/menuItems/search").withMethod(HttpMethod.POST)
-                        .withContentType(MediaType.APPLICATION_JSON).withBody(JsonBody.json(criteria)))
-                .withId(MOCK_ID)
-                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
-                        .withContentType(MediaType.APPLICATION_JSON)
-                        .withBody(JsonBody.json(result)));
-
-        MenuItemSearchCriteriaDTO criteriaDTO = new MenuItemSearchCriteriaDTO();
-        criteriaDTO.setWorkspaceId("1");
-        var output = given()
-                .when()
-                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
-                .header(APM_HEADER_PARAM, ADMIN)
-                .contentType(APPLICATION_JSON)
-                .body(criteriaDTO)
-                .post("/search")
-                .then()
-                .statusCode(Response.Status.OK.getStatusCode())
-                .contentType(APPLICATION_JSON)
-                .extract().as(MenuItemPageResultDTO.class);
-
-        Assertions.assertNotNull(output);
-        Assertions.assertEquals("m1", output.getStream().get(0).getName());
-        Assertions.assertEquals("m2", output.getStream().get(1).getName());
-    }
-
-    @Test
-    void getAllMenuItemsOfWorkspaceNotFoundTest() {
-        var output = given()
-                .when()
-                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
-                .header(APM_HEADER_PARAM, ADMIN)
-                .contentType(APPLICATION_JSON)
-                .get("/search")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
-
-        Assertions.assertNotNull(output);
-    }
-
-    @Test
     void updateMenuItemTest() {
 
         MenuItem m1 = new MenuItem().name("m1").badge("newBadge");
@@ -282,7 +233,6 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         MenuItemStructure itemStructure = new MenuItemStructure();
         itemStructure.setMenuItems(menuItems);
-        itemStructure.setWorkspaceId("w1");
 
         MenuStructureSearchCriteria criteria = new MenuStructureSearchCriteria();
         criteria.setWorkspaceId("w1");
@@ -440,7 +390,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/menuItems/" + menuItemId + "/parentItemId").withMethod(HttpMethod.PUT)
+                .when(request().withPath("/internal/menuItems/" + menuItemId + "/reorder").withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
@@ -459,7 +409,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .pathParam("menuItemId", menuItemId)
-                .put("/{menuItemId}/parentItemId")
+                .put("/{menuItemId}/reorder")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -473,7 +423,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .pathParam("menuItemId", menuItemId)
-                .put("/{menuItemId}/parentItemId")
+                .put("/{menuItemId}/reorder")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .contentType(APPLICATION_JSON)
@@ -494,7 +444,7 @@ class MenuItemRestControllerTest extends AbstractTest {
 
         // create mock rest endpoint
         mockServerClient
-                .when(request().withPath("/internal/menuItems/" + menuItemId + "/parentItemId").withMethod(HttpMethod.PUT)
+                .when(request().withPath("/internal/menuItems/" + menuItemId + "/reorder").withMethod(HttpMethod.PUT)
                         .withBody(JsonBody.json(request)).withContentType(MediaType.APPLICATION_JSON))
                 .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.NOT_FOUND.getStatusCode()));
@@ -511,7 +461,7 @@ class MenuItemRestControllerTest extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .body(requestDTO)
                 .pathParam("menuItemId", menuItemId)
-                .put("/{menuItemId}/parentItemId")
+                .put("/{menuItemId}/reorder")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
     }
