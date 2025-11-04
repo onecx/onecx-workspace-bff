@@ -1637,6 +1637,8 @@ components:
         undeployed:
           type: boolean
           default: false
+        exposedModule:
+          type: string
         type:
           $ref: '#/components/schemas/MicrofrontendType'
         endpoints:
@@ -1678,6 +1680,8 @@ components:
         appId:
           type: string
         basePath:
+          type: string
+        exposedModule:
           type: string
     CreateUpdateProductResponse:
       required:
