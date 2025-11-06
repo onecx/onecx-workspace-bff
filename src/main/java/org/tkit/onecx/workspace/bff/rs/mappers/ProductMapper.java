@@ -17,7 +17,7 @@ import gen.org.tkit.onecx.workspace.client.model.*;
 import gen.org.tkit.onecx.workspace.client.model.Microfrontend;
 import gen.org.tkit.onecx.workspace.client.model.Product;
 
-@Mapper(uses = { OffsetDateTimeMapper.class })
+@Mapper(uses = { OffsetDateTimeMapper.class, SlotMapper.class })
 public interface ProductMapper {
 
     CreateProductRequest map(CreateProductRequestDTO dto, String workspaceId);
@@ -82,7 +82,6 @@ public interface ProductMapper {
     }
 
     @Mapping(target = "version", ignore = true)
-    @Mapping(target = "slots", ignore = true)
     @Mapping(target = "removeSlotsItem", ignore = true)
     @Mapping(target = "undeployed", ignore = true)
     @Mapping(target = "imageUrl", ignore = true)
@@ -128,6 +127,8 @@ public interface ProductMapper {
     @Mapping(target = "endpoints", ignore = true)
     @Mapping(target = "appVersion", source = "version")
     MicrofrontendPSDTO map(MicrofrontendAbstract microfrontendAbstract);
+
+    SlotPSDTO map(SlotAbstract slotAbstract);
 
     default ProductItemSearchCriteria createCriteria(List<String> productNames) {
         ProductItemSearchCriteria criteria = new ProductItemSearchCriteria();

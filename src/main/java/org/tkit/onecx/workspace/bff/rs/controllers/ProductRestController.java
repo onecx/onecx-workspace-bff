@@ -60,7 +60,9 @@ public class ProductRestController implements WorkspaceProductApiService {
                     .mapToCreateUpdate(productMapper.map(response.readEntity(Product.class)));
             if (!createProductRequestDTO.getSlots().isEmpty()) {
                 try (Response slotsResponse = slotClient.createSlot(slotMapper.map(createProductRequestDTO.getSlots(), id))) {
-                    createdProduct.getResource().setSlots(slotMapper.mapArray(slotsResponse.readEntity(Slot[].class)));
+                    if (slotsResponse.getStatus() == 201) {
+                        createdProduct.getResource().setSlots(slotMapper.mapArray(slotsResponse.readEntity(Slot[].class)));
+                    }
                     responseBuilder = Response.status(response.getStatus())
                             .entity(createdProduct);
                 }
