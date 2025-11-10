@@ -42,7 +42,7 @@ public interface ProductMapper {
 
     default List<MicrofrontendDTO> enrichMfes(List<MicrofrontendDTO> microfrontends,
             List<gen.org.tkit.onecx.product.store.client.model.Microfrontend> microfrontendsPS) {
-        if (microfrontends != null && !microfrontends.isEmpty()) {
+        if (microfrontends != null && !microfrontends.isEmpty() && microfrontendsPS != null) {
             microfrontends.forEach(microfrontendDTO -> {
                 var matchingMfe = microfrontendsPS.stream().filter(m -> m.getAppId().equals(microfrontendDTO.getAppId()))
                         .findFirst();
