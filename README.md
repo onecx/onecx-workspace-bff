@@ -1,2 +1,2 @@
 # onecx-workspace-bff
-OneCx workspace BFF
+OneCX Workspace Backend-For-Frontend (BFF)
