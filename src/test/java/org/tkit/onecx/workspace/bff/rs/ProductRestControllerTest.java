@@ -124,6 +124,7 @@ class ProductRestControllerTest extends AbstractTest {
         mockServerClient
                 .when(request().withPath("/internal/slots").withMethod(HttpMethod.POST)
                         .withBody(JsonBody.json(slotRequest)))
+                .withId(MOCK_ID)
                 .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
                         .withContentType(MediaType.APPLICATION_JSON)
                         .withBody(JsonBody.json(createdSlots)));
@@ -150,6 +151,56 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertEquals(request.getProductName(), output.getResource().getProductName());
         Assertions.assertEquals(request.getBaseUrl(), output.getResource().getBaseUrl());
         Assertions.assertNotNull(output.getResource().getSlots());
+    }
+
+    @Test
+    void registerNewProductWithSlotsAlreadyExistingTest() {
+        String workspaceId = "test";
+        CreateProductRequest request = new CreateProductRequest();
+        request.setProductName("test-product");
+        request.setBaseUrl("/");
+
+        Product response = new Product();
+        response.setProductName("test-product");
+        response.setBaseUrl("/");
+        mockServerClient
+                .when(request().withPath("/internal/products").withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(request)))
+                .respond(httpRequest -> response().withStatusCode(Response.Status.CREATED.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(response)));
+
+        CreateSlotRequest slotRequest = new CreateSlotRequest();
+        slotRequest.setWorkspaceId("test");
+        slotRequest.setSlots(List.of(new CreateSlot().name("slot1"), new CreateSlot().name("slot2")));
+
+        mockServerClient
+                .when(request().withPath("/internal/slots").withMethod(HttpMethod.POST)
+                        .withBody(JsonBody.json(slotRequest)))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode()));
+
+        CreateProductRequestDTO input = new CreateProductRequestDTO();
+        input.setProductName("test-product");
+        input.setBaseUrl("/");
+        input.setSlots(List.of(new CreateSlotDTO().name("slot1"), new CreateSlotDTO().name("slot2")));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .body(input)
+                .post()
+                .then()
+                .statusCode(Response.Status.CREATED.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(CreateUpdateProductResponseDTO.class);
+
+        Assertions.assertNotNull(output.getResource());
+        Assertions.assertEquals(request.getProductName(), output.getResource().getProductName());
+        Assertions.assertEquals(request.getBaseUrl(), output.getResource().getBaseUrl());
     }
 
     @Test
@@ -351,6 +402,55 @@ class ProductRestControllerTest extends AbstractTest {
         Assertions.assertEquals(productstoreProduct.getMicrofrontends().get(0).getAppVersion(),
                 output.getMicrofrontends().get(0).getAppVersion());
 
+    }
+
+    @Test
+    void getProductFromWorkspaceByIdTest_PS_Store_Error() {
+        String productId = "p-id";
+        String workspaceId = "w-id";
+
+        Product product = new Product();
+        product.setProductName("Testname");
+        product.setBaseUrl("/testbaseUrl");
+        product.setModificationCount(1);
+        product.setProductName("testProductName");
+        product.setMicrofrontends(List.of(new Microfrontend().mfeId("mfe1")));
+
+        // create mock rest endpoint
+        mockServerClient
+                .when(request().withPath("/internal/products/" + productId)
+                        .withMethod(HttpMethod.GET))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(product)));
+
+        // mock endpoint product store
+        mockServerClient
+                .when(request().withPath("/v1/products/testProductName").withMethod(HttpMethod.GET))
+                .withId("mock2")
+                .respond(httpRequest -> response().withStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .pathParam("productId", productId)
+                .get("/{productId}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(ProductDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertNull(output.getDescription());
+        Assertions.assertNull(output.getDisplayName());
+        Assertions.assertNull(output.getImageUrl());
+
+        Assertions.assertEquals(product.getProductName(), output.getProductName());
+        Assertions.assertEquals(product.getMicrofrontends().get(0).getMfeId(), output.getMicrofrontends().get(0).getAppId());
     }
 
     @Test
