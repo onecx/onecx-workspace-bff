@@ -1,1 +1,1 @@
-** xref:documentation:onecx-workspace-bff:index.adoc[Workspace Bff]
+** xref:documentation:onecx-workspace-bff:index.adoc[Backend For Frontend]
