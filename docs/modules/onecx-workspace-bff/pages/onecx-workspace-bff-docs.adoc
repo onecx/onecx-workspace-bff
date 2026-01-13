@@ -1,10 +1,12 @@
 
 include::onecx-workspace-bff-attributes.adoc[opts=optional]
 
-=== Default properties
+{docker-registry}[Link to Docker registry]
+
+== Default properties
 
 .{properties-file}
-[%collapsible%open]
+[%collapsible]
 ====
 [source,properties,subs=attributes+]
 ----
@@ -58,22 +60,18 @@ quarkus.openapi-generator.codegen.spec.onecx_product_store_svc_external_v1_yaml.
 ----
 ====
 
-=== Extensions
-
+== Extensions
+.Extensions List
+[%collapsible]
+====
 include::onecx-workspace-bff-extensions.adoc[opts=optional]
+====
 
-=== Container
+== Helm
 
-{docker-registry}[Docker registry]
+{helm-registry}[Link to Helm registry]
 
-
-=== Helm
-
-{helm-registry}[Helm registry]
-
-Default values
-
-.{helm-file}
+.Default values in {helm-file}
 [source,yaml]
 ----
 app:
@@ -121,4 +119,3 @@ app:
         description: OneCX Workspace Backend For Frontend
         name: OneCX Workspace BFF
 ----
-

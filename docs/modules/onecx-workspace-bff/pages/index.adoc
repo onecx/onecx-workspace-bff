@@ -1,8 +1,7 @@
 include::onecx-workspace-bff-attributes.adoc[opts=optional]
 
-== onecx-workspace-bff
+= OneCX Workspace Backend For Frontend
 
-include::docs.adoc[opts=optional]
 
 
 include::onecx-workspace-bff-docs.adoc[opts=optional]

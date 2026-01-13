@@ -98,6 +98,12 @@ h| Version
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-oidc.adoc[Link]
 | 3.27.1
 
+| quarkus-rest-client-oidc-filter
+
+| https://quarkus.io/guides/security-openid-connect-client-reference#rest-client-oidc-filter[Link]
+| https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-rest-client-oidc-filter.adoc[Link]
+| 3.27.1
+
 | onecx-core
 
 | https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-core.html[Link]
@@ -128,12 +134,6 @@ h| Version
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-container-image-docker.adoc[Link]
 | 3.27.1
 
-
-| quarkus-rest-client-oidc-filter
-
-| 
-| 
-| 3.27.1
 
 
 |===
