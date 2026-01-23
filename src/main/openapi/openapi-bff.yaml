@@ -1271,6 +1271,12 @@ components:
           default: false
         disabled:
           type: boolean
+        i18n:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
     WorkspaceAbstract:
       required:
         - name
