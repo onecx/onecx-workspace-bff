@@ -168,6 +168,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         data.setName("test-name");
         data.setDescription("this is a test workspace");
         data.setMandatory(true);
+        data.setI18n(Map.of("en", Map.of("footerLabel", "TranslatedFooterLabel")));
 
         // create mock rest endpoint
         mockServerClient
@@ -193,6 +194,7 @@ class WorkspaceRestControllerTest extends AbstractTest {
         Assertions.assertEquals(data.getId(), output.getResource().getId());
         Assertions.assertEquals(data.getName(), output.getResource().getName());
         Assertions.assertEquals(data.getMandatory(), output.getResource().getMandatory());
+        Assertions.assertEquals(data.getI18n(), output.getResource().getI18n());
 
     }
 
