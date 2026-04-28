@@ -59,7 +59,7 @@ class ImagesRestControllerTest extends AbstractTest {
 
         try {
             mockServerClient.clear(MOCK_ID);
-        } catch (Exception ex) {
+        } catch (Exception _) {
             //  mockId not existing
         }
     }

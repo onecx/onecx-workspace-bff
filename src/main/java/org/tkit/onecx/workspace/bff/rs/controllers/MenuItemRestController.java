@@ -68,14 +68,14 @@ public class MenuItemRestController implements MenuItemApiService {
 
     @Override
     public Response deleteAllMenuItemsForWorkspace(String id) {
-        try (Response response = menuClient.deleteAllMenuItemsForWorkspace(id)) {
+        try (var _ = menuClient.deleteAllMenuItemsForWorkspace(id)) {
             return Response.status(NO_CONTENT).build();
         }
     }
 
     @Override
     public Response deleteMenuItemById(String menuItemId) {
-        try (Response response = menuClient.deleteMenuItemById(menuItemId)) {
+        try (var _ = menuClient.deleteMenuItemById(menuItemId)) {
             return Response.status(NO_CONTENT).build();
         }
     }
