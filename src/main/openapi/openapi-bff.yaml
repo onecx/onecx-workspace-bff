@@ -1060,6 +1060,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+    put:
+      x-onecx:
+        permissions:
+          slot:
+            - write
+      tags:
+        - slot
+      description: Add or update multiple slots for a workspace
+      operationId: addOrUpdateSlot
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSlotRequest'
+      responses:
+        "200":
+          description: Slot added/updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Slot'
+        "204":
+          description: Slot cleared and deleted successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /slots/{id}:
     get:
       x-onecx:
@@ -1148,7 +1180,6 @@ components:
     UpdateSlotRequest:
       type: object
       required:
-        - modificationCount
         - name
       properties:
         modificationCount:
