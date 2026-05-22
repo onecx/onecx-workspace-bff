@@ -220,6 +220,74 @@ class SlotRestControllerTest extends AbstractTest {
     }
 
     @Test
+    void addOrUpdateSlotTest() {
+        String workspaceId = "w1";
+        UpdateSlotRequest updateSlotRequest = new UpdateSlotRequest();
+        updateSlotRequest.setModificationCount(0);
+        updateSlotRequest.setName("slot1");
+
+        Slot updatedSlot = new Slot();
+        updatedSlot.setName("slot1");
+
+        mockServerClient
+                .when(request().withPath("/internal/slots/workspace/" + workspaceId).withMethod(HttpMethod.PUT)
+                        .withBody(JsonBody.json(updateSlotRequest)))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.OK.getStatusCode())
+                        .withContentType(MediaType.APPLICATION_JSON)
+                        .withBody(JsonBody.json(updatedSlot)));
+
+        UpdateSlotRequestDTO input = new UpdateSlotRequestDTO();
+        input.setName("slot1");
+        input.setModificationCount(0);
+
+        var output = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .body(input)
+                .put("/workspace/{id}")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .contentType(APPLICATION_JSON)
+                .extract().as(SlotDTO.class);
+
+        Assertions.assertNotNull(output);
+        Assertions.assertEquals("slot1", output.getName());
+    }
+
+    @Test
+    void addOrUpdateSlotNoContentTest() {
+        String workspaceId = "w2";
+        UpdateSlotRequest updateSlotRequest = new UpdateSlotRequest();
+        updateSlotRequest.setModificationCount(0);
+        updateSlotRequest.setName("slot2");
+
+        mockServerClient
+                .when(request().withPath("/internal/slots/workspace/" + workspaceId).withMethod(HttpMethod.PUT)
+                        .withBody(JsonBody.json(updateSlotRequest)))
+                .withId(MOCK_ID)
+                .respond(httpRequest -> response().withStatusCode(Response.Status.NO_CONTENT.getStatusCode()));
+
+        UpdateSlotRequestDTO input = new UpdateSlotRequestDTO();
+        input.setName("slot2");
+        input.setModificationCount(0);
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(APM_HEADER_PARAM, ADMIN)
+                .contentType(APPLICATION_JSON)
+                .pathParam("id", workspaceId)
+                .body(input)
+                .put("/workspace/{id}")
+                .then()
+                .statusCode(Response.Status.NO_CONTENT.getStatusCode());
+    }
+
+    @Test
     void getSlotsByWorkspaceIdTest() {
         String id = "w1";
 

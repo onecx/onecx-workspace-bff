@@ -36,6 +36,19 @@ public class SlotRestController implements SlotApiService {
     ExceptionMapper exceptionMapper;
 
     @Override
+    public Response addOrUpdateSlot(String id, UpdateSlotRequestDTO updateSlotRequestDTO) {
+        Response.ResponseBuilder responseBuilder;
+        try (Response response = slotClient.addOrUpdateSlot(id, slotMapper.mapUpdate(updateSlotRequestDTO))) {
+            if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
+                responseBuilder = Response.status(response.getStatus());
+            } else {
+                responseBuilder = Response.status(response.getStatus()).entity(slotMapper.map(response.readEntity(Slot.class)));
+            }
+            return responseBuilder.build();
+        }
+    }
+
+    @Override
     public Response createSlot(CreateSlotRequestDTO createSlotRequestDTO) {
         try (Response response = slotClient
                 .createSlot(slotMapper.map(createSlotRequestDTO))) {
